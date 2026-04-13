@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>GRAMMAR QUEST</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Dots&family=Noto+Sans+JP:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════
+   DESIGN TOKENS
+════════════════════════════════════ */
+:root {
+  --bg: #080c14;
+  --surface: #0f1623;
+  --card: #131b28;
+  --border: #1e2d44;
+  --accent:  #00e5ff;
+  --accent2: #ff3d71;
+  --accent3: #ffe57a;
+  --accent4: #69ff94;
+  --accent5: #bf7fff;
+  --text:  #e8f0fe;
+  --muted: #4a6080;
+  --muted2:#6a80a0;
+  --radius: 14px;
+  --S: #00e5ff; --V: #69ff94; --O: #ffe57a;
+  --C: #bf7fff; --M: #ff3d71;
+  --noun:#00e5ff; --verb:#69ff94; --adj:#ffe57a;
+  --adv:#bf7fff;  --prep:#ff3d71; --conj:#ff9632;
+  --art:#64c8ff;  --pron:#c864ff;
+}
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'Noto Sans JP',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+/* scanline */
+body::after {
+  content:'';
+  position:fixed; inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,229,255,.013) 2px,rgba(0,229,255,.013) 4px);
+  pointer-events:none; z-index:1000;
+}
+
+/* ════════════════════════════════════
+   BOTTOM NAV (persistent)
+════════════════════════════════════ */
+#bottomNav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 200;
+  background: rgba(8,12,20,.97);
+  border-top: 1px solid var(--border);
+  backdrop-filter: blur(14px);
+  display: flex;
+  height: 60px;
+}
+.bnav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: .6rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+  transition: color .2s;
+  position: relative;
+}
+.bnav-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 2px;
+  border-radius: 0 0 2px 2px;
+  background: var(--tab-color, var(--accent));
+  transform: scaleX(0);
+  transition: transform .2s;
+}
+.bnav-btn.active { color: var(--tab-color, var(--accent)); }
+.bnav-btn.active::before { transform: scaleX(1); }
+.bnav-icon { font-size: 1.3rem; line-height: 1; }
+
+/* ════════════════════════════════════
+   PAGE WRAPPER
+════════════════════════════════════ */
+.page { display: none; min-height: 100vh; padding-bottom: 60px; }
+.page.active { display: block; }
+
+/* ════════════════════════════════════
+   ── PAGE: GAME ──
+════════════════════════════════════ */
+#modeScreen {
+  min-height: calc(100vh - 60px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px 32px;
+  gap: 22px;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(0,229,255,.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 80%, rgba(255,61,113,.07) 0%, transparent 60%);
+}
+.game-title {
+  font-family:'Zen Dots',cursive;
+  font-size:clamp(1.8rem,6vw,3rem);
+  background:linear-gradient(135deg,var(--accent),var(--accent5));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  text-align:center; letter-spacing:2px;
+  filter:drop-shadow(0 0 20px rgba(0,229,255,.4));
+}
+.game-sub { font-size:.82rem; color:var(--muted); text-align:center; letter-spacing:1px; }
+.pool-info {
+  font-size:.72rem; color:var(--muted); text-align:center;
+  background:rgba(0,229,255,.06); border:1px solid rgba(0,229,255,.15);
+  border-radius:8px; padding:8px 16px; max-width:440px; width:100%;
+}
+.pool-info span { color:var(--accent3); font-family:'JetBrains Mono',monospace; font-weight:700; }
+.mode-cards { display:flex; flex-direction:column; gap:12px; width:100%; max-width:440px; }
+.mode-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:18px 20px; cursor:pointer;
+  transition:all .2s; display:flex; align-items:center; gap:14px;
+  position:relative; overflow:hidden;
+}
+.mode-card::before {
+  content:''; position:absolute; top:0; left:0; bottom:0;
+  width:3px; border-radius:3px 0 0 3px;
+}
+.mode-card.svoc::before { background:var(--accent); }
+.mode-card.pos::before  { background:var(--accent2); }
+.mode-card.mix::before  { background:var(--accent3); }
+.mode-card:hover { transform:translateX(4px); border-color:rgba(255,255,255,.15); }
+.mode-card:active { transform:scale(.98); }
+.mode-icon { font-size:1.8rem; flex-shrink:0; }
+.mode-title { font-size:.95rem; font-weight:900; margin-bottom:2px; }
+.mode-desc { font-size:.71rem; color:var(--muted); line-height:1.5; }
+.mode-badge {
+  margin-left:auto; font-family:'JetBrains Mono',monospace;
+  font-size:.63rem; font-weight:700; padding:3px 10px;
+  border-radius:20px; white-space:nowrap; flex-shrink:0;
+}
+.mode-card.svoc .mode-badge { background:rgba(0,229,255,.15); color:var(--accent); border:1px solid rgba(0,229,255,.3); }
+.mode-card.pos  .mode-badge { background:rgba(255,61,113,.15); color:var(--accent2); border:1px solid rgba(255,61,113,.3); }
+.mode-card.mix  .mode-badge { background:rgba(255,229,122,.15); color:var(--accent3); border:1px solid rgba(255,229,122,.3); }
+
+/* Q-count */
+.q-select-wrap { width:100%; max-width:440px; display:flex; flex-direction:column; gap:8px; }
+.q-select-label { font-size:.7rem; color:var(--muted); letter-spacing:1px; font-family:'JetBrains Mono',monospace; }
+.q-select-btns { display:flex; gap:8px; }
+.q-count-btn {
+  flex:1; padding:8px 4px; background:var(--surface);
+  border:1px solid var(--border); border-radius:8px; color:var(--muted);
+  font-family:'JetBrains Mono',monospace; font-size:.82rem; font-weight:700;
+  cursor:pointer; transition:all .15s;
+}
+.q-count-btn.active { border-color:var(--accent); color:var(--accent); background:rgba(0,229,255,.1); }
+
+/* guide link on mode screen */
+.guide-hint {
+  font-size:.73rem; color:var(--muted);
+  text-align:center;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+}
+.guide-hint-btn {
+  background:rgba(191,127,255,.1); border:1px solid rgba(191,127,255,.25);
+  border-radius:8px; color:var(--accent5); font-family:'Noto Sans JP',sans-serif;
+  font-size:.72rem; font-weight:700; padding:4px 12px; cursor:pointer;
+  transition:all .15s;
+}
+.guide-hint-btn:hover { background:rgba(191,127,255,.2); }
+
+/* GAME SCREEN */
+#gameScreen { display:none; min-height:calc(100vh - 60px); flex-direction:column; }
+.topbar {
+  background:rgba(15,22,35,.95); border-bottom:1px solid var(--border);
+  padding:10px 16px; display:flex; align-items:center; gap:12px;
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(8px);
+}
+.back-btn {
+  background:rgba(255,255,255,.06); border:1px solid var(--border);
+  border-radius:8px; color:var(--muted); font-family:'Noto Sans JP',sans-serif;
+  font-size:.75rem; padding:5px 10px; cursor:pointer; transition:all .15s;
+}
+.back-btn:hover { color:var(--text); border-color:rgba(255,255,255,.2); }
+.mode-label {
+  font-family:'JetBrains Mono',monospace; font-size:.7rem; font-weight:700;
+  color:var(--accent); background:rgba(0,229,255,.1); border:1px solid rgba(0,229,255,.2);
+  padding:3px 10px; border-radius:20px; letter-spacing:1px;
+}
+.score-display { margin-left:auto; display:flex; gap:14px; align-items:center; }
+.score-item { text-align:right; }
+.score-label { font-size:.58rem; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+.score-val { font-family:'JetBrains Mono',monospace; font-size:1.1rem; font-weight:700; }
+.score-val.score { color:var(--accent3); }
+.score-val.combo { color:var(--accent2); }
+.prog-wrap { height:3px; background:var(--border); }
+.prog-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent5)); transition:width .4s ease; }
+.game-body {
+  flex:1; display:flex; flex-direction:column; align-items:center;
+  padding:20px 16px 30px; gap:18px; max-width:720px; margin:0 auto; width:100%;
+}
+.q-counter { font-family:'JetBrains Mono',monospace; font-size:.72rem; color:var(--muted); letter-spacing:1px; align-self:flex-start; }
+.sentence-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:16px 18px; width:100%; position:relative; overflow:hidden;
+}
+.sentence-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent5));
+}
+.sentence-label { font-size:.6rem; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:8px; font-family:'JetBrains Mono',monospace; }
+.sentence-text { font-size:clamp(.95rem,3.5vw,1.25rem); font-weight:700; line-height:1.9; color:var(--text); word-break:break-word; }
+.sentence-jp { font-size:.78rem; color:var(--muted); margin-top:8px; line-height:1.6; border-top:1px solid var(--border); padding-top:7px; }
+.target-word {
+  display:inline-block; background:rgba(0,229,255,.12); border:2px solid var(--accent);
+  border-radius:8px; padding:2px 10px; color:var(--accent);
+  font-family:'JetBrains Mono',monospace; font-size:1.05em;
+  animation:pulse-border 1.5s ease-in-out infinite; cursor:default;
+}
+@keyframes pulse-border {
+  0%,100%{box-shadow:0 0 0 0 rgba(0,229,255,.3)}
+  50%{box-shadow:0 0 0 6px rgba(0,229,255,0)}
+}
+.question-box { width:100%; text-align:center; }
+.question-text { font-size:clamp(.82rem,2.5vw,.95rem); color:var(--muted); margin-bottom:4px; }
+.question-word { font-family:'JetBrains Mono',monospace; font-size:clamp(1.3rem,5vw,1.9rem); font-weight:700; color:var(--accent3); letter-spacing:2px; text-shadow:0 0 20px rgba(255,229,122,.3); }
+.choices-grid { display:grid; gap:9px; width:100%; }
+.choices-grid.svoc-grid { grid-template-columns:1fr 1fr; }
+.choices-grid.pos-grid  { grid-template-columns:1fr 1fr; }
+.choice-btn {
+  background:var(--surface); border:2px solid var(--border); border-radius:12px;
+  padding:14px 10px; font-family:'Noto Sans JP',sans-serif; font-size:.85rem; font-weight:900;
+  color:var(--text); cursor:pointer; transition:all .15s;
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  position:relative; overflow:hidden;
+}
+.choice-btn::before { content:''; position:absolute; inset:0; background:var(--hc,transparent); opacity:0; transition:opacity .15s; border-radius:10px; }
+.choice-btn:hover::before { opacity:1; }
+.choice-btn:hover { transform:translateY(-2px); border-color:rgba(255,255,255,.2); }
+.choice-btn:active { transform:scale(.97); }
+.choice-btn .choice-en { font-size:.68rem; color:var(--muted); font-weight:400; font-family:'JetBrains Mono',monospace; }
+.choice-btn[data-type="S"]   { --hc:rgba(0,229,255,.08); }
+.choice-btn[data-type="V"]   { --hc:rgba(105,255,148,.08); }
+.choice-btn[data-type="O"]   { --hc:rgba(255,229,122,.08); }
+.choice-btn[data-type="C"]   { --hc:rgba(191,127,255,.08); }
+.choice-btn[data-type="M"]   { --hc:rgba(255,61,113,.08); }
+.choice-btn[data-type="名詞"]  { --hc:rgba(0,229,255,.08); }
+.choice-btn[data-type="動詞"]  { --hc:rgba(105,255,148,.08); }
+.choice-btn[data-type="形容詞"]{ --hc:rgba(255,229,122,.08); }
+.choice-btn[data-type="副詞"]  { --hc:rgba(191,127,255,.08); }
+.choice-btn[data-type="前置詞"]{ --hc:rgba(255,61,113,.08); }
+.choice-btn[data-type="接続詞"]{ --hc:rgba(255,150,50,.08); }
+.choice-btn[data-type="冠詞"]  { --hc:rgba(100,200,255,.08); }
+.choice-btn[data-type="代名詞"]{ --hc:rgba(200,100,255,.08); }
+.choice-btn.correct { border-color:var(--accent4)!important; background:rgba(105,255,148,.15)!important; color:var(--accent4)!important; animation:correct-flash .4s ease; }
+.choice-btn.wrong   { border-color:var(--accent2)!important; background:rgba(255,61,113,.15)!important; color:var(--accent2)!important; animation:wrong-shake .4s ease; }
+@keyframes correct-flash { 0%{transform:scale(1)} 30%{transform:scale(1.06)} 100%{transform:scale(1)} }
+@keyframes wrong-shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+.feedback-toast { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0); font-family:'Zen Dots',cursive; font-size:2rem; font-weight:700; z-index:500; pointer-events:none; text-shadow:0 0 30px currentColor; }
+.feedback-toast.show { transform:translate(-50%,-50%) scale(1); animation:toast-pop .6s ease forwards; }
+@keyframes toast-pop { 0%{transform:translate(-50%,-50%) scale(.3);opacity:0} 30%{transform:translate(-50%,-50%) scale(1.2);opacity:1} 60%{transform:translate(-50%,-50%) scale(1);opacity:1} 100%{transform:translate(-50%,-50%) scale(.8);opacity:0} }
+.combo-display { position:fixed; top:70px; right:16px; font-family:'Zen Dots',cursive; font-size:1.2rem; color:var(--accent2); text-shadow:0 0 20px var(--accent2); z-index:60; opacity:0; transition:opacity .3s; pointer-events:none; }
+.combo-display.visible { opacity:1; animation:combo-bounce .4s ease; }
+@keyframes combo-bounce { 0%{transform:scale(.5) translateY(-10px)} 60%{transform:scale(1.2) translateY(0)} 100%{transform:scale(1)} }
+
+/* RESULT */
+#resultScreen {
+  display:none; min-height:calc(100vh - 60px); flex-direction:column;
+  align-items:center; justify-content:center; padding:24px 16px 32px; gap:18px;
+  background:radial-gradient(ellipse at 50% 30%, rgba(0,229,255,.1) 0%, transparent 60%);
+}
+.result-title { font-family:'Zen Dots',cursive; font-size:2rem; text-align:center; color:var(--accent3); filter:drop-shadow(0 0 20px rgba(255,229,122,.5)); }
+.result-score-big { font-family:'Zen Dots',cursive; font-size:clamp(3rem,12vw,5rem); color:var(--accent); text-shadow:0 0 40px rgba(0,229,255,.5); text-align:center; }
+.result-stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; width:100%; max-width:420px; }
+.stat-box { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px 10px; text-align:center; }
+.stat-label { font-size:.6rem; color:var(--muted); letter-spacing:1px; text-transform:uppercase; margin-bottom:4px; }
+.stat-val { font-family:'JetBrains Mono',monospace; font-size:1.4rem; font-weight:700; }
+.stat-val.ok { color:var(--accent4); } .stat-val.ng { color:var(--accent2); } .stat-val.combo { color:var(--accent3); }
+.review-list { width:100%; max-width:520px; max-height:260px; overflow-y:auto; display:flex; flex-direction:column; gap:7px; }
+.review-item { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:10px 14px; font-size:.76rem; line-height:1.6; border-left:3px solid; }
+.review-item.ng { border-left-color:var(--accent2); }
+.review-item .ri-word { font-family:'JetBrains Mono',monospace; font-weight:700; font-size:.88rem; }
+.review-item .ri-ans { color:var(--accent4); font-weight:700; }
+.review-item .ri-wrong { color:var(--accent2); text-decoration:line-through; }
+.review-item .ri-sentence { color:var(--muted); font-size:.71rem; margin-top:3px; }
+.big-btn { width:100%; max-width:300px; padding:15px; background:linear-gradient(135deg,var(--accent),#0099bb); border:none; border-radius:12px; color:#000; font-family:'Noto Sans JP',sans-serif; font-size:.92rem; font-weight:900; cursor:pointer; letter-spacing:1px; transition:all .2s; box-shadow:0 0 30px rgba(0,229,255,.3); }
+.big-btn:hover { transform:translateY(-2px); box-shadow:0 6px 30px rgba(0,229,255,.4); }
+.back-to-menu-btn { background:transparent; border:1px solid var(--border); border-radius:12px; color:var(--muted); font-family:'Noto Sans JP',sans-serif; font-size:.8rem; padding:11px 20px; cursor:pointer; transition:all .15s; }
+.back-to-menu-btn:hover { border-color:rgba(255,255,255,.2); color:var(--text); }
+.cfp { position:fixed; pointer-events:none; z-index:999; border-radius:2px; }
+@keyframes cf { 0%{transform:translateY(0) rotate(0);opacity:1} 100%{transform:translateY(150px) rotate(720deg);opacity:0} }
+
+/* ════════════════════════════════════
+   ── PAGE: GUIDE ──
+════════════════════════════════════ */
+#guidePage {
+  background:
+    radial-gradient(ellipse at 10% 10%, rgba(0,229,255,.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 90%, rgba(191,127,255,.04) 0%, transparent 50%);
+}
+
+/* guide top tab nav */
+.guide-nav {
+  position:sticky; top:0; z-index:100;
+  background:rgba(8,12,20,.94); backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:0 12px;
+  display:flex; align-items:center; gap:0;
+  overflow-x:auto; scrollbar-width:none;
+}
+.guide-nav::-webkit-scrollbar { display:none; }
+.guide-nav-brand {
+  font-family:'Zen Dots',cursive; font-size:.78rem;
+  background:linear-gradient(135deg,var(--accent),var(--accent5));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  white-space:nowrap; padding:13px 14px 13px 0;
+  border-right:1px solid var(--border); margin-right:4px; flex-shrink:0;
+}
+.guide-tab {
+  padding:13px 13px; font-size:.73rem; font-weight:700; color:var(--muted);
+  cursor:pointer; white-space:nowrap; border-bottom:2px solid transparent;
+  transition:all .2s; letter-spacing:.5px; border:none; background:transparent;
+}
+.guide-tab:hover { color:var(--text); }
+.guide-tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+
+/* guide main */
+.guide-main { max-width:780px; margin:0 auto; padding:24px 14px 32px; }
+.gsec { display:none; animation:fadeIn .3s ease; }
+.gsec.active { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+/* page header */
+.g-header { text-align:center; margin-bottom:28px; }
+.g-tag { display:inline-block; font-family:'JetBrains Mono',monospace; font-size:.62rem; font-weight:700; letter-spacing:2px; padding:4px 14px; border-radius:20px; margin-bottom:10px; }
+.g-title { font-family:'Zen Dots',cursive; font-size:clamp(1.4rem,5vw,2.2rem); margin-bottom:7px; }
+.g-desc { font-size:.82rem; color:var(--muted2); max-width:480px; margin:0 auto; }
+
+/* overview grid */
+.ov-grid { display:grid; gap:9px; margin-bottom:24px; }
+.ov-row {
+  background:var(--card); border:1px solid var(--border); border-radius:12px;
+  padding:13px 15px; display:grid; grid-template-columns:50px 1fr; gap:11px;
+  align-items:start; transition:border-color .2s;
+}
+.ov-row:hover { border-color:rgba(255,255,255,.1); }
+.ov-badge { font-family:'JetBrains Mono',monospace; font-size:.88rem; font-weight:700; width:40px; height:40px; border-radius:9px; display:flex; align-items:center; justify-content:center; }
+.ov-name { font-size:.88rem; font-weight:900; margin-bottom:2px; }
+.ov-desc { font-size:.75rem; color:var(--muted2); line-height:1.6; }
+
+/* concept card */
+.concept {
+  background:var(--card); border:1px solid var(--border); border-radius:15px;
+  padding:18px 20px; margin-bottom:14px; position:relative; overflow:hidden;
+  transition:border-color .2s;
+}
+.concept::before { content:''; position:absolute; top:0; left:0; bottom:0; width:4px; border-radius:4px 0 0 4px; background:var(--cc,var(--accent)); }
+.concept-head { display:flex; align-items:center; gap:11px; margin-bottom:9px; }
+.c-badge { font-family:'JetBrains Mono',monospace; font-size:1rem; font-weight:700; width:40px; height:40px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.c-name { font-size:.95rem; font-weight:900; }
+.c-en { font-family:'JetBrains Mono',monospace; font-size:.68rem; color:var(--muted2); margin-top:1px; }
+.c-body { font-size:.82rem; color:var(--muted2); margin-bottom:11px; line-height:1.8; }
+.ex-wrap { background:rgba(255,255,255,.03); border:1px solid var(--border); border-radius:9px; padding:11px 14px; }
+.ex-wrap + .ex-wrap { margin-top:9px; }
+.ex-label { font-family:'JetBrains Mono',monospace; font-size:.57rem; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:5px; }
+.ex-sent { font-size:.92rem; font-weight:700; line-height:2.1; word-break:break-word; }
+.ex-jp { font-size:.75rem; color:var(--muted2); margin-top:4px; border-top:1px solid var(--border); padding-top:5px; }
+.w { display:inline-block; padding:1px 7px; border-radius:5px; font-family:'JetBrains Mono',monospace; font-size:.9em; font-weight:700; }
+.tip { display:flex; gap:9px; align-items:flex-start; background:rgba(255,229,122,.05); border:1px solid rgba(255,229,122,.14); border-radius:9px; padding:10px 13px; margin-top:9px; font-size:.78rem; color:var(--muted2); line-height:1.7; }
+.tip-icon { font-size:.95rem; flex-shrink:0; margin-top:1px; }
+
+/* diagram */
+.diagram { background:var(--card); border:1px solid var(--border); border-radius:15px; padding:20px 18px; margin-bottom:14px; }
+.diagram-title { font-family:'JetBrains Mono',monospace; font-size:.6rem; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:12px; }
+.diag-sent { font-size:clamp(.9rem,3vw,1.1rem); font-weight:700; line-height:2.5; word-break:break-word; }
+.diag-jp { font-size:.76rem; color:var(--muted2); margin-top:5px; }
+.diag-labels { display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; padding-top:12px; border-top:1px solid var(--border); }
+.diag-lbl { font-family:'JetBrains Mono',monospace; font-size:.7rem; font-weight:700; padding:3px 10px; border-radius:6px; }
+
+/* sep & sec-title */
+.sep { height:1px; background:var(--border); margin:24px 0; }
+.sec-title { font-family:'Zen Dots',cursive; font-size:.92rem; color:var(--accent3); letter-spacing:1px; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.sec-title::after { content:''; flex:1; height:1px; background:linear-gradient(90deg,var(--border),transparent); }
+
+/* game banner inside guide */
+.game-banner {
+  background:linear-gradient(135deg,rgba(0,229,255,.07),rgba(191,127,255,.07));
+  border:1px solid rgba(0,229,255,.18); border-radius:13px;
+  padding:16px 18px; margin-top:28px;
+  display:flex; align-items:center; gap:13px;
+}
+.game-banner-text { flex:1; }
+.game-banner-title { font-size:.88rem; font-weight:900; margin-bottom:2px; }
+.game-banner-sub { font-size:.72rem; color:var(--muted2); }
+.game-banner-btn {
+  background:linear-gradient(135deg,var(--accent),#0099bb); border:none;
+  border-radius:8px; color:#000; font-family:'Noto Sans JP',sans-serif;
+  font-size:.72rem; font-weight:900; padding:8px 14px; cursor:pointer;
+  white-space:nowrap; transition:all .2s;
+}
+.game-banner-btn:hover { transform:translateY(-1px); box-shadow:0 4px 18px rgba(0,229,255,.3); }
+
+@media(max-width:480px) {
+  .choices-grid.svoc-grid,.choices-grid.pos-grid { grid-template-columns:1fr 1fr; }
+  .choice-btn { padding:12px 8px; font-size:.8rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════
+     PAGE: GAME
+════════════════════════════════════ -->
+<div class="page active" id="gamePage">
+
+  <!-- MODE SELECT -->
+  <div id="modeScreen">
+    <div>
+      <div class="game-title">GRAMMAR<br>QUEST</div>
+      <div class="game-sub" style="margin-top:6px">英文法 分類ゲーム</div>
+    </div>
+
+    <div class="pool-info">
+      問題プール：SVOCM <span id="svocCount">0</span>問 ／ 品詞 <span id="posCount">0</span>問
+    </div>
+
+    <div class="q-select-wrap">
+      <div class="q-select-label">出題数を選択</div>
+      <div class="q-select-btns">
+        <button class="q-count-btn" onclick="setQCount(10)" id="qb10">10問</button>
+        <button class="q-count-btn active" onclick="setQCount(20)" id="qb20">20問</button>
+        <button class="q-count-btn" onclick="setQCount(30)" id="qb30">30問</button>
+        <button class="q-count-btn" onclick="setQCount(50)" id="qb50">50問</button>
+      </div>
+    </div>
+
+    <div class="mode-cards">
+      <button class="mode-card svoc" onclick="startGame('svoc')">
+        <span class="mode-icon">🎯</span>
+        <div>
+          <div class="mode-title">文の成分</div>
+          <div class="mode-desc">主語 S・動詞 V・目的語 O・補語 C・修飾語 M<br>下線の語の文中の役割を答えよう</div>
+        </div>
+        <span class="mode-badge">SVOCM</span>
+      </button>
+      <button class="mode-card pos" onclick="startGame('pos')">
+        <span class="mode-icon">🔬</span>
+        <div>
+          <div class="mode-title">品詞</div>
+          <div class="mode-desc">名詞・動詞・形容詞・副詞・前置詞・接続詞・冠詞・代名詞<br>下線の語の品詞を答えよう</div>
+        </div>
+        <span class="mode-badge">品詞</span>
+      </button>
+      <button class="mode-card mix" onclick="startGame('mix')">
+        <span class="mode-icon">⚡</span>
+        <div>
+          <div class="mode-title">ミックス</div>
+          <div class="mode-desc">文の成分と品詞がランダムに出題<br>両方マスターしよう！</div>
+        </div>
+        <span class="mode-badge">MIX</span>
+      </button>
+    </div>
+
+    <div class="guide-hint">
+      <span>ルールがわからない？</span>
+      <button class="guide-hint-btn" onclick="switchPage('guidePage')">📖 解説を見る</button>
+    </div>
+    <div style="font-size:.68rem;color:var(--muted);text-align:center">中学〜高校1年レベル</div>
+  </div>
+
+  <!-- GAME PLAYING -->
+  <div id="gameScreen" style="display:none;flex-direction:column">
+    <div class="topbar">
+      <button class="back-btn" onclick="goMenu()">← メニュー</button>
+      <span class="mode-label" id="modeLabelTop">SVOCM</span>
+      <div class="score-display">
+        <div class="score-item">
+          <div class="score-label">SCORE</div>
+          <div class="score-val score" id="scoreDisp">0</div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">COMBO</div>
+          <div class="score-val combo" id="comboDisp">×0</div>
+        </div>
+      </div>
+    </div>
+    <div class="prog-wrap"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="game-body">
+      <div class="q-counter" id="qCounter">Q1 / 20</div>
+      <div class="sentence-card">
+        <div class="sentence-label">英文</div>
+        <div class="sentence-text" id="sentenceText"></div>
+        <div class="sentence-jp" id="sentenceJp"></div>
+      </div>
+      <div class="question-box">
+        <div class="question-text" id="questionText"></div>
+        <div class="question-word" id="questionWord"></div>
+      </div>
+      <div class="choices-grid svoc-grid" id="choicesGrid"></div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="resultScreen" style="display:none;flex-direction:column">
+    <div class="result-title" id="resultTitle">GAME CLEAR!</div>
+    <div class="result-score-big" id="resultScore">0</div>
+    <div class="result-stats">
+      <div class="stat-box"><div class="stat-label">正解</div><div class="stat-val ok" id="statOk">0</div></div>
+      <div class="stat-box"><div class="stat-label">不正解</div><div class="stat-val ng" id="statNg">0</div></div>
+      <div class="stat-box"><div class="stat-label">MAX連続</div><div class="stat-val combo" id="statCombo">0</div></div>
+    </div>
+    <div style="font-size:.7rem;color:var(--muted);text-align:center;width:100%;max-width:520px">間違えた問題</div>
+    <div class="review-list" id="reviewList"></div>
+    <button class="big-btn" onclick="retryGame()">🔄 もう一度</button>
+    <button class="back-to-menu-btn" onclick="goMenu()">← モード選択に戻る</button>
+  </div>
+
+</div><!-- /gamePage -->
+
+
+<!-- ════════════════════════════════════
+     PAGE: GUIDE
+════════════════════════════════════ -->
+<div class="page" id="guidePage">
+
+  <nav class="guide-nav">
+    <div class="guide-nav-brand">GUIDE</div>
+    <button class="guide-tab active" onclick="showGuide('svocm')">文の成分</button>
+    <button class="guide-tab" onclick="showGuide('pos')">品詞</button>
+    <button class="guide-tab" onclick="showGuide('tips')">まとめ</button>
+  </nav>
+
+  <div class="guide-main">
+
+    <!-- ─── 文の成分 ─── -->
+    <div class="gsec active" id="gsec-svocm">
+      <div class="g-header">
+        <div class="g-tag" style="background:rgba(0,229,255,.1);color:var(--accent);border:1px solid rgba(0,229,255,.22)">SVOCM</div>
+        <div class="g-title" style="background:linear-gradient(135deg,var(--accent),var(--accent5));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">文の成分</div>
+        <div class="g-desc">英語の文はいくつかの「パーツ」でできています。<br>それぞれが文の中でどんな役割を持つかを学ぼう。</div>
+      </div>
+
+      <div class="sec-title">📋 5つの成分</div>
+      <div class="ov-grid">
+        <div class="ov-row">
+          <div class="ov-badge" style="background:rgba(0,229,255,.12);color:var(--S)">S</div>
+          <div><div class="ov-name" style="color:var(--S)">主語（Subject）</div><div class="ov-desc">「〜は・〜が」にあたる語。文の主役。「だれが？なにが？」に答える。</div></div>
+        </div>
+        <div class="ov-row">
+          <div class="ov-badge" style="background:rgba(105,255,148,.12);color:var(--V)">V</div>
+          <div><div class="ov-name" style="color:var(--V)">動詞（Verb）</div><div class="ov-desc">「〜する・〜だ」にあたる語。主語の動作や状態を表す。</div></div>
+        </div>
+        <div class="ov-row">
+          <div class="ov-badge" style="background:rgba(255,229,122,.12);color:var(--O)">O</div>
+          <div><div class="ov-name" style="color:var(--O)">目的語（Object）</div><div class="ov-desc">「〜を・〜に」にあたる語。動作の対象となるもの。</div></div>
+        </div>
+        <div class="ov-row">
+          <div class="ov-badge" style="background:rgba(191,127,255,.12);color:var(--C)">C</div>
+          <div><div class="ov-name" style="color:var(--C)">補語（Complement）</div><div class="ov-desc">主語や目的語の状態・性質を説明する語。「S＝C」または「O＝C」が成り立つ。</div></div>
+        </div>
+        <div class="ov-row">
+          <div class="ov-badge" style="background:rgba(255,61,113,.12);color:var(--M)">M</div>
+          <div><div class="ov-name" style="color:var(--M)">修飾語（Modifier）</div><div class="ov-desc">時間・場所・様子などを加える語。なくても文は成立する。</div></div>
+        </div>
+      </div>
+
+      <div class="sep"></div>
+      <div class="sec-title">🔵 各成分の解説</div>
+
+      <!-- S -->
+      <div class="concept" style="--cc:var(--S)">
+        <div class="concept-head">
+          <div class="c-badge" style="background:rgba(0,229,255,.12);color:var(--S)">S</div>
+          <div><div class="c-name" style="color:var(--S)">主語（Subject）</div><div class="c-en">「だれが？」「なにが？」に答える語</div></div>
+        </div>
+        <div class="c-body">文の<strong>主役</strong>です。英語では必ず文頭付近にあり、ほぼすべての文に存在します。名詞・代名詞が主語になることが多い。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">例文</div>
+          <div class="ex-sent"><span class="w" style="background:rgba(0,229,255,.15);color:var(--S)">She</span> studies English every day.</div>
+          <div class="ex-jp">→「<strong>彼女は</strong>毎日英語を勉強します」　「だれが？」→ She</div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>「だれが？なにが？」と質問して答えられる語を探そう。</div></div>
+      </div>
+
+      <!-- V -->
+      <div class="concept" style="--cc:var(--V)">
+        <div class="concept-head">
+          <div class="c-badge" style="background:rgba(105,255,148,.12);color:var(--V)">V</div>
+          <div><div class="c-name" style="color:var(--V)">動詞（Verb）</div><div class="c-en">動作・状態を表す語</div></div>
+        </div>
+        <div class="c-body">主語の<strong>動作や状態</strong>を表します。be動詞（is/was…）と一般動詞（run/study…）の2種類。文には必ず1つあります。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">例文</div>
+          <div class="ex-sent">She <span class="w" style="background:rgba(105,255,148,.15);color:var(--V)">studies</span> English every day.</div>
+          <div class="ex-jp">→「彼女は英語を<strong>勉強します</strong>」　動作を表す語＝studies</div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>主語の後ろに必ず1つある。過去形（played）・進行形（is playing）もV。</div></div>
+      </div>
+
+      <!-- O -->
+      <div class="concept" style="--cc:var(--O)">
+        <div class="concept-head">
+          <div class="c-badge" style="background:rgba(255,229,122,.12);color:var(--O)">O</div>
+          <div><div class="c-name" style="color:var(--O)">目的語（Object）</div><div class="c-en">「〜を」「〜に」にあたる語</div></div>
+        </div>
+        <div class="c-body">動詞の動作が向けられる<strong>対象</strong>です。名詞・代名詞・動名詞（〜ing）・to不定詞などがなります。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">例文</div>
+          <div class="ex-sent">She studies <span class="w" style="background:rgba(255,229,122,.15);color:var(--O)">English</span> every day.</div>
+          <div class="ex-jp">→「彼女は<strong>英語を</strong>勉強します」　「何を？」→ English</div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>「V + O」の形で動詞の直後に来る。「〜を？〜に？」と質問して答えられる語。</div></div>
+      </div>
+
+      <!-- C -->
+      <div class="concept" style="--cc:var(--C)">
+        <div class="concept-head">
+          <div class="c-badge" style="background:rgba(191,127,255,.12);color:var(--C)">C</div>
+          <div><div class="c-name" style="color:var(--C)">補語（Complement）</div><div class="c-en">主語や目的語を「説明」する語</div></div>
+        </div>
+        <div class="c-body">ポイントは <strong>「S = C」または「O = C」</strong> の関係が成り立つこと。be動詞・look・become・seem などの後に来ることが多い。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">例① S＝C</div>
+          <div class="ex-sent">She is <span class="w" style="background:rgba(191,127,255,.15);color:var(--C)">a teacher</span>.</div>
+          <div class="ex-jp">→ She ＝ a teacher　✓成立 → <strong>C（補語）</strong></div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">例② O＝C</div>
+          <div class="ex-sent">She made him <span class="w" style="background:rgba(191,127,255,.15);color:var(--C)">happy</span>.</div>
+          <div class="ex-jp">→ him ＝ happy　✓成立 → <strong>C（補語）</strong></div>
+        </div>
+      </div>
+
+      <!-- M -->
+      <div class="concept" style="--cc:var(--M)">
+        <div class="concept-head">
+          <div class="c-badge" style="background:rgba(255,61,113,.12);color:var(--M)">M</div>
+          <div><div class="c-name" style="color:var(--M)">修飾語（Modifier）</div><div class="c-en">時間・場所・様子などを加える語</div></div>
+        </div>
+        <div class="c-body">S・V・O・C 以外のすべてが修飾語。<strong>取り除いても文が成立する</strong>のが目印。副詞・前置詞句（in〜/at〜）などがなります。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">例文</div>
+          <div class="ex-sent">She studies English <span class="w" style="background:rgba(255,61,113,.14);color:var(--M)">every day</span>.</div>
+          <div class="ex-jp">→ 「every day」を取っても「She studies English.」で意味が通る ✓</div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>「いつ？どこで？どのように？」に答える語がM。取り除いて文が成立すればM！</div></div>
+      </div>
+
+      <div class="sep"></div>
+      <div class="sec-title">📐 文の構造ダイアグラム</div>
+
+      <div class="diagram">
+        <div class="diagram-title">全成分の例</div>
+        <div class="diag-sent">
+          <span class="w" style="background:rgba(0,229,255,.14);color:var(--S)">Tom</span>&nbsp;
+          <span class="w" style="background:rgba(105,255,148,.14);color:var(--V)">gave</span>&nbsp;
+          <span class="w" style="background:rgba(255,229,122,.12);color:var(--O)">her</span>&nbsp;
+          <span class="w" style="background:rgba(255,229,122,.14);color:var(--O)">a beautiful flower</span>&nbsp;
+          <span class="w" style="background:rgba(255,61,113,.1);color:var(--M)">yesterday</span>.
+        </div>
+        <div class="diag-jp">トムは昨日、彼女に美しい花をあげました。</div>
+        <div class="diag-labels">
+          <span class="diag-lbl" style="background:rgba(0,229,255,.12);color:var(--S)">S: Tom</span>
+          <span class="diag-lbl" style="background:rgba(105,255,148,.12);color:var(--V)">V: gave</span>
+          <span class="diag-lbl" style="background:rgba(255,229,122,.12);color:var(--O)">O①: her</span>
+          <span class="diag-lbl" style="background:rgba(255,229,122,.12);color:var(--O)">O②: a beautiful flower</span>
+          <span class="diag-lbl" style="background:rgba(255,61,113,.1);color:var(--M)">M: yesterday</span>
+        </div>
+      </div>
+
+      <div class="diagram">
+        <div class="diagram-title">補語（C）の例</div>
+        <div class="diag-sent">
+          <span class="w" style="background:rgba(0,229,255,.14);color:var(--S)">The news</span>&nbsp;
+          <span class="w" style="background:rgba(105,255,148,.14);color:var(--V)">made</span>&nbsp;
+          <span class="w" style="background:rgba(255,229,122,.14);color:var(--O)">us</span>&nbsp;
+          <span class="w" style="background:rgba(191,127,255,.14);color:var(--C)">sad</span>.
+        </div>
+        <div class="diag-jp">そのニュースは私たちを悲しくさせました。</div>
+        <div class="diag-labels">
+          <span class="diag-lbl" style="background:rgba(0,229,255,.12);color:var(--S)">S: The news</span>
+          <span class="diag-lbl" style="background:rgba(105,255,148,.12);color:var(--V)">V: made</span>
+          <span class="diag-lbl" style="background:rgba(255,229,122,.12);color:var(--O)">O: us</span>
+          <span class="diag-lbl" style="background:rgba(191,127,255,.12);color:var(--C)">C: sad　※us＝sad ✓</span>
+        </div>
+      </div>
+
+      <div class="game-banner">
+        <div style="font-size:1.7rem">🎯</div>
+        <div class="game-banner-text"><div class="game-banner-title">文の成分モードで練習しよう</div><div class="game-banner-sub">ゲームで腕試し！</div></div>
+        <button class="game-banner-btn" onclick="switchPage('gamePage');startGame('svoc')">ゲームへ →</button>
+      </div>
+    </div><!-- /gsec-svocm -->
+
+
+    <!-- ─── 品詞 ─── -->
+    <div class="gsec" id="gsec-pos">
+      <div class="g-header">
+        <div class="g-tag" style="background:rgba(255,61,113,.1);color:var(--accent2);border:1px solid rgba(255,61,113,.22)">品詞</div>
+        <div class="g-title" style="background:linear-gradient(135deg,var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">品詞 8種類</div>
+        <div class="g-desc">単語はその「性質・役割」によって8つのグループに分けられます。<br>品詞を知ると文の構造がよく見えてくる！</div>
+      </div>
+
+      <!-- 名詞 -->
+      <div class="sec-title">📦 名詞</div>
+      <div class="concept" style="--cc:var(--noun)">
+        <div class="concept-head">
+          <div class="c-badge" style="background:rgba(0,229,255,.12);color:var(--noun)">名</div>
+          <div><div class="c-name" style="color:var(--noun)">名詞（Noun）</div><div class="c-en">もの・ひと・ことの名前</div></div>
+        </div>
+        <div class="c-body">人・物・場所・概念など「名前のあるもの」すべて。文の中でS・O・Cになります。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">例</div>
+          <div class="ex-sent" style="font-size:.85rem;line-height:2.1">
+            <span class="w" style="background:rgba(0,229,255,.12);color:var(--noun)">dog</span>（犬）
+            <span class="w" style="background:rgba(0,229,255,.12);color:var(--noun)">music</span>（音楽）
+            <span class="w" style="background:rgba(0,229,255,.12);color:var(--noun)">Tokyo</span>（東京）
+            <span class="w" style="background:rgba(0,229,255,.12);color:var(--noun)">courage</span>（勇気）
+          </div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>「a / the / my」の後に来る語はほぼ名詞！</div></div>
+      </div>
+
+      <!-- 動詞 -->
+      <div class="sec-title">⚡ 動詞</div>
+      <div class="concept" style="--cc:var(--verb)">
+        <div class="concept-head">
+          <div class="c-badge" style="background:rgba(105,255,148,.12);color:var(--verb)">動</div>
+          <div><div class="c-name" style="color:var(--verb)">動詞（Verb）</div><div class="c-en">動作・状態を表す語</div></div>
+        </div>
+        <div class="c-body">動作（run・eat）や状態（be・have・seem）を表します。時制で形が変わる（play→played→playing）のが特徴。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">例</div>
+          <div class="ex-sent" style="font-size:.85rem;line-height:2.1">
+            <span class="w" style="background:rgba(105,255,148,.12);color:var(--verb)">studies</span>
+            <span class="w" style="background:rgba(105,255,148,.12);color:var(--verb)">is</span>
+            <span class="w" style="background:rgba(105,255,148,.12);color:var(--verb)">became</span>
+            <span class="w" style="background:rgba(105,255,148,.12);color:var(--verb)">has lived</span>
+            <span class="w" style="background:rgba(105,255,148,.12);color:var(--verb)">are playing</span>
+          </div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>主語の後ろ・文の中心に必ず1つ。助動詞（will/can）と組み合わさることも多い。</div></div>
+      </div>
+
+      <!-- 形容詞 -->
+      <div class="sec-title">🎨 形容詞</div>
+      <div class="concept" style="--cc:var(--adj)">
+        <div class="concept-head">
+          <div class="c-badge" style="background:rgba(255,229,122,.12);color:var(--adj)">形</div>
+          <div><div class="c-name" style="color:var(--adj)">形容詞（Adjective）</div><div class="c-en">名詞を修飾・説明する語</div></div>
+        </div>
+        <div class="c-body">名詞の性質・状態・数量を表します。名詞の前に置く（限定用法）か、be動詞の後に置く（述語用法）の2通り。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">例</div>
+          <div class="ex-sent" style="font-size:.85rem;line-height:2.1">
+            a <span class="w" style="background:rgba(255,229,122,.12);color:var(--adj)">beautiful</span> singer　/　
+            a <span class="w" style="background:rgba(255,229,122,.12);color:var(--adj)">tall</span> boy　/　
+            She is <span class="w" style="background:rgba(255,229,122,.12);color:var(--adj)">happy</span>.
+          </div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>「名詞の前」または「be動詞の後」にある語が形容詞のことが多い。形容詞は<strong>名詞</strong>を説明する。</div></div>
+      </div>
+
+      <!-- 副詞 -->
+      <div class="sec-title">💨 副詞</div>
+      <div class="concept" style="--cc:var(--adv)">
+        <div class="concept-head">
+          <div class="c-badge" style="background:rgba(191,127,255,.12);color:var(--adv)">副</div>
+          <div><div class="c-name" style="color:var(--adv)">副詞（Adverb）</div><div class="c-en">動詞・形容詞・他の副詞を修飾する語</div></div>
+        </div>
+        <div class="c-body">「どのように？いつ？どこで？どの程度？」を表します。-ly で終わる語は副詞であることが多い。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">例</div>
+          <div class="ex-sent" style="font-size:.85rem;line-height:2.1">
+            <span class="w" style="background:rgba(191,127,255,.12);color:var(--adv)">very</span>
+            <span class="w" style="background:rgba(191,127,255,.12);color:var(--adv)">often</span>
+            <span class="w" style="background:rgba(191,127,255,.12);color:var(--adv)">quietly</span>
+            <span class="w" style="background:rgba(191,127,255,.12);color:var(--adv)">already</span>
+            <span class="w" style="background:rgba(191,127,255,.12);color:var(--adv)">fast</span>
+            <span class="w" style="background:rgba(191,127,255,.12);color:var(--adv)">never</span>
+          </div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>形容詞は<strong>名詞</strong>を修飾、副詞は<strong>名詞以外</strong>を修飾。「very beautiful」の very は副詞（beautifulという形容詞を修飾）。</div></div>
+      </div>
+
+      <!-- 前置詞 -->
+      <div class="sec-title">📍 前置詞</div>
+      <div class="concept" style="--cc:var(--prep)">
+        <div class="concept-head">
+          <div class="c-badge" style="background:rgba(255,61,113,.12);color:var(--prep)">前</div>
+          <div><div class="c-name" style="color:var(--prep)">前置詞（Preposition）</div><div class="c-en">名詞の前に置いて関係を表す語</div></div>
+        </div>
+        <div class="c-body">場所・時間・方向・手段などの<strong>関係</strong>を表します。必ず後ろに名詞（句）が続き、「前置詞＋名詞」で前置詞句を作ります。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">よく使う前置詞</div>
+          <div class="ex-sent" style="font-size:.83rem;line-height:2.2">
+            <span class="w" style="background:rgba(255,61,113,.1);color:var(--prep)">in</span>（〜の中）
+            <span class="w" style="background:rgba(255,61,113,.1);color:var(--prep)">on</span>（〜の上）
+            <span class="w" style="background:rgba(255,61,113,.1);color:var(--prep)">at</span>（〜で）
+            <span class="w" style="background:rgba(255,61,113,.1);color:var(--prep)">to</span>（〜へ）
+            <span class="w" style="background:rgba(255,61,113,.1);color:var(--prep)">by</span>（〜で）
+            <span class="w" style="background:rgba(255,61,113,.1);color:var(--prep)">after</span>（〜の後）
+            <span class="w" style="background:rgba(255,61,113,.1);color:var(--prep)">under</span>（〜の下）
+          </div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>「前置詞＋名詞」がセット。この前置詞句は修飾語（M）として文の成分になる。</div></div>
+      </div>
+
+      <!-- 接続詞 -->
+      <div class="sec-title">🔗 接続詞</div>
+      <div class="concept" style="--cc:var(--conj)">
+        <div class="concept-head">
+          <div class="c-badge" style="background:rgba(255,150,50,.12);color:var(--conj)">接</div>
+          <div><div class="c-name" style="color:var(--conj)">接続詞（Conjunction）</div><div class="c-en">語・句・節をつなぐ語</div></div>
+        </div>
+        <div class="c-body">単語同士や文と文をつなぎます。等位接続詞（and・but・or）と従属接続詞（when・if・because・that）の2種類。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">例</div>
+          <div class="ex-sent" style="font-size:.83rem;line-height:2.1">
+            I like tea <span class="w" style="background:rgba(255,150,50,.12);color:var(--conj)">and</span> coffee.　/　
+            She studies, <span class="w" style="background:rgba(255,150,50,.12);color:var(--conj)">but</span> fails.　/　
+            <span class="w" style="background:rgba(255,150,50,.12);color:var(--conj)">If</span> you try, you'll succeed.
+          </div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>after/before は前置詞にも接続詞にもなる。後ろに「主語＋動詞」が続けば接続詞、名詞だけなら前置詞。</div></div>
+      </div>
+
+      <!-- 冠詞 -->
+      <div class="sec-title">🏷️ 冠詞</div>
+      <div class="concept" style="--cc:var(--art)">
+        <div class="concept-head">
+          <div class="c-badge" style="background:rgba(100,200,255,.12);color:var(--art)">冠</div>
+          <div><div class="c-name" style="color:var(--art)">冠詞（Article）</div><div class="c-en">a / an / the の3語だけ</div></div>
+        </div>
+        <div class="c-body">名詞の前に置いて「どの名詞か」を示します。英語の冠詞は <strong>a / an / the</strong> の3つだけです。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">使い分け</div>
+          <div class="ex-sent" style="font-size:.83rem;line-height:2.3">
+            <span class="w" style="background:rgba(100,200,255,.12);color:var(--art)">a</span> dog　— 不特定の1つ（母音以外で始まる語）<br>
+            <span class="w" style="background:rgba(100,200,255,.12);color:var(--art)">an</span> apple　— 母音で始まる語の前は an<br>
+            <span class="w" style="background:rgba(100,200,255,.12);color:var(--art)">the</span> dog　— 特定のもの・すでに話題に出たもの
+          </div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>冠詞を見つけたら後ろは必ず名詞！</div></div>
+      </div>
+
+      <!-- 代名詞 -->
+      <div class="sec-title">👤 代名詞</div>
+      <div class="concept" style="--cc:var(--pron)">
+        <div class="concept-head">
+          <div class="c-badge" style="background:rgba(200,100,255,.12);color:var(--pron)">代</div>
+          <div><div class="c-name" style="color:var(--pron)">代名詞（Pronoun）</div><div class="c-en">名詞の代わりに使う語</div></div>
+        </div>
+        <div class="c-body">名詞の繰り返しを避けるために使います。人称代名詞（I/you/he/she…）・指示代名詞（this/that）・不定代名詞（everyone/nobody）など。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">例</div>
+          <div class="ex-sent" style="font-size:.83rem;line-height:2.1">
+            <span class="w" style="background:rgba(200,100,255,.12);color:var(--pron)">She</span>
+            <span class="w" style="background:rgba(200,100,255,.12);color:var(--pron)">him</span>
+            <span class="w" style="background:rgba(200,100,255,.12);color:var(--pron)">They</span>
+            <span class="w" style="background:rgba(200,100,255,.12);color:var(--pron)">This</span>
+            <span class="w" style="background:rgba(200,100,255,.12);color:var(--pron)">Everyone</span>
+            <span class="w" style="background:rgba(200,100,255,.12);color:var(--pron)">It</span>
+          </div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>代名詞も名詞と同じくS・O・Cになれる。「She」は品詞では代名詞、文の成分ではS、という二つの見方がある。</div></div>
+      </div>
+
+      <div class="game-banner">
+        <div style="font-size:1.7rem">🔬</div>
+        <div class="game-banner-text"><div class="game-banner-title">品詞を見抜く眼を鍛えよう</div><div class="game-banner-sub">品詞モードで挑戦！</div></div>
+        <button class="game-banner-btn" onclick="switchPage('gamePage');startGame('pos')">ゲームへ →</button>
+      </div>
+    </div><!-- /gsec-pos -->
+
+
+    <!-- ─── まとめ ─── -->
+    <div class="gsec" id="gsec-tips">
+      <div class="g-header">
+        <div class="g-tag" style="background:rgba(255,229,122,.1);color:var(--accent3);border:1px solid rgba(255,229,122,.22)">TIPS</div>
+        <div class="g-title" style="background:linear-gradient(135deg,var(--accent3),var(--accent4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">まとめ＆攻略ヒント</div>
+        <div class="g-desc">間違えやすいポイントと判別のコツをまとめました。</div>
+      </div>
+
+      <div class="sec-title">⚠️ 品詞と文の成分はちがう</div>
+      <div class="concept" style="--cc:var(--accent3)">
+        <div class="c-body" style="color:var(--text)">
+          <strong style="color:var(--accent3)">品詞</strong>は「単語そのもの」の分類。<br>
+          <strong style="color:var(--accent)">文の成分（SVOCM）</strong>は「文の中での役割」の分類。<br><br>
+          同じ単語でも文の成分は変わることがあります。
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">例：「She」の場合</div>
+          <div class="ex-sent" style="font-size:.88rem">
+            <span class="w" style="background:rgba(200,100,255,.12);color:var(--pron)">She</span> studies English.
+          </div>
+          <div class="ex-jp">品詞：<strong style="color:var(--pron)">代名詞</strong>　／　文の成分：<strong style="color:var(--S)">S（主語）</strong></div>
+        </div>
+      </div>
+
+      <div class="sec-title">🔍 O と C の見分け方</div>
+      <div class="concept" style="--cc:var(--accent5)">
+        <div class="c-body"><strong>「＝」が成り立つかどうか</strong>で判断します。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">O（「＝」が成り立たない）</div>
+          <div class="ex-sent" style="font-size:.85rem">She studies <span class="w" style="background:rgba(255,229,122,.14);color:var(--O)">English</span>.</div>
+          <div class="ex-jp">She ＝ English？　→ ✗ 成り立たない → <strong style="color:var(--O)">O（目的語）</strong></div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">C（「＝」が成り立つ）</div>
+          <div class="ex-sent" style="font-size:.85rem">She is <span class="w" style="background:rgba(191,127,255,.14);color:var(--C)">a teacher</span>.</div>
+          <div class="ex-jp">She ＝ a teacher？　→ ✓ 成り立つ → <strong style="color:var(--C)">C（補語）</strong></div>
+        </div>
+      </div>
+
+      <div class="sec-title">✂️ M（修飾語）の見つけ方</div>
+      <div class="concept" style="--cc:var(--M)">
+        <div class="c-body"><strong>取り除いてみて文が成立すればM</strong>。副詞や前置詞句（in〜 / at〜）はたいていM。</div>
+        <div class="ex-wrap">
+          <div class="ex-sent" style="font-size:.85rem">She studies English <span class="w" style="background:rgba(255,61,113,.13);color:var(--M)">every day</span>.</div>
+          <div class="ex-jp">「every day」を取ると「She studies English.」→ 成立 ✓ → <strong style="color:var(--M)">M</strong></div>
+        </div>
+      </div>
+
+      <div class="sec-title">🔀 前置詞 vs 接続詞</div>
+      <div class="concept" style="--cc:var(--conj)">
+        <div class="c-body"><strong>after / before / when / since</strong> は前置詞にも接続詞にもなれます。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">前置詞（後ろに名詞）</div>
+          <div class="ex-sent" style="font-size:.85rem">He came home <span class="w" style="background:rgba(255,61,113,.11);color:var(--prep)">after</span> school.</div>
+          <div class="ex-jp">after の後 → school（名詞）→ <strong style="color:var(--prep)">前置詞</strong></div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">接続詞（後ろに主語＋動詞）</div>
+          <div class="ex-sent" style="font-size:.85rem">She left <span class="w" style="background:rgba(255,150,50,.11);color:var(--conj)">after</span> the show ended.</div>
+          <div class="ex-jp">after の後 → the show ended（S＋V）→ <strong style="color:var(--conj)">接続詞</strong></div>
+        </div>
+      </div>
+
+      <div class="sec-title">🎯 形容詞 vs 副詞</div>
+      <div class="concept" style="--cc:var(--adj)">
+        <div class="c-body">どちらも修飾する語ですが、<strong>修飾する対象が違います</strong>。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">形容詞 → 名詞を修飾</div>
+          <div class="ex-sent" style="font-size:.85rem">a <span class="w" style="background:rgba(255,229,122,.12);color:var(--adj)">tall</span> boy　／　She is <span class="w" style="background:rgba(255,229,122,.12);color:var(--adj)">happy</span>.</div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">副詞 → 動詞・形容詞・副詞を修飾</div>
+          <div class="ex-sent" style="font-size:.85rem">runs <span class="w" style="background:rgba(191,127,255,.12);color:var(--adv)">fast</span>　／　<span class="w" style="background:rgba(191,127,255,.12);color:var(--adv)">very</span> tall</div>
+        </div>
+      </div>
+
+      <div class="sep"></div>
+      <div class="sec-title">📋 判別チートシート</div>
+
+      <div class="diagram">
+        <div class="diagram-title">文の成分の確認手順</div>
+        <div style="font-size:.8rem;color:var(--muted2);line-height:2.1">
+          <div>① 動詞（V）を最初に探す — 時制が変化している語</div>
+          <div>② 「だれが・なにが V する？」→ それが <strong style="color:var(--S)">S</strong></div>
+          <div>③ V の後の名詞・代名詞 → 「＝」で <strong style="color:var(--O)">O</strong> か <strong style="color:var(--C)">C</strong> を判定</div>
+          <div>④ 残り（取り除いても文成立）→ <strong style="color:var(--M)">M</strong></div>
+        </div>
+      </div>
+
+      <div class="diagram">
+        <div class="diagram-title">品詞の判別フロー</div>
+        <div style="font-size:.8rem;color:var(--muted2);line-height:2.1">
+          <div>🔵 a/an/the の直後 → <strong style="color:var(--noun)">名詞</strong>（または形容詞＋名詞）</div>
+          <div>🟢 主語の後・文の中心 → <strong style="color:var(--verb)">動詞</strong></div>
+          <div>🟡 名詞の前・be動詞の後 → <strong style="color:var(--adj)">形容詞</strong></div>
+          <div>🟣 動詞・形容詞・副詞を修飾（-ly が多い）→ <strong style="color:var(--adv)">副詞</strong></div>
+          <div>🔴 後ろに名詞が続く in/on/at/to… → <strong style="color:var(--prep)">前置詞</strong></div>
+          <div>🟠 語・句・文をつなぐ and/but/if… → <strong style="color:var(--conj)">接続詞</strong></div>
+          <div>🩵 a / an / the の3語のみ → <strong style="color:var(--art)">冠詞</strong></div>
+          <div>🟤 名詞の代わり（I/she/they/this…）→ <strong style="color:var(--pron)">代名詞</strong></div>
+        </div>
+      </div>
+
+      <div class="game-banner">
+        <div style="font-size:1.7rem">⚡</div>
+        <div class="game-banner-text"><div class="game-banner-title">準備完了！MIXモードに挑戦</div><div class="game-banner-sub">両方まとめて練習しよう！</div></div>
+        <button class="game-banner-btn" onclick="switchPage('gamePage');startGame('mix')">ゲームへ →</button>
+      </div>
+    </div><!-- /gsec-tips -->
+
+  </div><!-- /guide-main -->
+</div><!-- /guidePage -->
+
+
+<!-- BOTTOM NAV -->
+<nav id="bottomNav">
+  <button class="bnav-btn active" id="bnav-game" onclick="switchPage('gamePage')" style="--tab-color:var(--accent)">
+    <span class="bnav-icon">🎮</span>ゲーム
+  </button>
+  <button class="bnav-btn" id="bnav-guide" onclick="switchPage('guidePage')" style="--tab-color:var(--accent5)">
+    <span class="bnav-icon">📖</span>解説
+  </button>
+</nav>
+
+<div class="feedback-toast" id="feedbackToast"></div>
+<div class="combo-display" id="comboDisplay"></div>
+
+<script>
+// ════════════════════════════════════
+// PAGE NAVIGATION
+// ════════════════════════════════════
+function switchPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
+  const map = { gamePage:'bnav-game', guidePage:'bnav-guide' };
+  document.getElementById(map[id])?.classList.add('active');
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function showGuide(id) {
+  document.querySelectorAll('.gsec').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.guide-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('gsec-' + id).classList.add('active');
+  const tabs = document.querySelectorAll('.guide-tab');
+  const idx = { svocm:0, pos:1, tips:2 }[id];
+  tabs[idx]?.classList.add('active');
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+// ════════════════════════════════════
+// QUESTION DATA — SVOCM
+// ════════════════════════════════════
+const SVOC_Q = [
+  {s:"She studies English every day.", jp:"彼女は毎日英語を勉強します。", target:"She", ans:"S", choices:["S","V","O","C","M"]},
+  {s:"The tall boy runs very fast.", jp:"その背の高い男の子はとても速く走ります。", target:"The tall boy", ans:"S", choices:["S","V","O","C","M"]},
+  {s:"My dog likes meat.", jp:"私の犬は肉が好きです。", target:"My dog", ans:"S", choices:["S","V","O","C","M"]},
+  {s:"Kumamon is a popular mascot.", jp:"くまモンは人気のあるマスコットです。", target:"Kumamon", ans:"S", choices:["S","V","O","C","M"]},
+  {s:"Soccer is played all over the world.", jp:"サッカーは世界中でプレーされています。", target:"Soccer", ans:"S", choices:["S","V","O","C","M"]},
+  {s:"Many students skip breakfast.", jp:"多くの生徒が朝食を抜きます。", target:"Many students", ans:"S", choices:["S","V","O","C","M"]},
+  {s:"AI handles a great deal of information.", jp:"AIは大量の情報を扱います。", target:"AI", ans:"S", choices:["S","V","O","C","M"]},
+  {s:"The leader never threatens the members.", jp:"リーダーはメンバーを脅したりしません。", target:"The leader", ans:"S", choices:["S","V","O","C","M"]},
+  {s:"Our teacher speaks English very well.", jp:"私たちの先生はとても上手に英語を話します。", target:"Our teacher", ans:"S", choices:["S","V","O","C","M"]},
+  {s:"Birds sing beautiful songs in the morning.", jp:"鳥は朝に美しい歌を歌います。", target:"Birds", ans:"S", choices:["S","V","O","C","M"]},
+  {s:"The new smartphone sells well.", jp:"その新しいスマートフォンはよく売れています。", target:"The new smartphone", ans:"S", choices:["S","V","O","C","M"]},
+  {s:"Water boils at 100 degrees Celsius.", jp:"水は摂氏100度で沸騰します。", target:"Water", ans:"S", choices:["S","V","O","C","M"]},
+  {s:"Children love playing games.", jp:"子供たちはゲームで遊ぶのが大好きです。", target:"Children", ans:"S", choices:["S","V","O","C","M"]},
+  {s:"The old library stands near the station.", jp:"古い図書館が駅の近くに建っています。", target:"The old library", ans:"S", choices:["S","V","O","C","M"]},
+  {s:"Japanese food is popular worldwide.", jp:"日本食は世界中で人気があります。", target:"Japanese food", ans:"S", choices:["S","V","O","C","M"]},
+  {s:"The train arrived at the station on time.", jp:"電車は定刻どおりに駅に到着しました。", target:"The train", ans:"S", choices:["S","V","O","C","M"]},
+  {s:"She studies English every day.", jp:"彼女は毎日英語を勉強します。", target:"studies", ans:"V", choices:["S","V","O","C","M"]},
+  {s:"He plays soccer after school.", jp:"彼は放課後サッカーをします。", target:"plays", ans:"V", choices:["S","V","O","C","M"]},
+  {s:"The baby cried all night.", jp:"赤ちゃんは一晩中泣いていました。", target:"cried", ans:"V", choices:["S","V","O","C","M"]},
+  {s:"Tom gave her a beautiful flower.", jp:"トムは彼女にきれいな花をあげました。", target:"gave", ans:"V", choices:["S","V","O","C","M"]},
+  {s:"AI is used in many systems today.", jp:"AIは今日多くのシステムで使われています。", target:"is used", ans:"V", choices:["S","V","O","C","M"]},
+  {s:"The boss decides everything.", jp:"ボスがすべてを決めます。", target:"decides", ans:"V", choices:["S","V","O","C","M"]},
+  {s:"We saw a whale shark pass slowly.", jp:"私たちはジンベエザメがゆっくり通り過ぎるのを見ました。", target:"saw", ans:"V", choices:["S","V","O","C","M"]},
+  {s:"She became a famous singer.", jp:"彼女は有名な歌手になりました。", target:"became", ans:"V", choices:["S","V","O","C","M"]},
+  {s:"He brought his lunch to school.", jp:"彼は学校にお弁当を持ってきました。", target:"brought", ans:"V", choices:["S","V","O","C","M"]},
+  {s:"The children ran to the playground.", jp:"子供たちは運動場に走っていきました。", target:"ran", ans:"V", choices:["S","V","O","C","M"]},
+  {s:"She will travel to Europe next summer.", jp:"彼女は来年の夏ヨーロッパを旅します。", target:"will travel", ans:"V", choices:["S","V","O","C","M"]},
+  {s:"He has lived in Tokyo for five years.", jp:"彼は5年間東京に住んでいます。", target:"has lived", ans:"V", choices:["S","V","O","C","M"]},
+  {s:"She felt tired after the long trip.", jp:"彼女は長い旅の後疲れを感じました。", target:"felt", ans:"V", choices:["S","V","O","C","M"]},
+  {s:"They built a new school last year.", jp:"彼らは昨年新しい学校を建てました。", target:"built", ans:"V", choices:["S","V","O","C","M"]},
+  {s:"She studies English every day.", jp:"彼女は毎日英語を勉強します。", target:"English", ans:"O", choices:["S","V","O","C","M"]},
+  {s:"I like music very much.", jp:"私は音楽がとても好きです。", target:"music", ans:"O", choices:["S","V","O","C","M"]},
+  {s:"He reads a book before bed.", jp:"彼は寝る前に本を読みます。", target:"a book", ans:"O", choices:["S","V","O","C","M"]},
+  {s:"Tom gave her a beautiful flower.", jp:"トムは彼女にきれいな花をあげました。", target:"a beautiful flower", ans:"O", choices:["S","V","O","C","M"]},
+  {s:"They choose appropriate words.", jp:"彼らは適切な言葉を選びます。", target:"appropriate words", ans:"O", choices:["S","V","O","C","M"]},
+  {s:"I love playing soccer.", jp:"私はサッカーをするのが大好きです。", target:"playing soccer", ans:"O", choices:["S","V","O","C","M"]},
+  {s:"She found the answer easily.", jp:"彼女は簡単に答えを見つけました。", target:"the answer", ans:"O", choices:["S","V","O","C","M"]},
+  {s:"We enjoy watching movies on weekends.", jp:"私たちは週末に映画を見るのを楽しみます。", target:"watching movies", ans:"O", choices:["S","V","O","C","M"]},
+  {s:"He bought a new bicycle.", jp:"彼は新しい自転車を買いました。", target:"a new bicycle", ans:"O", choices:["S","V","O","C","M"]},
+  {s:"The teacher explained the rule.", jp:"先生はルールを説明しました。", target:"the rule", ans:"O", choices:["S","V","O","C","M"]},
+  {s:"She needs more time to finish.", jp:"彼女は終わらせるためにもっと時間が必要です。", target:"more time", ans:"O", choices:["S","V","O","C","M"]},
+  {s:"They discussed the problem carefully.", jp:"彼らは問題を慎重に話し合いました。", target:"the problem", ans:"O", choices:["S","V","O","C","M"]},
+  {s:"She remembered his name.", jp:"彼女は彼の名前を覚えていました。", target:"his name", ans:"O", choices:["S","V","O","C","M"]},
+  {s:"She is a teacher.", jp:"彼女は先生です。", target:"a teacher", ans:"C", choices:["S","V","O","C","M"]},
+  {s:"He looks happy today.", jp:"彼は今日幸せそうに見えます。", target:"happy", ans:"C", choices:["S","V","O","C","M"]},
+  {s:"The sky became dark.", jp:"空が暗くなりました。", target:"dark", ans:"C", choices:["S","V","O","C","M"]},
+  {s:"Kumamon is a popular mascot.", jp:"くまモンは人気のあるマスコットです。", target:"a popular mascot", ans:"C", choices:["S","V","O","C","M"]},
+  {s:"The food smells good.", jp:"その食べ物はいいにおいがします。", target:"good", ans:"C", choices:["S","V","O","C","M"]},
+  {s:"The gorilla is the leader.", jp:"ゴリラはリーダーです。", target:"the leader", ans:"C", choices:["S","V","O","C","M"]},
+  {s:"She made him happy.", jp:"彼女は彼を幸せにしました。", target:"happy", ans:"C", choices:["S","V","O","C","M"]},
+  {s:"The news made us sad.", jp:"そのニュースは私たちを悲しくさせました。", target:"sad", ans:"C", choices:["S","V","O","C","M"]},
+  {s:"This book seems interesting.", jp:"この本は面白そうです。", target:"interesting", ans:"C", choices:["S","V","O","C","M"]},
+  {s:"The flower remained beautiful.", jp:"その花は美しいままでした。", target:"beautiful", ans:"C", choices:["S","V","O","C","M"]},
+  {s:"He grew strong with training.", jp:"彼はトレーニングで強くなりました。", target:"strong", ans:"C", choices:["S","V","O","C","M"]},
+  {s:"She called him a genius.", jp:"彼女は彼を天才と呼びました。", target:"a genius", ans:"C", choices:["S","V","O","C","M"]},
+  {s:"The soup tastes salty.", jp:"そのスープは塩辛い味がします。", target:"salty", ans:"C", choices:["S","V","O","C","M"]},
+  {s:"He kept the room clean.", jp:"彼は部屋をきれいに保ちました。", target:"clean", ans:"C", choices:["S","V","O","C","M"]},
+  {s:"He found the test difficult.", jp:"彼はテストが難しいと感じました。", target:"difficult", ans:"C", choices:["S","V","O","C","M"]},
+  {s:"She studies English every day.", jp:"彼女は毎日英語を勉強します。", target:"every day", ans:"M", choices:["S","V","O","C","M"]},
+  {s:"He runs very fast.", jp:"彼はとても速く走ります。", target:"very fast", ans:"M", choices:["S","V","O","C","M"]},
+  {s:"She reads a book in her room.", jp:"彼女は自分の部屋で本を読みます。", target:"in her room", ans:"M", choices:["S","V","O","C","M"]},
+  {s:"They played soccer yesterday.", jp:"彼らは昨日サッカーをしました。", target:"yesterday", ans:"M", choices:["S","V","O","C","M"]},
+  {s:"AI is also used in air conditioners.", jp:"AIはまたエアコンにも使われています。", target:"also", ans:"M", choices:["S","V","O","C","M"]},
+  {s:"She went to Paris last year.", jp:"彼女は去年パリに行きました。", target:"last year", ans:"M", choices:["S","V","O","C","M"]},
+  {s:"The tall boy runs very fast.", jp:"その背の高い男の子はとても速く走ります。", target:"very", ans:"M", choices:["S","V","O","C","M"]},
+  {s:"He often visits his grandmother on Sundays.", jp:"彼は日曜日によく祖母のところを訪ねます。", target:"on Sundays", ans:"M", choices:["S","V","O","C","M"]},
+  {s:"She speaks English fluently.", jp:"彼女は英語を流暢に話します。", target:"fluently", ans:"M", choices:["S","V","O","C","M"]},
+  {s:"The students work hard during exams.", jp:"生徒たちは試験期間中一生懸命勉強します。", target:"during exams", ans:"M", choices:["S","V","O","C","M"]},
+  {s:"He suddenly stopped at the corner.", jp:"彼は角で突然止まりました。", target:"suddenly", ans:"M", choices:["S","V","O","C","M"]},
+  {s:"She carefully placed the glass on the table.", jp:"彼女は丁寧にグラスをテーブルに置きました。", target:"carefully", ans:"M", choices:["S","V","O","C","M"]},
+  {s:"They met at the park in the evening.", jp:"彼らは夕方公園で会いました。", target:"in the evening", ans:"M", choices:["S","V","O","C","M"]},
+  {s:"She always smiles at everyone.", jp:"彼女はいつもみんなに微笑みかけます。", target:"always", ans:"M", choices:["S","V","O","C","M"]},
+  {s:"He runs every morning before breakfast.", jp:"彼は毎朝朝食前に走ります。", target:"every morning", ans:"M", choices:["S","V","O","C","M"]},
+  {s:"The cat sat quietly under the tree.", jp:"猫は木の下に静かに座っていました。", target:"quietly", ans:"M", choices:["S","V","O","C","M"]},
+];
+
+// ════════════════════════════════════
+// QUESTION DATA — 品詞
+// ════════════════════════════════════
+const POS_Q = [
+  {s:"She studies English every day.", jp:"彼女は毎日英語を勉強します。", target:"English", ans:"名詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"A dog runs in the park.", jp:"犬が公園で走ります。", target:"dog", ans:"名詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"Breakfast is a very important meal.", jp:"朝食はとても大切な食事です。", target:"meal", ans:"名詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"The leader considers the feelings of members.", jp:"リーダーはメンバーの気持ちを考慮します。", target:"feelings", ans:"名詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"AI handles a great deal of information.", jp:"AIは大量の情報を扱います。", target:"information", ans:"名詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"He went to the station by bike.", jp:"彼は自転車で駅に行きました。", target:"station", ans:"名詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She has a strong motivation to study.", jp:"彼女には勉強する強い意欲があります。", target:"motivation", ans:"名詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"Kumamon became popular in a very short time.", jp:"くまモンはとても短い時間で人気になりました。", target:"time", ans:"名詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"The children played in the garden.", jp:"子供たちは庭で遊びました。", target:"garden", ans:"名詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"Music brings joy to people.", jp:"音楽は人々に喜びをもたらします。", target:"joy", ans:"名詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"The bridge was built 100 years ago.", jp:"その橋は100年前に建てられました。", target:"bridge", ans:"名詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"He showed great courage in the situation.", jp:"彼はその状況で大きな勇気を見せました。", target:"courage", ans:"名詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She learned the importance of teamwork.", jp:"彼女はチームワークの重要性を学びました。", target:"teamwork", ans:"名詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She studies English every day.", jp:"彼女は毎日英語を勉強します。", target:"studies", ans:"動詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"He plays soccer after school.", jp:"彼は放課後サッカーをします。", target:"plays", ans:"動詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"The dog runs very fast.", jp:"その犬はとても速く走ります。", target:"runs", ans:"動詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She decided to study abroad.", jp:"彼女は留学することを決意しました。", target:"decided", ans:"動詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"They sent money to support the repair.", jp:"彼らは修復を支援するためにお金を送りました。", target:"sent", ans:"動詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"AI seems to make everything possible.", jp:"AIは全てを可能にするように見えます。", target:"seems", ans:"動詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She taught math at a high school.", jp:"彼女は高校で数学を教えました。", target:"taught", ans:"動詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"The children are playing in the yard.", jp:"子供たちは庭で遊んでいます。", target:"are playing", ans:"動詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She will graduate next March.", jp:"彼女は来年の3月に卒業します。", target:"will graduate", ans:"動詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"He bought flowers for his mother.", jp:"彼は母のために花を買いました。", target:"bought", ans:"動詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She smiled when she heard the news.", jp:"彼女はそのニュースを聞いて微笑みました。", target:"smiled", ans:"動詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"They arrived at the airport early.", jp:"彼らは早めに空港に到着しました。", target:"arrived", ans:"動詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She writes poems in her free time.", jp:"彼女は自由な時間に詩を書きます。", target:"writes", ans:"動詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She is a beautiful singer.", jp:"彼女は美しい歌手です。", target:"beautiful", ans:"形容詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"Breakfast is a very important meal.", jp:"朝食はとても大切な食事です。", target:"important", ans:"形容詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"The tall boy runs very fast.", jp:"その背の高い男の子はとても速く走ります。", target:"tall", ans:"形容詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"Kumamon is a popular mascot.", jp:"くまモンは人気のあるマスコットです。", target:"popular", ans:"形容詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"He is always calm and kind.", jp:"彼はいつも落ち着いていて親切です。", target:"calm", ans:"形容詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She chose appropriate words.", jp:"彼女は適切な言葉を選びました。", target:"appropriate", ans:"形容詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"The food smells delicious.", jp:"その食べ物はおいしそうなにおいがします。", target:"delicious", ans:"形容詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She wore a red dress at the party.", jp:"彼女はパーティーで赤いドレスを着ました。", target:"red", ans:"形容詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"He found an ancient coin in the garden.", jp:"彼は庭で古いコインを見つけました。", target:"ancient", ans:"形容詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She gave me a useful piece of advice.", jp:"彼女は私に役立つアドバイスをくれました。", target:"useful", ans:"形容詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"He made a brave decision.", jp:"彼は勇気ある決断をしました。", target:"brave", ans:"形容詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She studies English every day.", jp:"彼女は毎日英語を勉強します。", target:"every day", ans:"副詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"He runs very fast.", jp:"彼はとても速く走ります。", target:"very", ans:"副詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She often skips breakfast.", jp:"彼女はよく朝食を抜きます。", target:"often", ans:"副詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"AI also helps our daily life.", jp:"AIはまた私たちの日常生活も助けます。", target:"also", ans:"副詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"He already finished his homework.", jp:"彼はすでに宿題を終えました。", target:"already", ans:"副詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She never gives up.", jp:"彼女は決して諦めません。", target:"never", ans:"副詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"He runs very fast.", jp:"彼はとても速く走ります。", target:"fast", ans:"副詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She spoke quietly so as not to wake the baby.", jp:"彼女は赤ちゃんを起こさないように静かに話しました。", target:"quietly", ans:"副詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"He suddenly remembered her name.", jp:"彼は突然彼女の名前を思い出しました。", target:"suddenly", ans:"副詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She usually wakes up at six.", jp:"彼女はたいてい6時に起きます。", target:"usually", ans:"副詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She reads books carefully.", jp:"彼女は丁寧に本を読みます。", target:"carefully", ans:"副詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She finally passed the exam.", jp:"彼女はついに試験に合格しました。", target:"finally", ans:"副詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She goes to school by bus.", jp:"彼女はバスで学校に行きます。", target:"by", ans:"前置詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"He studies in his room.", jp:"彼は自分の部屋で勉強します。", target:"in", ans:"前置詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She went to Paris last year.", jp:"彼女は去年パリに行きました。", target:"to", ans:"前置詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"The book is on the desk.", jp:"本は机の上にあります。", target:"on", ans:"前置詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"He came home after school.", jp:"彼は放課後家に帰りました。", target:"after", ans:"前置詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She was born in Kumamoto.", jp:"彼女は熊本で生まれました。", target:"in", ans:"前置詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She sat beside her friend.", jp:"彼女は友人の隣に座りました。", target:"beside", ans:"前置詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"He waited for her at the gate.", jp:"彼は門で彼女を待ちました。", target:"at", ans:"前置詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"The cat is under the table.", jp:"猫はテーブルの下にいます。", target:"under", ans:"前置詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"He left before sunrise.", jp:"彼は日の出前に出発しました。", target:"before", ans:"前置詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She learned English through watching movies.", jp:"彼女は映画を見ることを通じて英語を学びました。", target:"through", ans:"前置詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She hid the key beneath the mat.", jp:"彼女はマットの下に鍵を隠しました。", target:"beneath", ans:"前置詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She studies hard, but she doesn't pass.", jp:"彼女は一生懸命勉強しますが、合格しません。", target:"but", ans:"接続詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"I like tea and coffee.", jp:"私はお茶もコーヒーも好きです。", target:"and", ans:"接続詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"If you study hard, you will pass.", jp:"一生懸命勉強すれば、合格するでしょう。", target:"If", ans:"接続詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"I knew that she was happy.", jp:"私は彼女が幸せだということを知っていました。", target:"that", ans:"接続詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"When she arrived, it started to rain.", jp:"彼女が到着したとき、雨が降り始めました。", target:"When", ans:"接続詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"Because it was raining, she stayed home.", jp:"雨が降っていたので、彼女は家にいました。", target:"Because", ans:"接続詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"Although it was cold, she went out.", jp:"寒かったけれど、彼女は外出しました。", target:"Although", ans:"接続詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She will succeed unless she gives up.", jp:"諦めなければ彼女は成功するでしょう。", target:"unless", ans:"接続詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"He studied while she was cooking.", jp:"彼は彼女が料理している間勉強しました。", target:"while", ans:"接続詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She left after the show ended.", jp:"彼女はショーが終わった後に去りました。", target:"after", ans:"接続詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"A dog runs in the park.", jp:"犬が公園で走ります。", target:"A", ans:"冠詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She reads a book before bed.", jp:"彼女は寝る前に本を読みます。", target:"a", ans:"冠詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"He reads the news every morning.", jp:"彼は毎朝ニュースを読みます。", target:"the", ans:"冠詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"The boss decides everything.", jp:"ボスはすべてを決めます。", target:"The", ans:"冠詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She is an English teacher.", jp:"彼女は英語の先生です。", target:"an", ans:"冠詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"The sun rises in the east.", jp:"太陽は東から昇ります。", target:"The", ans:"冠詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She bought an umbrella before it rained.", jp:"彼女は雨が降る前に傘を買いました。", target:"an", ans:"冠詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She found the key under the mat.", jp:"彼女はマットの下で鍵を見つけました。", target:"the", ans:"冠詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She studies English every day.", jp:"彼女は毎日英語を勉強します。", target:"She", ans:"代名詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"He plays soccer after school.", jp:"彼は放課後サッカーをします。", target:"He", ans:"代名詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"Tom gave her a beautiful flower.", jp:"トムは彼女に美しい花をあげました。", target:"her", ans:"代名詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"They choose appropriate words.", jp:"彼らは適切な言葉を選びます。", target:"They", ans:"代名詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"This is because AI collects data.", jp:"これはAIがデータを収集するからです。", target:"This", ans:"代名詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"We saw a whale shark pass slowly.", jp:"私たちはジンベエザメがゆっくり通るのを見ました。", target:"We", ans:"代名詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"It takes about one hour to get there.", jp:"そこに着くのに約1時間かかります。", target:"It", ans:"代名詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"Nobody knew the answer.", jp:"誰もその答えを知りませんでした。", target:"Nobody", ans:"代名詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"She told us everything she knew.", jp:"彼女は自分が知っていることをすべて私たちに話しました。", target:"us", ans:"代名詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"Everyone in the class liked her.", jp:"クラスの全員が彼女のことが好きでした。", target:"Everyone", ans:"代名詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+  {s:"He introduced himself to the group.", jp:"彼はグループに自己紹介しました。", target:"himself", ans:"代名詞", choices:["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]},
+];
+
+// ════════════════════════════════════
+// DEFS
+// ════════════════════════════════════
+const SVOC_DEFS = {
+  S:{jp:"主語", en:"Subject",    color:"#00e5ff"},
+  V:{jp:"動詞", en:"Verb",       color:"#69ff94"},
+  O:{jp:"目的語",en:"Object",   color:"#ffe57a"},
+  C:{jp:"補語", en:"Complement",color:"#bf7fff"},
+  M:{jp:"修飾語",en:"Modifier", color:"#ff3d71"},
+};
+const POS_DEFS = {
+  "名詞":{en:"Noun",        color:"#00e5ff"},
+  "動詞":{en:"Verb",        color:"#69ff94"},
+  "形容詞":{en:"Adjective", color:"#ffe57a"},
+  "副詞":{en:"Adverb",      color:"#bf7fff"},
+  "前置詞":{en:"Preposition",color:"#ff3d71"},
+  "接続詞":{en:"Conjunction",color:"#ff9632"},
+  "冠詞":{en:"Article",     color:"#64c8ff"},
+  "代名詞":{en:"Pronoun",   color:"#c864ff"},
+};
+
+// ════════════════════════════════════
+// STATE
+// ════════════════════════════════════
+let mode='svoc', totalQ=20, questions=[], qIdx=0;
+let score=0, combo=0, maxCombo=0, okCount=0, ngCount=0;
+let answering=false, history=[];
+
+// ════════════════════════════════════
+// INIT
+// ════════════════════════════════════
+window.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('svocCount').textContent = SVOC_Q.length;
+  document.getElementById('posCount').textContent  = POS_Q.length;
+});
+
+function setQCount(n){
+  totalQ=n;
+  document.querySelectorAll('.q-count-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('qb'+n).classList.add('active');
+}
+
+// ════════════════════════════════════
+// GAME LOGIC
+// ════════════════════════════════════
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function startGame(m){
+  mode=m; score=0; combo=0; maxCombo=0;
+  okCount=0; ngCount=0; qIdx=0; history=[]; answering=false;
+  let pool=[];
+  if(m==='svoc') pool=shuffle([...SVOC_Q]);
+  else if(m==='pos') pool=shuffle([...POS_Q]);
+  else pool=shuffle([...SVOC_Q,...POS_Q]);
+  questions=pool.slice(0,Math.min(totalQ,pool.length));
+
+  // ensure game page is shown
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('gamePage').classList.add('active');
+  document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('bnav-game').classList.add('active');
+
+  document.getElementById('modeScreen').style.display='none';
+  document.getElementById('resultScreen').style.display='none';
+  const gs=document.getElementById('gameScreen');
+  gs.style.display='flex';
+  document.getElementById('modeLabelTop').textContent={svoc:'SVOCM',pos:'品詞',mix:'MIX'}[m];
+  updateScore(); loadQ();
+}
+
+function loadQ(){
+  if(qIdx>=questions.length){showResult();return;}
+  answering=false;
+  const q=questions[qIdx], TOTAL=questions.length;
+  document.getElementById('qCounter').textContent=`Q${qIdx+1} / ${TOTAL}`;
+  document.getElementById('progFill').style.width=((qIdx/TOTAL)*100)+'%';
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  document.getElementById('sentenceText').innerHTML=q.s.replace(q.target,`<span class="target-word">${esc(q.target)}</span>`);
+  document.getElementById('sentenceJp').textContent=q.jp;
+  const isSVOC=SVOC_DEFS[q.ans]!==undefined;
+  document.getElementById('questionText').textContent=isSVOC?'下線の語の「文の成分」は？':'下線の語の「品詞」は？';
+  document.getElementById('questionWord').textContent=`"${q.target}"`;
+  const grid=document.getElementById('choicesGrid');
+  const defs=isSVOC?SVOC_DEFS:POS_DEFS;
+  grid.className='choices-grid '+(isSVOC?'svoc-grid':'pos-grid');
+  grid.innerHTML=q.choices.map(c=>{const d=defs[c];return`<button class="choice-btn" data-type="${c}" onclick="answer('${c}')" style="border-color:${d.color}22"><span style="color:${d.color};font-size:1rem;font-weight:900">${c}</span><span class="choice-en">${d.en}</span></button>`;}).join('');
+}
+
+function answer(selected){
+  if(answering)return;
+  answering=true;
+  const q=questions[qIdx], ok=selected===q.ans;
+  const isSVOC=SVOC_DEFS[q.ans]!==undefined;
+  document.querySelectorAll('.choice-btn').forEach(btn=>{
+    btn.disabled=true;
+    if(btn.dataset.type===q.ans) btn.classList.add('correct');
+    else if(btn.dataset.type===selected&&!ok) btn.classList.add('wrong');
+  });
+  if(ok){
+    combo++; maxCombo=Math.max(maxCombo,combo); okCount++;
+    const bonus=combo>=5?200:combo>=3?150:100; score+=bonus;
+    showFeedback(combo>=3?`${combo} COMBO! 🔥`:'✓ CORRECT!',true);
+    if(combo>=3)showCombo(combo);
+    if(combo>=5)confetti();
+  }else{
+    combo=0; ngCount++; score=Math.max(0,score-20);
+    showFeedback('✗ WRONG',false);
+  }
+  history.push({q,selected,ok}); updateScore();
+  setTimeout(()=>{qIdx++;loadQ();},ok?700:1000);
+}
+
+function updateScore(){
+  document.getElementById('scoreDisp').textContent=score;
+  document.getElementById('comboDisp').textContent=`×${combo}`;
+}
+
+function showFeedback(msg,ok){
+  const el=document.getElementById('feedbackToast');
+  el.textContent=msg; el.style.color=ok?'var(--accent4)':'var(--accent2)';
+  el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+}
+
+function showCombo(n){
+  const el=document.getElementById('comboDisplay');
+  el.textContent=`${n} COMBO!`; el.classList.remove('visible');
+  void el.offsetWidth; el.classList.add('visible');
+  setTimeout(()=>el.classList.remove('visible'),1200);
+}
+
+function showResult(){
+  document.getElementById('gameScreen').style.display='none';
+  const rs=document.getElementById('resultScreen'); rs.style.display='flex';
+  const TOTAL=questions.length, pct=Math.round(okCount/TOTAL*100);
+  document.getElementById('resultTitle').textContent=pct===100?'🏆 PERFECT!':pct>=80?'🎉 EXCELLENT!':pct>=60?'😊 GOOD!':'😢 RETRY?';
+  document.getElementById('resultScore').textContent=score;
+  document.getElementById('statOk').textContent=okCount;
+  document.getElementById('statNg').textContent=ngCount;
+  document.getElementById('statCombo').textContent=maxCombo;
+  const wrongItems=history.filter(h=>!h.ok);
+  const reviewList=document.getElementById('reviewList');
+  if(wrongItems.length===0){
+    reviewList.innerHTML=`<div style="text-align:center;color:var(--accent4);font-size:.85rem;padding:16px">全問正解！完璧です🎉</div>`;
+  }else{
+    const isSVOC=ans=>SVOC_DEFS[ans]!==undefined;
+    const defs=ans=>isSVOC(ans)?SVOC_DEFS:POS_DEFS;
+    reviewList.innerHTML=wrongItems.map(h=>{
+      const def=defs(h.q.ans)[h.q.ans], selDef=defs(h.q.ans)[h.selected];
+      return`<div class="review-item ng"><div><span class="ri-wrong">${h.selected}(${selDef?.en||''})</span> → <span class="ri-ans">${h.q.ans}(${def?.en||''})</span></div><div class="ri-word">"${h.q.target}"</div><div class="ri-sentence">${h.q.s}</div></div>`;
+    }).join('');
+  }
+  if(pct>=80)confetti();
+}
+
+function retryGame(){startGame(mode);}
+function goMenu(){
+  document.getElementById('gameScreen').style.display='none';
+  document.getElementById('resultScreen').style.display='none';
+  document.getElementById('modeScreen').style.display='flex';
+}
+
+function confetti(){
+  const cols=['#00e5ff','#ff3d71','#ffe57a','#69ff94','#bf7fff'];
+  for(let i=0;i<30;i++){
+    const d=document.createElement('div'); d.className='cfp';
+    d.style.cssText=`width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>.5?'50%':'2px'};background:${cols[Math.floor(Math.random()*cols.length)]};left:${10+Math.random()*80}%;top:10%;animation:cf ${.8+Math.random()*.8}s ease forwards;animation-delay:${Math.random()*.4}s;`;
+    document.body.appendChild(d); setTimeout(()=>d.remove(),1800);
+  }
+}
+</script>
+</body>
+</html>
