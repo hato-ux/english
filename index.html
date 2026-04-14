@@ -762,8 +762,87 @@ body::before {
   max-width: 700px; margin: 0 auto; width: 100%;
   display: flex; flex-direction: column; gap: 8px;
 }
+/* ══════════════════════════════════
+   PRACTICE MODE
+══════════════════════════════════ */
+/* token chip in sentence display */
+.p-token {
+  display: inline-block;
+  font-family: 'Fredoka', sans-serif;
+  font-size: .95em; font-weight: 700;
+  padding: 1px 9px; border-radius: 8px;
+  border: 2.5px solid transparent;
+  cursor: default; margin: 1px 1px;
+  transition: all .2s;
+}
+.p-token.pending  { background: var(--bg); border-color: var(--border); color: var(--muted); }
+.p-token.current  { background: linear-gradient(135deg,#f3f0ff,#fff0f6); border-color: var(--purple); color: var(--purple); animation: pop-pulse 1.4s ease-in-out infinite; }
+.p-token.done-ok  { border-color: currentColor; }
+.p-token.done-ng  { border-color: var(--coral)!important; background: #fff0ef!important; color: var(--coral)!important; text-decoration: line-through; }
+.p-token.skip     { background: var(--bg); border-color: var(--border); color: var(--border); font-size:.75em; }
+
+/* question card */
+.p-question-card {
+  background: var(--white);
+  border: 2.5px solid var(--purple);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  box-shadow: 0 4px 0 #c9b8fd;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.p-question-label { font-size: .7rem; font-weight: 900; color: var(--purple); letter-spacing: .5px; }
+.p-target-word {
+  font-family: 'Fredoka', sans-serif; font-size: 1.4rem; font-weight: 700;
+  color: var(--purple); letter-spacing: 1px; text-align: center;
+  padding: 6px; background: #f3f0ff; border-radius: var(--radius-sm);
+  border: 2px dashed var(--purple);
+}
+
+/* inline explanation that appears after answer */
+.p-explain-card {
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  font-size: .8rem; line-height: 1.8; font-weight: 700;
+  border: 2px solid;
+  animation: slide-up .25s ease;
+}
+.p-explain-card.ok { background: #edfff2; border-color: #95e1a3; color: #1a6e38; }
+.p-explain-card.ng { background: #fff0ef; border-color: var(--coral); color: #993333; }
+.p-explain-head { font-family: 'Fredoka', sans-serif; font-size: .85rem; font-weight: 700; margin-bottom: 4px; display:flex; align-items:center; gap:6px; }
+.p-next-btn {
+  width: 100%; padding: 13px;
+  background: linear-gradient(135deg,var(--purple),var(--pink));
+  border: none; border-radius: var(--radius-md); color: var(--white);
+  font-family: 'M PLUS Rounded 1c', sans-serif; font-size: .92rem; font-weight: 900;
+  cursor: pointer; transition: all .2s; box-shadow: 0 4px 0 #8b7fcc;
+}
+.p-next-btn:hover  { transform:translateY(-2px); box-shadow:0 6px 0 #8b7fcc; }
+.p-next-btn:active { transform:translateY(1px);  box-shadow:0 2px 0 #8b7fcc; }
+
+/* sentence selector pill */
+.p-sent-pill {
+  font-family: 'Fredoka', sans-serif; font-size: .78rem; font-weight: 600;
+  padding: 4px 14px; border-radius: 20px; border: 2px solid var(--border);
+  background: var(--white); color: var(--muted); cursor: pointer;
+  white-space: nowrap; transition: all .18s; flex-shrink: 0;
+}
+.p-sent-pill.active { border-color: var(--purple); background: #f3f0ff; color: var(--purple); }
+.p-sent-pill.done   { border-color: #95e1a3; background: #edfff2; color: #2d9e50; }
+
+/* complete review items */
+.p-cr-item {
+  background: var(--white); border: 2px solid var(--border);
+  border-radius: var(--radius-sm); padding: 8px 12px;
+  display: flex; align-items: center; gap: 10px;
+  box-shadow: 0 2px 0 var(--border);
+}
+.p-cr-word { font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 700; min-width: 70px; }
+.p-cr-tag {
+  font-family: 'Fredoka', sans-serif; font-size: .8rem; font-weight: 700;
+  padding: 2px 11px; border-radius: 20px; border: 2px solid; flex-shrink: 0;
+}
+.p-cr-result { font-size: .75rem; font-weight: 700; color: var(--muted); flex: 1; }
 </style>
-</head>
 <body>
 
 <!-- ══════════════════════════════════
@@ -824,6 +903,18 @@ body::before {
           <div class="mode-desc">文の成分＋品詞がランダム出題！<br>両方マスターしよう！</div>
         </div>
         <span class="mode-badge">MIX</span>
+      </button>
+    </div>
+
+    <div style="font-size:.68rem;color:var(--muted);font-weight:700;letter-spacing:.3px;text-align:center;width:100%;max-width:420px">── または練習モードで1文まるごと挑戦 ──</div>
+    <div class="mode-cards" style="margin-top:-4px">
+      <button class="mode-card" style="border-color:var(--purple)" onclick="switchPage('practicePage')">
+        <div class="mode-icon-wrap" style="background:#f3f0ff">🧩</div>
+        <div>
+          <div class="mode-title" style="color:var(--purple)">1文まるごと分類</div>
+          <div class="mode-desc">1つの文の単語を品詞 / 文の成分に分類！<br>答えるたびにその場で解説が出る✨</div>
+        </div>
+        <span class="mode-badge" style="background:#f3f0ff;color:var(--purple);border:1.5px solid var(--purple)">練習</span>
       </button>
     </div>
 
@@ -1318,11 +1409,87 @@ body::before {
 </div><!-- /guidePage -->
 
 
+<!-- ══════════════════════════════════
+     PRACTICE PAGE (1文まるごと分類)
+══════════════════════════════════ -->
+<div class="page" id="practicePage">
+
+  <!-- PRACTICE HOME -->
+  <div id="practiceHome" style="min-height:calc(100vh - 62px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 16px 20px;gap:18px;background:radial-gradient(ellipse at 60% 20%,rgba(162,155,254,.12) 0%,transparent 55%),radial-gradient(ellipse at 20% 80%,rgba(78,205,196,.08) 0%,transparent 50%)">
+    <div style="text-align:center">
+      <div style="font-size:3rem;margin-bottom:8px">🧩</div>
+      <div style="font-family:'Fredoka',sans-serif;font-size:clamp(1.6rem,5vw,2.2rem);font-weight:700;color:var(--purple)">1文まるごと分類</div>
+      <div style="font-size:.82rem;color:var(--muted);font-weight:700;margin-top:6px;line-height:1.7">1つの英文の単語を順番に1つずつ分類しよう！<br>答えるたびにすぐ解説が出るから理解しながら進める ✨</div>
+    </div>
+    <div style="width:100%;max-width:420px;display:flex;flex-direction:column;gap:10px">
+      <div style="font-size:.73rem;font-weight:900;color:var(--muted);text-align:center;letter-spacing:.5px">モードを選択</div>
+      <button class="mode-card" style="border-color:var(--pink)" onclick="startPractice('pos')">
+        <div class="mode-icon-wrap" style="background:#fff0f6">🔬</div>
+        <div><div class="mode-title" style="color:var(--pink)">品詞で分類</div><div class="mode-desc">各単語の品詞（名詞・動詞・形容詞…）を当てよう</div></div>
+        <span class="mode-badge" style="background:#fff0f6;color:var(--pink);border:1.5px solid var(--pink)">品詞</span>
+      </button>
+      <button class="mode-card" style="border-color:var(--sky)" onclick="startPractice('svoc')">
+        <div class="mode-icon-wrap" style="background:#e8fafb">🎯</div>
+        <div><div class="mode-title" style="color:var(--sky)">文の成分で分類</div><div class="mode-desc">各語の文の成分（S・V・O・C・M）を当てよう</div></div>
+        <span class="mode-badge" style="background:#e8fafb;color:var(--sky);border:1.5px solid var(--sky)">SVOCM</span>
+      </button>
+    </div>
+    <div style="font-size:.68rem;color:var(--muted);font-weight:700;text-align:center">全<span id="pSentCount" style="color:var(--purple);font-family:'Fredoka',sans-serif">0</span>文収録</div>
+  </div>
+
+  <!-- PRACTICE PLAYING -->
+  <div id="practiceScreen" style="display:none;flex-direction:column;min-height:calc(100vh - 62px)">
+    <div class="topbar">
+      <button class="back-btn" onclick="endPractice()">← もどる</button>
+      <div style="font-family:'Fredoka',sans-serif;font-size:.9rem;font-weight:700;color:var(--purple)">🧩 1文分類</div>
+      <div class="review-progress-pill" id="pTokenPill" style="border-color:var(--purple);color:var(--purple)">0 / 0語</div>
+    </div>
+    <!-- sentence selector -->
+    <div style="background:var(--white);border-bottom:2px solid var(--border);padding:8px 14px;display:flex;align-items:center;gap:8px;overflow-x:auto;scrollbar-width:none">
+      <span style="font-size:.65rem;font-weight:900;color:var(--muted);white-space:nowrap;flex-shrink:0">文を選ぶ：</span>
+      <div id="pSentSelector" style="display:flex;gap:6px;flex-shrink:0"></div>
+    </div>
+    <!-- full sentence display -->
+    <div style="padding:12px 14px 0;max-width:700px;margin:0 auto;width:100%">
+      <div style="background:var(--white);border:2.5px solid var(--border);border-radius:var(--radius-lg);padding:12px 16px;position:relative;overflow:hidden;box-shadow:var(--shadow)">
+        <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--purple),var(--pink),var(--sky))"></div>
+        <div style="font-size:.6rem;font-weight:900;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">英文</div>
+        <div id="pFullSent" style="font-size:clamp(.95rem,3.5vw,1.15rem);font-weight:700;line-height:2.2;word-break:break-word"></div>
+        <div id="pSentJp" style="font-size:.75rem;color:var(--muted);font-weight:700;margin-top:6px;border-top:2px dashed var(--border);padding-top:6px"></div>
+      </div>
+    </div>
+    <!-- current token question -->
+    <div id="pQuestionArea" style="flex:1;display:flex;flex-direction:column;padding:12px 14px 16px;max-width:700px;margin:0 auto;width:100%;gap:12px">
+      <!-- filled in by JS -->
+    </div>
+  </div>
+
+  <!-- PRACTICE COMPLETE -->
+  <div id="practiceComplete" style="display:none;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 62px);padding:28px 16px;gap:16px">
+    <div style="font-size:3.5rem;animation:bounce-in .6s cubic-bezier(.34,1.56,.64,1)">🎊</div>
+    <div style="font-family:'Fredoka',sans-serif;font-size:1.8rem;font-weight:700;color:var(--purple);text-align:center">分類完了！</div>
+    <div id="pCompleteStat" style="background:var(--white);border:2.5px solid var(--purple);border-radius:var(--radius-lg);padding:16px 24px;text-align:center;box-shadow:0 4px 0 #c9b8fd">
+      <div style="font-size:.68rem;font-weight:900;color:var(--muted);letter-spacing:1px;margin-bottom:4px">RESULT</div>
+      <div id="pCompleteScore" style="font-family:'Fredoka',sans-serif;font-size:2.5rem;font-weight:700;color:var(--purple)">0 / 0</div>
+      <div style="font-size:.75rem;color:var(--muted);font-weight:700">語 正解</div>
+    </div>
+    <!-- full review of this sentence -->
+    <div id="pCompleteReview" style="width:100%;max-width:520px;display:flex;flex-direction:column;gap:8px"></div>
+    <button class="big-btn" style="background:linear-gradient(135deg,var(--purple),var(--pink));box-shadow:0 5px 0 #8b7fcc" onclick="practiceNextSentence()">➡️ 次の文へ</button>
+    <button class="back-to-menu-btn" onclick="endPractice()">← 文選択にもどる</button>
+  </div>
+
+</div><!-- /practicePage -->
+
 <!-- BOTTOM NAV -->
 <nav id="bottomNav">
   <button class="bnav-btn active" id="bnav-game" onclick="switchPage('gamePage')">
     <div class="bnav-pip"></div>
     <span class="bnav-icon">🎮</span>ゲーム
+  </button>
+  <button class="bnav-btn" id="bnav-practice" onclick="switchPage('practicePage')" style="--tab-color:var(--purple)">
+    <div class="bnav-pip" style="background:var(--purple)"></div>
+    <span class="bnav-icon">🧩</span>練習
   </button>
   <button class="bnav-btn" id="bnav-guide" onclick="switchPage('guidePage')">
     <div class="bnav-pip"></div>
@@ -1595,11 +1762,6 @@ let mode='svoc', totalQ=20, questions=[], qIdx=0;
 let score=0, combo=0, maxCombo=0, okCount=0, ngCount=0;
 let answering=false, history=[];
 
-window.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('svocCount').textContent = SVOC_Q.length;
-  document.getElementById('posCount').textContent  = POS_Q.length;
-});
-
 function setQCount(n) {
   totalQ = n;
   document.querySelectorAll('.q-count-btn').forEach(b => b.classList.remove('active'));
@@ -1732,6 +1894,328 @@ function confetti(){
     document.body.appendChild(d); setTimeout(()=>d.remove(),1800);
   }
 }
+
+// ══════════════════════════════════
+// PRACTICE SENTENCES DATA
+// ══════════════════════════════════
+const PRACTICE_SENTENCES = [
+  {
+    en:"She studies English every day.",
+    jp:"彼女は毎日英語を勉強します。",
+    tokens:[
+      {w:"She",     pos:"代名詞",svoc:"S", explainPos:"Sheは「彼女は」という人称代名詞。名詞の代わりに使います。",  explainSvoc:"「だれが勉強する？」→ She。文の主役なのでS（主語）。"},
+      {w:"studies", pos:"動詞",  svoc:"V", explainPos:"study（勉強する）の三人称単数現在形。動詞は動作・状態を表します。", explainSvoc:"主語の動作を表すV（動詞）。"},
+      {w:"English", pos:"名詞",  svoc:"O", explainPos:"英語という言語の名前。名前のあるものはすべて名詞です。",    explainSvoc:"「何を勉強する？」→ English。動作の対象なのでO（目的語）。"},
+      {w:"every",   pos:"形容詞",svoc:"M", explainPos:"「毎〜」という意味で後ろの名詞dayを修飾する形容詞。",      explainSvoc:"「every day」まとめてM。取り除いても「She studies English.」で成立する。"},
+      {w:"day",     pos:"名詞",  svoc:"M", explainPos:"「日」を表す名詞。every dayで「毎日」という副詞句になります。", explainSvoc:"「いつ？」に答える語。M（修飾語）。"},
+      {w:".",skip:true},
+    ]
+  },
+  {
+    en:"The tall boy runs very fast.",
+    jp:"その背の高い男の子はとても速く走ります。",
+    tokens:[
+      {w:"The",  pos:"冠詞",  svoc:"M", explainPos:"特定のものを指す定冠詞「その〜」。",                      explainSvoc:"冠詞はboyに付随してM（修飾語）的な役割。"},
+      {w:"tall", pos:"形容詞",svoc:"M", explainPos:"「背が高い」という形容詞。後ろの名詞boyを修飾しています。", explainSvoc:"主語boyを説明する形容詞。主語の一部としてM的な役割。"},
+      {w:"boy",  pos:"名詞",  svoc:"S", explainPos:"「男の子」という人を表す名詞。",                        explainSvoc:"「だれが走る？」→ The tall boy。S（主語）。"},
+      {w:"runs", pos:"動詞",  svoc:"V", explainPos:"run（走る）の三人称単数現在形。動作を表す動詞。",          explainSvoc:"主語の動作を表すV（動詞）。"},
+      {w:"very", pos:"副詞",  svoc:"M", explainPos:"「とても」という程度を表す副詞。後ろのfastを修飾。",       explainSvoc:"程度を表す語。取り除いても文が成立するのでM（修飾語）。"},
+      {w:"fast", pos:"副詞",  svoc:"M", explainPos:"「速く」という様子を表す副詞。動詞runsを修飾。",          explainSvoc:"「どのように走る？」に答えるM（修飾語）。"},
+      {w:".",skip:true},
+    ]
+  },
+  {
+    en:"Tom gave her a beautiful flower.",
+    jp:"トムは彼女に美しい花をあげました。",
+    tokens:[
+      {w:"Tom",       pos:"名詞",  svoc:"S", explainPos:"人の名前（固有名詞）。固有名詞も名詞の一種。",                              explainSvoc:"「だれがあげた？」→ Tom。S（主語）。"},
+      {w:"gave",      pos:"動詞",  svoc:"V", explainPos:"give（あげる）の過去形。動作を表す動詞。",                                  explainSvoc:"主語の動作を表すV（動詞）。"},
+      {w:"her",       pos:"代名詞",svoc:"O", explainPos:"sheの目的格「彼女に・彼女を」。代名詞の目的格は〜を・〜に の意味。",         explainSvoc:"「だれに？」→ her。動作の相手なのでO（目的語）。"},
+      {w:"a",         pos:"冠詞",  svoc:"M", explainPos:"不定冠詞「ひとつの〜」。不特定のものを指す冠詞。",                           explainSvoc:"冠詞はflowerに付随してM（修飾語）的な役割。"},
+      {w:"beautiful", pos:"形容詞",svoc:"M", explainPos:"「美しい」という形容詞。名詞flowerを修飾しています。",                       explainSvoc:"flowerを説明する形容詞。O（a beautiful flower）の一部としてM的な役割。"},
+      {w:"flower",    pos:"名詞",  svoc:"O", explainPos:"「花」という物を表す名詞。",                                                explainSvoc:"「何をあげた？」→ a beautiful flower。O（目的語）。"},
+      {w:".",skip:true},
+    ]
+  },
+  {
+    en:"She is a popular teacher.",
+    jp:"彼女は人気のある先生です。",
+    tokens:[
+      {w:"She",     pos:"代名詞",svoc:"S", explainPos:"「彼女は」という人称代名詞。",                       explainSvoc:"「だれが先生？」→ She。S（主語）。"},
+      {w:"is",      pos:"動詞",  svoc:"V", explainPos:"be動詞の三人称単数現在形。状態や性質を表します。",    explainSvoc:"主語の状態を表すV（動詞）。be動詞の後にはC（補語）が来ます。"},
+      {w:"a",       pos:"冠詞",  svoc:"M", explainPos:"不定冠詞「ひとりの〜」。",                         explainSvoc:"冠詞はteacherに付随してM的な役割。"},
+      {w:"popular", pos:"形容詞",svoc:"M", explainPos:"「人気のある」という形容詞。名詞teacherを修飾。",    explainSvoc:"teacherを修飾する形容詞。C（補語）の一部。"},
+      {w:"teacher", pos:"名詞",  svoc:"C", explainPos:"「先生」という職業を表す名詞。",                    explainSvoc:"She ＝ a popular teacher が成立！→ C（補語）。"},
+      {w:".",skip:true},
+    ]
+  },
+  {
+    en:"He runs very fast in the park.",
+    jp:"彼は公園でとても速く走ります。",
+    tokens:[
+      {w:"He",   pos:"代名詞",svoc:"S", explainPos:"「彼は」という人称代名詞。",                              explainSvoc:"「だれが走る？」→ He。S（主語）。"},
+      {w:"runs", pos:"動詞",  svoc:"V", explainPos:"run（走る）の三人称単数現在形。",                          explainSvoc:"主語の動作を表すV（動詞）。"},
+      {w:"very", pos:"副詞",  svoc:"M", explainPos:"「とても」という程度の副詞。後ろのfastを修飾。",             explainSvoc:"取り除いても文が成立するM（修飾語）。"},
+      {w:"fast", pos:"副詞",  svoc:"M", explainPos:"「速く」という様子の副詞。動詞runsを修飾。",               explainSvoc:"「どのように？」に答えるM（修飾語）。"},
+      {w:"in",   pos:"前置詞",svoc:"M", explainPos:"「〜の中で・〜で」という場所を表す前置詞。後ろにthe parkが続く。", explainSvoc:"「in the park」で場所を表しM（修飾語）。"},
+      {w:"the",  pos:"冠詞",  svoc:"M", explainPos:"特定の場所を指す定冠詞。",                               explainSvoc:"冠詞はparkに付随してM（修飾語）の一部。"},
+      {w:"park", pos:"名詞",  svoc:"M", explainPos:"「公園」という場所を表す名詞。",                           explainSvoc:"「どこで？」に答えるM（修飾語）の一部。"},
+      {w:".",skip:true},
+    ]
+  },
+  {
+    en:"I like music very much.",
+    jp:"私は音楽がとても好きです。",
+    tokens:[
+      {w:"I",     pos:"代名詞",svoc:"S", explainPos:"「私は」という一人称代名詞。",                           explainSvoc:"「だれが好き？」→ I。S（主語）。"},
+      {w:"like",  pos:"動詞",  svoc:"V", explainPos:"「好きだ」という状態を表す動詞。",                        explainSvoc:"主語の状態を表すV（動詞）。"},
+      {w:"music", pos:"名詞",  svoc:"O", explainPos:"「音楽」という概念を表す名詞。",                          explainSvoc:"「何が好き？」→ music。O（目的語）。"},
+      {w:"very",  pos:"副詞",  svoc:"M", explainPos:"「とても」という程度の副詞。後ろのmuchを修飾。",            explainSvoc:"M（修飾語）。取り除いても文は成立する。"},
+      {w:"much",  pos:"副詞",  svoc:"M", explainPos:"「たくさん・とても」という副詞。動詞likeを強調。",          explainSvoc:"「どの程度？」に答えるM（修飾語）。"},
+      {w:".",skip:true},
+    ]
+  },
+  {
+    en:"The sky became dark suddenly.",
+    jp:"空が突然暗くなりました。",
+    tokens:[
+      {w:"The",      pos:"冠詞",  svoc:"M", explainPos:"特定のものを指す定冠詞。「その」空という特定の空を指す。",       explainSvoc:"冠詞はskyに付随してM（修飾語）的な役割。"},
+      {w:"sky",      pos:"名詞",  svoc:"S", explainPos:"「空」という場所・物を表す名詞。",                           explainSvoc:"「なにが暗くなった？」→ The sky。S（主語）。"},
+      {w:"became",   pos:"動詞",  svoc:"V", explainPos:"become（〜になる）の過去形。状態の変化を表す動詞。",            explainSvoc:"主語の変化を表すV（動詞）。becomeの後にはC（補語）が来る。"},
+      {w:"dark",     pos:"形容詞",svoc:"C", explainPos:"「暗い」という状態を表す形容詞。",                           explainSvoc:"The sky ＝ dark が成立！→ C（補語）。"},
+      {w:"suddenly", pos:"副詞",  svoc:"M", explainPos:"「突然・急に」という様子を表す副詞。動詞becameを修飾。",        explainSvoc:"「どのように？」に答えるM（修飾語）。取り除いても文が成立する。"},
+      {w:".",skip:true},
+    ]
+  },
+  {
+    en:"She goes to school by bus every day.",
+    jp:"彼女は毎日バスで学校に行きます。",
+    tokens:[
+      {w:"She",    pos:"代名詞",svoc:"S", explainPos:"「彼女は」という人称代名詞。",                                           explainSvoc:"「だれが行く？」→ She。S（主語）。"},
+      {w:"goes",   pos:"動詞",  svoc:"V", explainPos:"go（行く）の三人称単数現在形。動作を表す動詞。",                            explainSvoc:"主語の動作を表すV（動詞）。"},
+      {w:"to",     pos:"前置詞",svoc:"M", explainPos:"「〜へ・〜に」という方向を表す前置詞。後ろにschoolが続く。",                   explainSvoc:"「to school」で行き先を表しM（修飾語）。"},
+      {w:"school", pos:"名詞",  svoc:"M", explainPos:"「学校」という場所を表す名詞。",                                          explainSvoc:"「どこへ？」に答えるM（修飾語）の一部。"},
+      {w:"by",     pos:"前置詞",svoc:"M", explainPos:"「〜で・〜によって」という手段を表す前置詞。by busで「バスで」。",              explainSvoc:"手段を表す語。M（修飾語）。"},
+      {w:"bus",    pos:"名詞",  svoc:"M", explainPos:"「バス」という乗り物を表す名詞。",                                        explainSvoc:"「どうやって？」に答えるM（修飾語）の一部。"},
+      {w:"every",  pos:"形容詞",svoc:"M", explainPos:"「毎〜」という意味で後ろの名詞dayを修飾する形容詞。",                        explainSvoc:"「every day」でM（修飾語）。"},
+      {w:"day",    pos:"名詞",  svoc:"M", explainPos:"「日」を表す名詞。every dayで「毎日」という副詞句。",                        explainSvoc:"「いつ？」に答えるM（修飾語）の一部。"},
+      {w:".",skip:true},
+    ]
+  },
+  {
+    en:"She studies hard, but she doesn't pass.",
+    jp:"彼女は一生懸命勉強しますが、合格しません。",
+    tokens:[
+      {w:"She",     pos:"代名詞",svoc:"S", explainPos:"「彼女は」という人称代名詞。前半の主語。",              explainSvoc:"前半の文の主語S（主語）。"},
+      {w:"studies", pos:"動詞",  svoc:"V", explainPos:"study（勉強する）の三人称単数現在形。",                explainSvoc:"前半の動詞V（動詞）。"},
+      {w:"hard",    pos:"副詞",  svoc:"M", explainPos:"「一生懸命」という様子を表す副詞。動詞studiesを修飾。",  explainSvoc:"「どのように？」に答えるM（修飾語）。"},
+      {w:",",skip:true},
+      {w:"but",     pos:"接続詞",svoc:"M", explainPos:"「しかし」という意味の等位接続詞。前後の文を逆接でつなぐ。", explainSvoc:"文と文をつなぐ接続詞。M（修飾語）的な役割。"},
+      {w:"she",     pos:"代名詞",svoc:"S", explainPos:"「彼女は」という人称代名詞。後半の主語。",              explainSvoc:"後半の文の主語S（主語）。"},
+      {w:"doesn't", pos:"動詞",  svoc:"V", explainPos:"does notの短縮形。否定の助動詞。passと合わせて否定形を作る。", explainSvoc:"後半の動詞部分でV（動詞）。"},
+      {w:"pass",    pos:"動詞",  svoc:"V", explainPos:"「合格する」という動詞。doesn'tと合わさって否定形になる。",  explainSvoc:"doesn't passでひとつのV（動詞）を形成。"},
+      {w:".",skip:true},
+    ]
+  },
+  {
+    en:"If you study hard, you will succeed.",
+    jp:"一生懸命勉強すれば、あなたは成功するでしょう。",
+    tokens:[
+      {w:"If",      pos:"接続詞",svoc:"M", explainPos:"「もし〜ならば」という条件を表す従属接続詞。",           explainSvoc:"条件節を導くM（修飾語）的な役割。"},
+      {w:"you",     pos:"代名詞",svoc:"S", explainPos:"「あなたは」という二人称代名詞。条件節の主語。",         explainSvoc:"条件節の主語S（主語）。"},
+      {w:"study",   pos:"動詞",  svoc:"V", explainPos:"「勉強する」という動作を表す動詞。条件節の動詞。",        explainSvoc:"条件節の動詞V（動詞）。"},
+      {w:"hard",    pos:"副詞",  svoc:"M", explainPos:"「一生懸命」という副詞。動詞studyを修飾。",             explainSvoc:"M（修飾語）。"},
+      {w:",",skip:true},
+      {w:"you",     pos:"代名詞",svoc:"S", explainPos:"主節の主語「あなたは」。",                           explainSvoc:"主節の主語S（主語）。"},
+      {w:"will",    pos:"動詞",  svoc:"V", explainPos:"未来を表す助動詞。succeedと合わさって未来形を作る。",     explainSvoc:"主節の動詞部分（助動詞）でV（動詞）の一部。"},
+      {w:"succeed", pos:"動詞",  svoc:"V", explainPos:"「成功する」という動詞。will succeedで「成功するだろう」。", explainSvoc:"will succeedでひとつのV（動詞）。"},
+      {w:".",skip:true},
+    ]
+  },
+];
+
+// ══════════════════════════════════
+// PRACTICE STATE & LOGIC
+// ══════════════════════════════════
+let pMode = 'pos';
+let pSentIdx = 0;
+let pTokenIdx = 0;
+let pActiveTokens = [];
+let pResults = [];
+let pDoneSentences = new Set();
+
+function startPractice(mode) {
+  pMode = mode;
+  pSentIdx = 0;
+  pDoneSentences = new Set();
+  document.getElementById('practiceHome').style.display = 'none';
+  document.getElementById('practiceComplete').style.display = 'none';
+  document.getElementById('practiceScreen').style.display = 'flex';
+  buildSentenceSelector();
+  loadPracticeSentence(0);
+}
+
+function endPractice() {
+  document.getElementById('practiceScreen').style.display = 'none';
+  document.getElementById('practiceComplete').style.display = 'none';
+  document.getElementById('practiceHome').style.display = 'flex';
+}
+
+function buildSentenceSelector() {
+  const sel = document.getElementById('pSentSelector');
+  sel.innerHTML = PRACTICE_SENTENCES.map((s, i) =>
+    `<button class="p-sent-pill ${i===0?'active':''} ${pDoneSentences.has(i)?'done':''}" id="psp-${i}" onclick="jumpPSentence(${i})">${i+1}文目</button>`
+  ).join('');
+}
+
+function jumpPSentence(idx) {
+  pTokenIdx = 0; pResults = [];
+  loadPracticeSentence(idx);
+}
+
+function loadPracticeSentence(idx) {
+  pSentIdx = idx;
+  pTokenIdx = 0;
+  pResults = [];
+  const sent = PRACTICE_SENTENCES[idx];
+  pActiveTokens = sent.tokens.filter(t => !t.skip);
+
+  document.querySelectorAll('.p-sent-pill').forEach((el, i) => {
+    el.className = `p-sent-pill${i===idx?' active':''}${pDoneSentences.has(i)?' done':''}`;
+  });
+
+  renderPFullSent();
+  document.getElementById('pSentJp').textContent = sent.jp;
+  document.getElementById('pTokenPill').textContent = `0 / ${pActiveTokens.length}語`;
+  renderPQuestion();
+}
+
+function renderPFullSent() {
+  const sent = PRACTICE_SENTENCES[pSentIdx];
+  let ai = 0;
+  const html = sent.tokens.map(t => {
+    if(t.skip) return `<span style="font-weight:700;color:var(--muted)">${t.w}</span>`;
+    const ti = ai++;
+    const defs = pMode==='pos' ? POS_DEFS : SVOC_DEFS;
+    const ans  = pMode==='pos' ? t.pos : t.svoc;
+    const color = (defs[ans]||{color:'#aaa'}).color;
+    let cls='p-token pending', sty='';
+    if(ti < pTokenIdx) {
+      const r = pResults[ti];
+      cls = r && r.ok ? 'p-token done-ok' : 'p-token done-ng';
+      if(r && r.ok) sty=`style="background:${color}18;color:${color};border-color:${color}"`;
+    } else if(ti === pTokenIdx) {
+      cls = 'p-token current';
+    }
+    return `<span class="${cls}" ${sty}>${t.w}</span>`;
+  }).join(' ');
+  document.getElementById('pFullSent').innerHTML = html;
+}
+
+function renderPQuestion() {
+  const area = document.getElementById('pQuestionArea');
+  area.innerHTML = '';
+  if(pTokenIdx >= pActiveTokens.length) { showPracticeComplete(); return; }
+  const token = pActiveTokens[pTokenIdx];
+  const defs  = pMode==='pos' ? POS_DEFS : SVOC_DEFS;
+  const choices = pMode==='pos'
+    ? ["名詞","動詞","形容詞","副詞","前置詞","接続詞","冠詞","代名詞"]
+    : ["S","V","O","C","M"];
+  const label = pMode==='pos' ? '品詞は？' : '文の成分は？';
+  area.innerHTML = `
+    <div class="p-question-card">
+      <div class="p-question-label">「 ${token.w} 」の${label}</div>
+      <div class="p-target-word">${token.w}</div>
+      <div class="choices-grid ${pMode==='svoc'?'svoc-grid':'pos-grid'}" id="pChoicesGrid">
+        ${choices.map(c=>{ const d=defs[c]||{color:'#888',en:'?'}; return `<button class="choice-btn" data-type="${c}" onclick="answerPractice('${c}')"><span style="color:${d.color};font-size:1rem;font-weight:900">${c}</span><span class="choice-en">${d.en}</span></button>`; }).join('')}
+      </div>
+    </div>`;
+}
+
+function answerPractice(selected) {
+  const token = pActiveTokens[pTokenIdx];
+  const defs  = pMode==='pos' ? POS_DEFS : SVOC_DEFS;
+  const ans   = pMode==='pos' ? token.pos : token.svoc;
+  const ok    = selected === ans;
+  const explain = pMode==='pos' ? token.explainPos : token.explainSvoc;
+  const ansColor = (defs[ans]||{color:'#888'}).color;
+  const ansEn    = (defs[ans]||{en:''}).en;
+
+  pResults.push({token, selected, ok});
+
+  document.querySelectorAll('#pChoicesGrid .choice-btn').forEach(btn => {
+    btn.disabled = true;
+    if(btn.dataset.type===ans) btn.classList.add('correct');
+    if(btn.dataset.type===selected && !ok) btn.classList.add('wrong');
+  });
+
+  const area = document.getElementById('pQuestionArea');
+  const wrongPart = !ok
+    ? `<div style="font-size:.75rem;margin-bottom:5px">あなたの答え：<span style="text-decoration:line-through;color:var(--coral)">${selected}（${(defs[selected]||{en:'?'}).en}）</span> → <span style="color:${ansColor};font-weight:900">${ans}（${ansEn}）</span></div>`
+    : '';
+  const card = document.createElement('div');
+  card.className = `p-explain-card ${ok?'ok':'ng'}`;
+  card.innerHTML = `<div class="p-explain-head">${ok?'✅':'❌'} <span style="color:${ansColor}">${ans}（${ansEn}）</span></div>${wrongPart}<div>${explain||''}</div>`;
+  area.appendChild(card);
+
+  const isLast = pTokenIdx+1 >= pActiveTokens.length;
+  const btn = document.createElement('button');
+  btn.className = 'p-next-btn';
+  btn.textContent = isLast ? '🏁 結果を見る' : '➡️ 次の単語へ';
+  btn.onclick = () => { pTokenIdx++; renderPFullSent(); renderPQuestion(); };
+  area.appendChild(btn);
+
+  renderPFullSent();
+  document.getElementById('pTokenPill').textContent = `${pTokenIdx+1} / ${pActiveTokens.length}語`;
+}
+
+function showPracticeComplete() {
+  pDoneSentences.add(pSentIdx);
+  document.getElementById('practiceScreen').style.display = 'none';
+  const comp = document.getElementById('practiceComplete');
+  comp.style.display = 'flex';
+  const okCount = pResults.filter(r=>r.ok).length;
+  document.getElementById('pCompleteScore').textContent = `${okCount} / ${pResults.length}`;
+  const defs = pMode==='pos' ? POS_DEFS : SVOC_DEFS;
+  document.getElementById('pCompleteReview').innerHTML =
+    `<div style="font-size:.72rem;font-weight:900;color:var(--muted);text-align:center;margin-bottom:6px">全語の答え合わせ 📋</div>` +
+    pResults.map(r => {
+      const ans = pMode==='pos' ? r.token.pos : r.token.svoc;
+      const color = (defs[ans]||{color:'#888'}).color;
+      return `<div class="p-cr-item">
+        <div class="p-cr-word">${r.token.w}</div>
+        <div class="p-cr-tag" style="background:${color}18;border-color:${color};color:${color}">${ans}</div>
+        <div class="p-cr-result">${r.ok?'<span style="color:#2d9e50">✅ 正解</span>':`<span style="color:var(--coral)">❌ ${r.selected}</span>`}</div>
+      </div>`;
+    }).join('');
+  const pill = document.getElementById(`psp-${pSentIdx}`);
+  if(pill) { pill.classList.add('done'); pill.classList.remove('active'); }
+  if(okCount===pResults.length) confetti();
+}
+
+function practiceNextSentence() {
+  const next = (pSentIdx+1) % PRACTICE_SENTENCES.length;
+  document.getElementById('practiceComplete').style.display = 'none';
+  document.getElementById('practiceScreen').style.display = 'flex';
+  buildSentenceSelector();
+  loadPracticeSentence(next);
+}
+
+// ── override switchPage to support 3 tabs ──
+function switchPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));
+  const map={gamePage:'bnav-game',guidePage:'bnav-guide',practicePage:'bnav-practice'};
+  document.getElementById(map[id])?.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('svocCount').textContent = SVOC_Q.length;
+  document.getElementById('posCount').textContent  = POS_Q.length;
+  document.getElementById('pSentCount').textContent = PRACTICE_SENTENCES.length;
+});
 </script>
 </body>
 </html>
