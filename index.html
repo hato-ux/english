@@ -615,6 +615,153 @@ body::before {
   .choices-grid.svoc-grid,.choices-grid.pos-grid { grid-template-columns:1fr 1fr; }
   .choice-btn { padding:12px 8px; font-size:.82rem; }
 }
+
+/* ══════════════════════════════════
+   REVIEW SCREEN (全問解説)
+══════════════════════════════════ */
+#reviewScreen {
+  display: none;
+  min-height: calc(100vh - 62px);
+  flex-direction: column;
+}
+
+.review-topbar {
+  background: var(--white);
+  border-bottom: 2px solid var(--border);
+  padding: 10px 14px;
+  display: flex; align-items: center; gap: 10px;
+  position: sticky; top: 0; z-index: 50;
+  box-shadow: 0 2px 12px rgba(100,80,160,.08);
+}
+.review-topbar-title {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1rem; font-weight: 700; color: var(--ink);
+}
+.review-progress-pill {
+  margin-left: auto;
+  font-family: 'Fredoka', sans-serif;
+  font-size: .8rem; font-weight: 600;
+  background: var(--bg); border: 2px solid var(--border);
+  border-radius: 20px; padding: 3px 12px; color: var(--muted);
+}
+
+.review-body {
+  flex: 1;
+  padding: 16px 14px 28px;
+  max-width: 700px; margin: 0 auto; width: 100%;
+  display: flex; flex-direction: column; gap: 14px;
+}
+
+/* individual review card */
+.rv-card {
+  background: var(--white);
+  border: 2.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 3px 0 var(--border);
+  animation: slide-up .3s ease both;
+}
+.rv-card:nth-child(1)  { animation-delay:.02s }
+.rv-card:nth-child(2)  { animation-delay:.06s }
+.rv-card:nth-child(3)  { animation-delay:.10s }
+.rv-card:nth-child(4)  { animation-delay:.14s }
+.rv-card:nth-child(5)  { animation-delay:.18s }
+.rv-card:nth-child(6)  { animation-delay:.22s }
+.rv-card:nth-child(7)  { animation-delay:.26s }
+.rv-card:nth-child(8)  { animation-delay:.30s }
+.rv-card:nth-child(9)  { animation-delay:.34s }
+.rv-card:nth-child(10) { animation-delay:.38s }
+@keyframes slide-up { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:none} }
+
+.rv-card.correct-card { border-color: #95e1a3; box-shadow: 0 3px 0 #86c99a; }
+.rv-card.wrong-card   { border-color: var(--coral); box-shadow: 0 3px 0 #e5a0a0; }
+
+/* card header */
+.rv-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 2px dashed var(--border);
+}
+.rv-num {
+  font-family: 'Fredoka', sans-serif;
+  font-size: .8rem; font-weight: 700;
+  background: var(--bg); border: 2px solid var(--border);
+  border-radius: 10px; padding: 2px 10px; color: var(--muted);
+  flex-shrink: 0;
+}
+.rv-badge {
+  font-size: .95rem; font-weight: 900;
+  padding: 2px 0; flex-shrink: 0;
+}
+.rv-question-type {
+  font-size: .68rem; font-weight: 900; color: var(--muted);
+  margin-left: auto; background: var(--bg);
+  border: 1.5px solid var(--border); border-radius: 20px; padding: 2px 9px;
+}
+
+/* card body */
+.rv-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+
+/* sentence display */
+.rv-sentence {
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  border: 1.5px dashed var(--border);
+  padding: 10px 13px;
+}
+.rv-sent-text {
+  font-size: clamp(.88rem, 3vw, 1.05rem);
+  font-weight: 700; line-height: 2; word-break: break-word;
+}
+.rv-sent-jp { font-size: .74rem; color: var(--muted); margin-top: 4px; font-weight: 700; }
+
+.rv-target-ok {
+  display: inline-block; padding: 1px 9px; border-radius: 7px;
+  font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.05em;
+  background: #edfff2; border: 2.5px solid #95e1a3; color: #2d9e50;
+}
+.rv-target-ng {
+  display: inline-block; padding: 1px 9px; border-radius: 7px;
+  font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.05em;
+  background: #fff0ef; border: 2.5px solid var(--coral); color: var(--coral);
+}
+
+/* answer row */
+.rv-answer-row {
+  display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+}
+.rv-answer-label {
+  font-size: .68rem; font-weight: 900; color: var(--muted); letter-spacing: .5px;
+}
+.rv-ans-chip {
+  font-family: 'Fredoka', sans-serif;
+  font-size: .88rem; font-weight: 700;
+  padding: 3px 13px; border-radius: 20px; border: 2px solid;
+}
+.rv-ans-chip.correct { background: #edfff2; border-color: #95e1a3; color: #2d9e50; }
+.rv-ans-chip.wrong   { background: #fff0ef; border-color: var(--coral); color: var(--coral); text-decoration: line-through; }
+.rv-arrow { color: var(--muted); font-size: .9rem; }
+
+/* explanation box */
+.rv-explain {
+  background: linear-gradient(135deg, #fffae8, #fff9f0);
+  border: 2px dashed var(--yellow);
+  border-radius: var(--radius-sm);
+  padding: 10px 13px;
+  font-size: .8rem; color: var(--ink); line-height: 1.8; font-weight: 700;
+}
+.rv-explain-title {
+  font-family: 'Fredoka', sans-serif;
+  font-size: .72rem; color: #b8941a; letter-spacing: .5px;
+  margin-bottom: 4px; font-weight: 700;
+}
+
+/* bottom nav inside review */
+.rv-footer {
+  padding: 0 14px 10px;
+  max-width: 700px; margin: 0 auto; width: 100%;
+  display: flex; flex-direction: column; gap: 8px;
+}
 </style>
 </head>
 <body>
@@ -737,10 +884,23 @@ body::before {
       <div class="stat-box"><div class="stat-label">ミス ❌</div><div class="stat-val ng" id="statNg">0</div></div>
       <div class="stat-box"><div class="stat-label">連続 🔥</div><div class="stat-val combo" id="statCombo">0</div></div>
     </div>
-    <div style="font-size:.7rem;color:var(--muted);font-weight:900;text-align:center;width:100%;max-width:480px">間違えた問題 📝</div>
-    <div class="review-list" id="reviewList"></div>
+    <button class="big-btn" style="background:linear-gradient(135deg,var(--sky),#2db8b0);box-shadow:0 5px 0 #2a9990;" onclick="showReviewScreen()">📋 全問の解説を見る</button>
     <button class="big-btn" onclick="retryGame()">🔄 もう一度チャレンジ！</button>
     <button class="back-to-menu-btn" onclick="goMenu()">← モード選択にもどる</button>
+  </div>
+
+  <!-- REVIEW SCREEN -->
+  <div id="reviewScreen" style="display:none;flex-direction:column">
+    <div class="review-topbar">
+      <button class="back-btn" onclick="backToResult()">← 結果にもどる</button>
+      <div class="review-topbar-title">📋 全問解説</div>
+      <div class="review-progress-pill" id="reviewPill">0問</div>
+    </div>
+    <div class="review-body" id="reviewBody"></div>
+    <div class="rv-footer">
+      <button class="big-btn" onclick="retryGame()" style="max-width:100%">🔄 もう一度チャレンジ！</button>
+      <button class="back-to-menu-btn" onclick="goMenu()">← モード選択にもどる</button>
+    </div>
   </div>
 
 </div><!-- /gamePage -->
@@ -1341,6 +1501,96 @@ const POS_DEFS = {
   "代名詞":{en:"Pronoun",   color:"#ff7675"},
 };
 
+// ── 解説文データ ──
+const EXPLAIN = {
+  // SVOCM
+  S: `主語（S）は文の主役。「だれが？なにが？」と質問して答えられる語です。英語では文頭付近に必ず登場し、名詞・代名詞がなることがほとんどです。`,
+  V: `動詞（V）は主語の動作や状態を表します。be動詞（is/was）と一般動詞（run/study）の2種類があり、文には必ず1つあります。時制によって形が変わります（play→played→playing）。`,
+  O: `目的語（O）は動詞の動作が向けられる対象。「〜を？〜に？」と聞いて答えられる語です。「V + O」の形で動詞の後ろに来ます。`,
+  C: `補語（C）は主語や目的語の状態・性質を説明する語です。「S＝C」または「O＝C」の関係が成り立つかどうかで確認できます。be動詞・look・become・seemの後によく来ます。`,
+  M: `修飾語（M）はS・V・O・C以外のすべて。取り除いても文が成立するのが目印です。「いつ？どこで？どのように？」に答える副詞や前置詞句（in〜/at〜）がなることが多いです。`,
+  // 品詞
+  "名詞": `名詞は人・物・場所・概念など「名前のあるもの」すべてです。文の中でS・O・Cになります。「a/the/my」の後に来る語は名詞のサインです。`,
+  "動詞": `動詞は動作（run・eat）や状態（be・have・seem）を表します。時制で形が変わります（play→played→playing）。主語の後ろに必ず1つあります。`,
+  "形容詞": `形容詞は名詞の性質・状態を説明する語です。名詞の前（a beautiful singer）かbe動詞の後（She is happy）に置きます。名詞を修飾するのが形容詞のポイントです。`,
+  "副詞": `副詞は動詞・形容詞・他の副詞・文全体を修飾します。「いつ？どこで？どのように？どの程度？」を表し、-lyで終わる語が多いです。名詞以外を修飾するのが特徴です。`,
+  "前置詞": `前置詞は名詞の前に置いて場所・時間・方向・手段などの関係を表します。「前置詞＋名詞」がセットで前置詞句を作り、修飾語（M）になります。後ろに必ず名詞が続きます。`,
+  "接続詞": `接続詞は語・句・文をつなぐ語です。等位接続詞（and・but・or）と従属接続詞（when・if・because・that）の2種類があります。after/beforeは後ろにS+Vが続けば接続詞、名詞だけなら前置詞です。`,
+  "冠詞": `冠詞はa/an/theの3語だけです。a・anは不特定の1つ、theは特定のものを指します。母音で始まる語の前はanを使います（an apple, an umbrella）。`,
+  "代名詞": `代名詞は名詞の代わりに使う語です。人称代名詞（I/you/he/she/they）・指示代名詞（this/that）・不定代名詞（everyone/nobody）などがあります。品詞は代名詞でも、文の成分としてはS・O・Cになれます。`,
+};
+
+// ── 解説画面を表示 ──
+function showReviewScreen() {
+  document.getElementById('resultScreen').style.display = 'none';
+  const rs = document.getElementById('reviewScreen');
+  rs.style.display = 'flex';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const total = history.length;
+  const ok    = history.filter(h => h.ok).length;
+  document.getElementById('reviewPill').textContent = `${ok}/${total}問 正解`;
+
+  const isSVOC = ans => SVOC_DEFS[ans] !== undefined;
+  const defs   = ans => isSVOC(ans) ? SVOC_DEFS : POS_DEFS;
+  const esc    = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  const body = document.getElementById('reviewBody');
+  body.innerHTML = history.map((h, i) => {
+    const q        = h.q;
+    const isOk     = h.ok;
+    const d        = defs(q.ans);
+    const ansColor = d[q.ans].color;
+    const ansEn    = d[q.ans].en;
+
+    // build colored sentence with target highlighted
+    const targetClass = isOk ? 'rv-target-ok' : 'rv-target-ng';
+    const sentHtml = esc(q.s).replace(
+      esc(q.target),
+      `<span class="${targetClass}">${esc(q.target)}</span>`
+    );
+
+    // wrong answer chip (if wrong)
+    const wrongChip = !isOk
+      ? `<span class="rv-ans-chip wrong">${h.selected}（${(defs(q.ans)[h.selected]||{en:'?'}).en}）</span>
+         <span class="rv-arrow">→</span>`
+      : '';
+
+    const qType = isSVOC(q.ans) ? '文の成分' : '品詞';
+    const explain = EXPLAIN[q.ans] || '';
+
+    return `
+      <div class="rv-card ${isOk ? 'correct-card' : 'wrong-card'}">
+        <div class="rv-header">
+          <div class="rv-num">Q${i + 1}</div>
+          <div class="rv-badge">${isOk ? '✅' : '❌'}</div>
+          <div class="rv-question-type">${qType}</div>
+        </div>
+        <div class="rv-body">
+          <div class="rv-sentence">
+            <div class="rv-sent-text">${sentHtml}</div>
+            <div class="rv-sent-jp">${esc(q.jp)}</div>
+          </div>
+          <div class="rv-answer-row">
+            <span class="rv-answer-label">答え</span>
+            ${wrongChip}
+            <span class="rv-ans-chip correct" style="border-color:${ansColor};background:${ansColor}18;color:${ansColor}">${q.ans}（${ansEn}）</span>
+          </div>
+          <div class="rv-explain">
+            <div class="rv-explain-title">💡 解説</div>
+            ${explain}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function backToResult() {
+  document.getElementById('reviewScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'flex';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 let mode='svoc', totalQ=20, questions=[], qIdx=0;
 let score=0, combo=0, maxCombo=0, okCount=0, ngCount=0;
 let answering=false, history=[];
@@ -1453,6 +1703,7 @@ function showCombo(n) {
 
 function showResult() {
   document.getElementById('gameScreen').style.display='none';
+  document.getElementById('reviewScreen').style.display='none';
   const rs=document.getElementById('resultScreen'); rs.style.display='flex';
   const TOTAL=questions.length, pct=Math.round(okCount/TOTAL*100);
   const data = pct===100?{e:'🏆',t:'PERFECT!!'}:pct>=80?{e:'🎉',t:'EXCELLENT!'}:pct>=60?{e:'😊',t:'GOOD JOB!'}:{e:'😅',t:'もう一回！'};
@@ -1462,18 +1713,6 @@ function showResult() {
   document.getElementById('statOk').textContent=okCount;
   document.getElementById('statNg').textContent=ngCount;
   document.getElementById('statCombo').textContent=maxCombo;
-  const wrongItems=history.filter(h=>!h.ok);
-  const reviewList=document.getElementById('reviewList');
-  if(wrongItems.length===0){
-    reviewList.innerHTML=`<div style="text-align:center;color:#3a9e56;font-size:.88rem;padding:16px;font-weight:900">全問正解！完璧です🎉✨</div>`;
-  } else {
-    const isSVOC=ans=>SVOC_DEFS[ans]!==undefined;
-    const defs=ans=>isSVOC(ans)?SVOC_DEFS:POS_DEFS;
-    reviewList.innerHTML=wrongItems.map(h=>{
-      const def=defs(h.q.ans)[h.q.ans], selDef=defs(h.q.ans)[h.selected];
-      return`<div class="review-item"><div><span class="ri-wrong">${h.selected}(${selDef?.en||''})</span> → <span class="ri-ans">${h.q.ans}(${def?.en||''})</span></div><div class="ri-word">"${h.q.target}"</div><div class="ri-sentence">${h.q.s}</div></div>`;
-    }).join('');
-  }
   if(pct>=80)confetti();
 }
 
@@ -1481,6 +1720,7 @@ function retryGame(){startGame(mode);}
 function goMenu(){
   document.getElementById('gameScreen').style.display='none';
   document.getElementById('resultScreen').style.display='none';
+  document.getElementById('reviewScreen').style.display='none';
   document.getElementById('modeScreen').style.display='flex';
 }
 
