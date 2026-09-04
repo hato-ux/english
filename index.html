@@ -1491,6 +1491,14 @@ body::before {
     <div class="bnav-pip" style="background:var(--purple)"></div>
     <span class="bnav-icon">🧩</span>練習
   </button>
+  <button class="bnav-btn" id="bnav-vocab" onclick="switchPage('vocabPage')" style="--tab-color:var(--orange)">
+    <div class="bnav-pip" style="background:var(--orange)"></div>
+    <span class="bnav-icon">📝</span>単語
+  </button>
+  <button class="bnav-btn" id="bnav-grammar" onclick="switchPage('grammarPage')" style="--tab-color:var(--mint)">
+    <div class="bnav-pip" style="background:var(--mint)"></div>
+    <span class="bnav-icon">📐</span>文法
+  </button>
   <button class="bnav-btn" id="bnav-guide" onclick="switchPage('guidePage')">
     <div class="bnav-pip"></div>
     <span class="bnav-icon">📖</span>解説
@@ -1499,6 +1507,226 @@ body::before {
 
 <div class="feedback-toast" id="feedbackToast"></div>
 <div class="combo-display" id="comboDisplay"></div>
+
+<!-- ══════════════════════════════════
+     VOCAB PAGE
+══════════════════════════════════ -->
+<style>
+/* ── vocab page ── */
+#vocabPage { background: var(--bg); }
+
+.vp-header {
+  background: var(--white);
+  border-bottom: 2px solid var(--border);
+  padding: 14px 16px 10px;
+  position: sticky; top: 0; z-index: 50;
+  box-shadow: 0 2px 12px rgba(100,80,160,.08);
+}
+.vp-title-row {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+}
+.vp-title {
+  font-family: 'Fredoka', sans-serif; font-size: 1.3rem; font-weight: 700; color: var(--orange);
+}
+.vp-count-badge {
+  font-family: 'Fredoka', sans-serif; font-size: .75rem; font-weight: 600;
+  background: #fff5e8; border: 2px solid var(--orange); border-radius: 20px;
+  padding: 2px 10px; color: var(--orange); margin-left: auto;
+}
+
+/* filter bar */
+.vp-filters {
+  display: flex; gap: 6px; flex-wrap: wrap;
+}
+.vf-btn {
+  font-family: 'M PLUS Rounded 1c', sans-serif; font-size: .72rem; font-weight: 900;
+  padding: 5px 12px; border-radius: 20px; border: 2px solid var(--border);
+  background: var(--bg); color: var(--muted); cursor: pointer; transition: all .18s;
+  white-space: nowrap;
+}
+.vf-btn.active {
+  border-color: var(--orange); background: #fff5e8; color: var(--orange);
+  box-shadow: 0 2px 8px rgba(255,159,67,.2);
+}
+
+/* mode toggle */
+.vp-mode-row {
+  display: flex; gap: 6px; margin-top: 8px;
+}
+.vm-btn {
+  flex: 1; font-family: 'M PLUS Rounded 1c', sans-serif; font-size: .75rem; font-weight: 900;
+  padding: 7px; border-radius: var(--radius-sm); border: 2.5px solid var(--border);
+  background: var(--bg); color: var(--muted); cursor: pointer; transition: all .18s;
+}
+.vm-btn.active { border-color: var(--sky); background: #e8fafb; color: var(--sky); }
+
+/* quiz card */
+.vp-body {
+  padding: 16px 14px 24px; max-width: 700px; margin: 0 auto;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.vq-progress-row {
+  display: flex; align-items: center; gap: 10px;
+}
+.vq-prog-label { font-size: .72rem; font-weight: 900; color: var(--muted); }
+.vq-prog-bar { flex: 1; height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; }
+.vq-prog-fill {
+  height: 100%; background: linear-gradient(90deg, var(--orange), var(--pink));
+  transition: width .4s cubic-bezier(.34,1.56,.64,1); border-radius: 4px;
+}
+
+/* question card */
+.vq-card {
+  background: var(--white); border: 2.5px solid var(--border);
+  border-radius: var(--radius-lg); padding: 20px 18px;
+  box-shadow: var(--shadow); position: relative; overflow: hidden;
+  text-align: center;
+}
+.vq-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, var(--orange), var(--pink), var(--yellow));
+}
+.vq-mode-label {
+  font-size: .62rem; font-weight: 900; color: var(--muted);
+  letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px;
+}
+.vq-word {
+  font-family: 'Fredoka', sans-serif; font-size: clamp(1.8rem, 6vw, 2.6rem);
+  font-weight: 700; color: var(--ink); margin-bottom: 6px; letter-spacing: 1px;
+}
+.vq-pos-badge {
+  display: inline-block; font-family: 'Fredoka', sans-serif; font-size: .72rem;
+  font-weight: 600; padding: 2px 10px; border-radius: 20px; border: 2px solid;
+  margin-bottom: 4px;
+}
+.vq-ex {
+  font-size: .78rem; color: var(--muted); font-weight: 700;
+  font-style: italic; margin-top: 8px; line-height: 1.7;
+  background: var(--bg); border-radius: var(--radius-sm);
+  padding: 7px 12px;
+}
+.vq-ex-jp { font-style: normal; font-size: .72rem; color: var(--muted); margin-top: 3px; }
+
+/* choices */
+.vq-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.vq-choice {
+  background: var(--white); border: 2.5px solid var(--border);
+  border-radius: var(--radius-md); padding: 13px 10px;
+  font-family: 'M PLUS Rounded 1c', sans-serif; font-size: .88rem; font-weight: 900;
+  color: var(--ink); cursor: pointer; transition: all .16s;
+  box-shadow: 0 3px 0 var(--border); text-align: center; line-height: 1.4;
+}
+.vq-choice:hover { transform: translateY(-2px); box-shadow: 0 5px 0 var(--border); border-color: var(--orange); color: var(--orange); }
+.vq-choice:active { transform: translateY(1px); box-shadow: 0 1px 0 var(--border); }
+.vq-choice.correct { border-color: var(--mint)!important; background: #edfff2!important; color: #2d9e50!important; box-shadow: 0 3px 0 #86c99a!important; animation: bounce-correct .4s ease; }
+.vq-choice.wrong { border-color: var(--coral)!important; background: #fff0ef!important; color: var(--coral)!important; box-shadow: 0 3px 0 #e5a0a0!important; animation: shake-wrong .4s ease; }
+
+/* answer reveal */
+.vq-reveal {
+  background: var(--white); border: 2.5px solid var(--border);
+  border-radius: var(--radius-lg); padding: 16px 18px;
+  box-shadow: var(--shadow); display: none; flex-direction: column; gap: 10px;
+}
+.vq-reveal.show { display: flex; animation: slide-up .25s ease; }
+@keyframes slide-up { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+.vq-reveal-title { font-family: 'Fredoka', sans-serif; font-size: .75rem; letter-spacing: .5px; font-weight: 700; }
+.vq-reveal-ans {
+  font-family: 'Fredoka', sans-serif; font-size: 1.5rem; font-weight: 700;
+  color: var(--orange);
+}
+.vq-reveal-memo {
+  font-size: .78rem; color: var(--muted); font-weight: 700; line-height: 1.7;
+  background: #fffae8; border: 2px dashed var(--yellow);
+  border-radius: var(--radius-sm); padding: 8px 12px;
+}
+
+.vq-next-btn {
+  padding: 14px; border: none; border-radius: var(--radius-md);
+  font-family: 'M PLUS Rounded 1c', sans-serif; font-size: .92rem; font-weight: 900;
+  background: linear-gradient(135deg, var(--orange), var(--pink));
+  color: var(--white); cursor: pointer; transition: all .2s;
+  box-shadow: 0 4px 0 #c06020;
+}
+.vq-next-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #c06020; }
+.vq-next-btn:active { transform: translateY(1px); box-shadow: 0 1px 0 #c06020; }
+
+/* result */
+.vq-result {
+  display: none; flex-direction: column; align-items: center;
+  gap: 14px; padding: 20px 0 10px;
+}
+.vq-result.show { display: flex; animation: slide-up .3s ease; }
+.vq-result-emoji { font-size: 3.5rem; animation: bounce-in .6s cubic-bezier(.34,1.56,.64,1); }
+.vq-result-title { font-family: 'Fredoka', sans-serif; font-size: 1.8rem; font-weight: 700; text-align: center; }
+.vq-result-score { font-family: 'Fredoka', sans-serif; font-size: clamp(3rem,10vw,4.5rem); font-weight: 700; color: var(--orange); text-shadow: 3px 3px 0 rgba(255,159,67,.2); }
+.vq-result-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 300px; }
+.vq-stat-box { background: var(--white); border: 2.5px solid var(--border); border-radius: var(--radius-md); padding: 12px 8px; text-align: center; box-shadow: 0 3px 0 var(--border); }
+.vq-stat-label { font-size: .6rem; font-weight: 900; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
+.vq-stat-val { font-family: 'Fredoka', sans-serif; font-size: 1.4rem; font-weight: 700; }
+
+/* miss list */
+.vq-miss-list { width: 100%; display: flex; flex-direction: column; gap: 6px; }
+.vq-miss-item {
+  background: var(--white); border: 2px solid var(--border); border-radius: var(--radius-sm);
+  padding: 9px 13px; border-left: 4px solid var(--coral); box-shadow: 0 2px 0 var(--border);
+  display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+}
+.vq-miss-en { font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 700; color: var(--orange); }
+.vq-miss-jp { font-size: .78rem; font-weight: 700; color: var(--ink); }
+.vq-miss-pos { font-size: .65rem; font-weight: 900; color: var(--muted); }
+
+.vq-restart-btn {
+  width: 100%; max-width: 280px; padding: 14px; border: none; border-radius: var(--radius-md);
+  font-family: 'M PLUS Rounded 1c', sans-serif; font-size: .92rem; font-weight: 900;
+  background: linear-gradient(135deg, var(--orange), var(--coral)); color: var(--white);
+  cursor: pointer; letter-spacing: .5px; transition: all .2s;
+  box-shadow: 0 5px 0 #c06020;
+}
+.vq-restart-btn:hover { transform: translateY(-2px); box-shadow: 0 7px 0 #c06020; }
+</style>
+
+<div class="page" id="vocabPage">
+  <!-- sticky header -->
+  <div class="vp-header">
+    <div class="vp-title-row">
+      <div class="vp-title">📝 単語テスト</div>
+      <div style="font-size:.65rem;font-weight:700;color:var(--muted)">TARGET 1200レベル</div>
+      <div class="vp-count-badge" id="vpCountBadge">200語</div>
+    </div>
+    <!-- pos filter -->
+    <div class="vp-filters" id="vpFilters">
+      <button class="vf-btn active" onclick="setVFilter('all')">すべて</button>
+      <button class="vf-btn" onclick="setVFilter('名詞')">🟦 名詞</button>
+      <button class="vf-btn" onclick="setVFilter('動詞')">🟩 動詞</button>
+      <button class="vf-btn" onclick="setVFilter('形容詞')">🟨 形容詞</button>
+      <button class="vf-btn" onclick="setVFilter('副詞')">🟪 副詞</button>
+      <button class="vf-btn" onclick="setVFilter('前置詞')">🟧 前置詞</button>
+      <button class="vf-btn" onclick="setVFilter('接続詞')">🟥 接続詞</button>
+    </div>
+    <!-- direction + count -->
+    <div class="vp-mode-row">
+      <button class="vm-btn active" id="vdir-en" onclick="setVDir('en')">英語 → 日本語</button>
+      <button class="vm-btn" id="vdir-jp" onclick="setVDir('jp')">日本語 → 英語</button>
+    </div>
+    <div class="vp-mode-row">
+      <button class="vm-btn" id="vn10" onclick="setVCount(10)">10問</button>
+      <button class="vm-btn" id="vn20" onclick="setVCount(20)">20問</button>
+      <button class="vm-btn active" id="vn30" onclick="setVCount(30)">30問</button>
+      <button class="vm-btn" id="vn50" onclick="setVCount(50)">50問</button>
+    </div>
+    <div style="margin-top:8px;text-align:right">
+      <button onclick="startVocab()" style="background:linear-gradient(135deg,var(--orange),var(--pink));border:none;border-radius:20px;color:var(--white);font-family:'M PLUS Rounded 1c',sans-serif;font-size:.82rem;font-weight:900;padding:7px 20px;cursor:pointer;box-shadow:0 3px 0 #c06020">
+        ▶ スタート！
+      </button>
+    </div>
+  </div>
+
+  <div class="vp-body" id="vpBody">
+    <div style="text-align:center;color:var(--muted);font-size:.85rem;font-weight:700;padding:30px 0">
+      設定を選んで「スタート！」を押してね 🎉
+    </div>
+  </div>
+</div>
 
 <script>
 // ══ PAGE NAV ══
@@ -2320,12 +2548,12 @@ function practiceNextSentence() {
   loadPracticeSentence(next);
 }
 
-// ── override switchPage to support 3 tabs ──
+// ── switchPage (4 tabs) ──
 function switchPage(id) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));
-  const map={gamePage:'bnav-game',guidePage:'bnav-guide',practicePage:'bnav-practice'};
+  const map={gamePage:'bnav-game',guidePage:'bnav-guide',practicePage:'bnav-practice',vocabPage:'bnav-vocab'};
   document.getElementById(map[id])?.classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -2334,7 +2562,1242 @@ window.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('svocCount').textContent = SVOC_Q.length;
   document.getElementById('posCount').textContent  = POS_Q.length;
   document.getElementById('pSentCount').textContent = PRACTICE_SENTENCES.length;
+  document.getElementById('vpCountBadge').textContent = VOCAB.length + '語';
 });
+
+// ════════════════════════════════════
+// VOCAB DATA — TARGET 1200 level
+// en: 英語, jp: 日本語訳, pos: 品詞,
+// ex: 例文(英), exj: 例文(日), memo: 覚え方・ポイント
+// ════════════════════════════════════
+const VOCAB = [
+  // ── 名詞 ──
+  {en:"ability",    jp:"能力・才能",      pos:"名詞", ex:"She has the ability to lead others.", exj:"彼女には人を導く能力があります。", memo:"able（できる）の名詞形。enable（可能にする）も同語根。"},
+  {en:"advantage",  jp:"有利・利点",      pos:"名詞", ex:"Knowing two languages is an advantage.", exj:"2言語を知っていることは有利です。", memo:"take advantage of〜（〜を利用する）も必須フレーズ。"},
+  {en:"advice",     jp:"アドバイス・忠告", pos:"名詞", ex:"She gave me useful advice.", exj:"彼女は私に役立つアドバイスをくれました。", memo:"不可算名詞。×an advice ○a piece of advice。"},
+  {en:"agreement",  jp:"合意・協定",      pos:"名詞", ex:"Both sides reached an agreement.", exj:"双方は合意に達しました。", memo:"agree（同意する）の名詞形。in agreement（同意して）。"},
+  {en:"amount",     jp:"量・総額",        pos:"名詞", ex:"A large amount of data was collected.", exj:"大量のデータが収集されました。", memo:"不可算名詞に使う。数えられるものにはnumber。"},
+  {en:"attention",  jp:"注意・関心",      pos:"名詞", ex:"Pay attention to the details.", exj:"細部に注意を払いなさい。", memo:"pay attention to〜（〜に注意を払う）は超頻出。"},
+  {en:"behavior",   jp:"行動・振る舞い",  pos:"名詞", ex:"His behavior surprised everyone.", exj:"彼の行動はみんなを驚かせました。", memo:"behave（振る舞う）の名詞形。"},
+  {en:"benefit",    jp:"利益・恩恵",      pos:"名詞", ex:"Exercise has many health benefits.", exj:"運動には多くの健康上の利点があります。", memo:"for the benefit of〜（〜のために）も重要。"},
+  {en:"cause",      jp:"原因・理由",      pos:"名詞", ex:"What is the cause of the problem?", exj:"問題の原因は何ですか？", memo:"動詞「引き起こす」にもなる。cause〜to...の形に注意。"},
+  {en:"challenge",  jp:"難題・課題",      pos:"名詞", ex:"Learning a language is a big challenge.", exj:"言語を学ぶことは大きな挑戦です。", memo:"動詞「〜に挑む」にもなる。challenging（やりがいのある）も重要。"},
+  {en:"character",  jp:"性格・文字・登場人物", pos:"名詞", ex:"She has a kind and gentle character.", exj:"彼女は優しく穏やかな性格です。", memo:"文脈によって意味が変わる多義語。"},
+  {en:"choice",     jp:"選択・選択肢",    pos:"名詞", ex:"You have to make a choice.", exj:"あなたは選択をしなければなりません。", memo:"choose（選ぶ）の名詞形。have no choice but to〜（〜するしかない）も頻出。"},
+  {en:"community",  jp:"地域社会・共同体", pos:"名詞", ex:"She volunteers in the local community.", exj:"彼女は地域コミュニティでボランティアをしています。", memo:"common（共通の）と同語根。共に何かを持つ人々の集まり。"},
+  {en:"condition",  jp:"状態・条件",      pos:"名詞", ex:"The patient's condition is improving.", exj:"患者の状態は改善しています。", memo:"under the condition that〜（〜という条件で）も重要。"},
+  {en:"confidence", jp:"自信・信頼",      pos:"名詞", ex:"She spoke with confidence.", exj:"彼女は自信を持って話しました。", memo:"confident（自信のある）の名詞形。"},
+  {en:"conflict",   jp:"対立・衝突",      pos:"名詞", ex:"There was a conflict between the two groups.", exj:"2つのグループ間に対立がありました。", memo:"動詞「矛盾する」にもなる。conflict with〜の形に注意。"},
+  {en:"consequence",jp:"結果・影響",      pos:"名詞", ex:"Consider the consequences of your actions.", exj:"行動の結果を考えなさい。", memo:"as a consequence（その結果として）。consequentlyも重要。"},
+  {en:"context",    jp:"文脈・状況",      pos:"名詞", ex:"Read the word in context.", exj:"文脈の中でその単語を読みなさい。", memo:"in context（文脈の中で）。contextual（文脈的な）も覚えよう。"},
+  {en:"crisis",     jp:"危機・重大局面",  pos:"名詞", ex:"The country is facing an economic crisis.", exj:"その国は経済危機に直面しています。", memo:"複数形はcrises（クライシーズ）。critical（重大な）と同語根。"},
+  {en:"culture",    jp:"文化",           pos:"名詞", ex:"Japan has a rich cultural heritage.", exj:"日本は豊かな文化遺産を持っています。", memo:"cultural（文化的な）も頻出。multicultural（多文化的な）も重要。"},
+  {en:"data",       jp:"データ・情報",    pos:"名詞", ex:"Scientists collect data from experiments.", exj:"科学者たちは実験からデータを集めます。", memo:"本来は複数形（datum→data）だが現代英語では単数扱いも多い。"},
+  {en:"decade",     jp:"10年間",         pos:"名詞", ex:"Technology has changed over the past decade.", exj:"技術はここ10年で変化しました。", memo:"deca-（10）がつく語。December（12月）とは別語根なので注意。"},
+  {en:"demand",     jp:"需要・要求",      pos:"名詞", ex:"There is a high demand for skilled workers.", exj:"熟練労働者への需要が高いです。", memo:"動詞「要求する」にもなる。supply and demand（需要と供給）。"},
+  {en:"detail",     jp:"細部・詳細",      pos:"名詞", ex:"Please check the details of the contract.", exj:"契約の詳細を確認してください。", memo:"in detail（詳細に）。detailed（詳細な）も重要。"},
+  {en:"device",     jp:"装置・機器",      pos:"名詞", ex:"This device can measure temperature.", exj:"この装置は温度を測定できます。", memo:"devise（考案する）と混同しないよう注意。"},
+  {en:"difficulty", jp:"困難・問題",      pos:"名詞", ex:"She overcame many difficulties.", exj:"彼女は多くの困難を乗り越えました。", memo:"difficult（難しい）の名詞形。with difficulty（苦労して）も頻出。"},
+  {en:"effort",     jp:"努力・尽力",      pos:"名詞", ex:"He put a lot of effort into the project.", exj:"彼はプロジェクトに多大な努力を注ぎました。", memo:"make an effort（努力する）。effortless（楽々とした）も覚えよう。"},
+  {en:"energy",     jp:"エネルギー・活力", pos:"名詞", ex:"Solar energy is becoming more popular.", exj:"太陽エネルギーがより普及しています。", memo:"energetic（活発な）。renewable energy（再生可能エネルギー）も重要。"},
+  {en:"environment",jp:"環境",           pos:"名詞", ex:"We must protect the environment.", exj:"私たちは環境を守らなければなりません。", memo:"environ-（囲む）+ment。environmental（環境の）も頻出。"},
+  {en:"event",      jp:"出来事・行事",    pos:"名詞", ex:"The event attracted thousands of visitors.", exj:"そのイベントは何千もの訪問者を引き付けました。", memo:"e-vent（出てくるもの）。eventual（最終的な）と同語根。"},
+  {en:"evidence",   jp:"証拠・根拠",      pos:"名詞", ex:"There is no evidence of his guilt.", exj:"彼の罪の証拠はありません。", memo:"evident（明らかな）。provide evidence（証拠を提示する）は頻出。"},
+  {en:"experience", jp:"経験・体験",      pos:"名詞", ex:"She has five years of teaching experience.", exj:"彼女には5年の教授経験があります。", memo:"動詞「経験する」にもなる。inexperienced（経験不足の）も重要。"},
+  {en:"factor",     jp:"要因・要素",      pos:"名詞", ex:"Many factors affect the result.", exj:"多くの要因が結果に影響します。", memo:"factory（工場）と同語根（作るもの）。key factor（主要因）は頻出。"},
+  {en:"feature",    jp:"特徴・機能",      pos:"名詞", ex:"This phone has many useful features.", exj:"このスマートフォンには多くの便利な機能があります。", memo:"動詞「特集する・目玉にする」にもなる。"},
+  {en:"focus",      jp:"焦点・集中",      pos:"名詞", ex:"Keep your focus on the task.", exj:"作業に集中を保ちなさい。", memo:"動詞「集中する」にもなる。focus on〜（〜に焦点を当てる）は必須。"},
+  {en:"function",   jp:"機能・役割",      pos:"名詞", ex:"The main function of the heart is to pump blood.", exj:"心臓の主な機能は血液を送り出すことです。", memo:"動詞「機能する」にもなる。functional（機能的な）も重要。"},
+  {en:"goal",       jp:"目標・ゴール",    pos:"名詞", ex:"Set a clear goal for your future.", exj:"将来に向けた明確な目標を設定しなさい。", memo:"aim / objective も類義語。achieve a goal（目標を達成する）は頻出。"},
+  {en:"government", jp:"政府・行政",      pos:"名詞", ex:"The government passed a new law.", exj:"政府は新しい法律を可決しました。", memo:"govern（統治する）+ment。governor（知事）も同語根。"},
+  {en:"growth",     jp:"成長・増加",      pos:"名詞", ex:"The company showed strong growth last year.", exj:"その会社は昨年強い成長を見せました。", memo:"grow（成長する）の名詞形。economic growth（経済成長）は頻出。"},
+  {en:"habit",      jp:"習慣",           pos:"名詞", ex:"Reading is a good habit to develop.", exj:"読書は身につけるべき良い習慣です。", memo:"習慣的なものにはhave a habit of〜（〜する習慣がある）を使う。"},
+  {en:"impact",     jp:"影響・衝撃",      pos:"名詞", ex:"Technology has a huge impact on our lives.", exj:"テクノロジーは私たちの生活に大きな影響を与えます。", memo:"動詞「影響を与える」にもなる。have an impact on〜は超頻出。"},
+  {en:"importance", jp:"重要性",         pos:"名詞", ex:"She emphasized the importance of education.", exj:"彼女は教育の重要性を強調しました。", memo:"important（重要な）の名詞形。of great importance（非常に重要な）も重要。"},
+  {en:"industry",   jp:"産業・工業",      pos:"名詞", ex:"The tourism industry is growing rapidly.", exj:"観光業は急速に成長しています。", memo:"industrial（産業の）。industrious（勤勉な）は別の意味なので注意。"},
+  {en:"influence",  jp:"影響・影響力",    pos:"名詞", ex:"Parents have a great influence on children.", exj:"親は子供に大きな影響を与えます。", memo:"動詞「影響を与える」にもなる。under the influence of〜（〜の影響下で）も重要。"},
+  {en:"information",jp:"情報",           pos:"名詞", ex:"I need more information about the event.", exj:"イベントについてもっと情報が必要です。", memo:"不可算名詞。×informations ○pieces of information。"},
+  {en:"issue",      jp:"問題・課題・号",  pos:"名詞", ex:"Climate change is a major global issue.", exj:"気候変動は主要な世界的問題です。", memo:"「問題」の中でも社会的・議論的なものに使う。"},
+  {en:"knowledge",  jp:"知識",           pos:"名詞", ex:"She has extensive knowledge of history.", exj:"彼女は歴史について広範な知識を持っています。", memo:"know（知る）の名詞形。不可算名詞。knowledgeable（知識豊富な）も重要。"},
+  {en:"language",   jp:"言語・言葉",      pos:"名詞", ex:"She speaks four languages.", exj:"彼女は4言語を話します。", memo:"mother tongue / native language（母国語）も覚えよう。"},
+  {en:"leader",     jp:"指導者・リーダー", pos:"名詞", ex:"He is a great leader.", exj:"彼は素晴らしいリーダーです。", memo:"lead（率いる）の名詞形。leadership（指導力）も重要。"},
+  {en:"method",     jp:"方法・手順",      pos:"名詞", ex:"This is an effective method for learning.", exj:"これは学習のための効果的な方法です。", memo:"manner / way / means も類義語。"},
+  // ── 動詞 ──
+  {en:"achieve",    jp:"達成する・成し遂げる", pos:"動詞", ex:"She achieved her dream of becoming a doctor.", exj:"彼女は医者になるという夢を達成しました。", memo:"achievement（達成・業績）の動詞形。high achiever（優秀な人）も重要。"},
+  {en:"affect",     jp:"影響を与える",    pos:"動詞", ex:"Stress can affect your health.", exj:"ストレスは健康に影響を与えることがあります。", memo:"effect（名詞）と混同しがち。affect→effect（動詞→名詞）で覚えよう。"},
+  {en:"allow",      jp:"許可する・可能にする", pos:"動詞", ex:"My parents allow me to stay up late.", exj:"両親は私が夜更かしするのを許可しています。", memo:"allow O to do（Oが〜するのを許す）の形が重要。"},
+  {en:"apply",      jp:"申し込む・適用する", pos:"動詞", ex:"She applied for a scholarship.", exj:"彼女は奨学金に申し込みました。", memo:"apply for〜（〜に申し込む）、apply to〜（〜に適用する）を区別しよう。"},
+  {en:"avoid",      jp:"避ける",         pos:"動詞", ex:"He avoids eating junk food.", exj:"彼はジャンクフードを食べることを避けます。", memo:"avoid -ing（〜することを避ける）で動名詞が続く。"},
+  {en:"cause",      jp:"引き起こす",      pos:"動詞", ex:"Pollution causes many diseases.", exj:"汚染は多くの病気を引き起こします。", memo:"cause O to do（Oが〜するのを引き起こす）の形も重要。"},
+  {en:"communicate",jp:"伝える・意思疎通する", pos:"動詞", ex:"It is important to communicate clearly.", exj:"明確に伝えることが重要です。", memo:"communication（コミュニケーション）の動詞形。"},
+  {en:"compare",    jp:"比較する",        pos:"動詞", ex:"Compare the two products carefully.", exj:"2つの製品を注意深く比較しなさい。", memo:"compare A with B（AとBを比較する）、compared to〜（〜と比べると）。"},
+  {en:"concern",    jp:"〜に関係する・心配させる", pos:"動詞", ex:"This problem concerns everyone.", exj:"この問題は皆に関係します。", memo:"be concerned about〜（〜を心配する）の形も超頻出。"},
+  {en:"consider",   jp:"検討する・〜と考える", pos:"動詞", ex:"Please consider my proposal.", exj:"私の提案を検討してください。", memo:"consider -ing（〜することを検討する）でも動名詞が続く。"},
+  {en:"contain",    jp:"含む・収容する",  pos:"動詞", ex:"This drink contains a lot of sugar.", exj:"この飲み物は大量の砂糖を含みます。", memo:"container（容器）も同語根。"},
+  {en:"contribute", jp:"貢献する・寄付する", pos:"動詞", ex:"She contributed to the success of the team.", exj:"彼女はチームの成功に貢献しました。", memo:"contribute to〜（〜に貢献する）の形が重要。contribution（貢献）も覚えよう。"},
+  {en:"create",     jp:"創る・生み出す",  pos:"動詞", ex:"He created a new app by himself.", exj:"彼は自分で新しいアプリを作りました。", memo:"creative（創造的な）、creation（創造）、creator（創造者）も重要。"},
+  {en:"define",     jp:"定義する",        pos:"動詞", ex:"Please define this technical term.", exj:"この専門用語を定義してください。", memo:"definition（定義）の動詞形。"},
+  {en:"depend",     jp:"頼る・次第である", pos:"動詞", ex:"Success depends on your effort.", exj:"成功はあなたの努力次第です。", memo:"depend on〜（〜に頼る・〜次第である）の形が最重要。"},
+  {en:"describe",   jp:"説明する・描写する", pos:"動詞", ex:"Can you describe what happened?", exj:"何が起きたか説明できますか？", memo:"description（説明）の動詞形。describe O as〜（OをAと描写する）も重要。"},
+  {en:"determine",  jp:"決定する・解明する", pos:"動詞", ex:"She determined to study abroad.", exj:"彼女は留学することを決意しました。", memo:"determination（決意）の動詞形。be determined to〜（〜する決意をしている）も重要。"},
+  {en:"develop",    jp:"発展させる・開発する", pos:"動詞", ex:"They developed a new vaccine.", exj:"彼らは新しいワクチンを開発しました。", memo:"development（発展）の動詞形。developing countries（発展途上国）も頻出。"},
+  {en:"discuss",    jp:"議論する",        pos:"動詞", ex:"Let's discuss the plan in detail.", exj:"計画について詳しく議論しましょう。", memo:"×discuss about ○discuss（前置詞不要）。discussion（議論）も重要。"},
+  {en:"encourage",  jp:"励ます・促す",    pos:"動詞", ex:"She encouraged him to try again.", exj:"彼女は彼にもう一度試みるよう励ましました。", memo:"encourage O to do（OがAするのを励ます）の形が重要。"},
+  {en:"establish",  jp:"設立する・確立する", pos:"動詞", ex:"The company was established in 1990.", exj:"その会社は1990年に設立されました。", memo:"establishment（設立・組織）。well-established（確立した）も覚えよう。"},
+  {en:"exist",      jp:"存在する",        pos:"動詞", ex:"Do aliens exist?", exj:"エイリアンは存在するのでしょうか？", memo:"existence（存在）の動詞形。existing（既存の）も重要。"},
+  {en:"expand",     jp:"拡大する・広げる", pos:"動詞", ex:"The company plans to expand overseas.", exj:"その会社は海外に拡大する計画があります。", memo:"expansion（拡大）の動詞形。"},
+  {en:"experience", jp:"経験する",        pos:"動詞", ex:"She experienced many difficulties.", exj:"彼女は多くの困難を経験しました。", memo:"名詞「経験」にもなる多義語。"},
+  {en:"explore",    jp:"探索する・探求する", pos:"動詞", ex:"Scientists explore new possibilities.", exj:"科学者たちは新しい可能性を探求します。", memo:"exploration（探索）。explorer（探検家）も重要。"},
+  {en:"express",    jp:"表現する・表す",  pos:"動詞", ex:"She expressed her feelings through art.", exj:"彼女は芸術を通じて気持ちを表現しました。", memo:"expression（表現）の動詞形。express oneself（自己表現する）も重要。"},
+  {en:"fail",       jp:"失敗する",        pos:"動詞", ex:"He failed to meet the deadline.", exj:"彼は締め切りに間に合いませんでした。", memo:"fail to do（〜することに失敗する）の形が重要。failure（失敗）も覚えよう。"},
+  {en:"focus",      jp:"集中する・焦点を当てる", pos:"動詞", ex:"Focus on your strengths.", exj:"自分の強みに集中しなさい。", memo:"focus on〜（〜に集中する）が最重要形。"},
+  {en:"gain",       jp:"得る・増やす",    pos:"動詞", ex:"She gained a lot of experience.", exj:"彼女は多くの経験を得ました。", memo:"gain weight（体重が増える）、gain knowledge（知識を得る）は頻出。"},
+  {en:"identify",   jp:"特定する・識別する", pos:"動詞", ex:"Can you identify the problem?", exj:"問題を特定できますか？", memo:"identity（アイデンティティ）の動詞形。identification（識別）も重要。"},
+  {en:"improve",    jp:"改善する・上達する", pos:"動詞", ex:"She improved her English by watching movies.", exj:"彼女は映画を見ることで英語を上達させました。", memo:"improvement（改善・上達）の動詞形。"},
+  {en:"increase",   jp:"増加する・増やす", pos:"動詞", ex:"The population has increased rapidly.", exj:"人口が急速に増加しています。", memo:"decrease（減少する）の反意語。名詞「増加」にもなる。"},
+  {en:"indicate",   jp:"示す・指摘する",  pos:"動詞", ex:"Research indicates that exercise is beneficial.", exj:"研究は運動が有益であることを示しています。", memo:"indication（兆候）、indicator（指標）も同語根。"},
+  {en:"influence",  jp:"影響を与える",    pos:"動詞", ex:"Music influenced her career choice.", exj:"音楽は彼女のキャリア選択に影響を与えました。", memo:"名詞「影響」にもなる多義語。"},
+  {en:"involve",    jp:"〜を含む・関与する", pos:"動詞", ex:"This project involves many people.", exj:"このプロジェクトは多くの人を含みます。", memo:"be involved in〜（〜に関与している）の形も超頻出。"},
+  {en:"maintain",   jp:"維持する・主張する", pos:"動詞", ex:"She maintains a healthy lifestyle.", exj:"彼女は健康的な生活スタイルを維持しています。", memo:"maintenance（維持・整備）の動詞形。"},
+  {en:"manage",     jp:"管理する・なんとかする", pos:"動詞", ex:"She managed to finish on time.", exj:"彼女は時間内になんとか終わらせました。", memo:"manage to do（なんとか〜する）のフレーズが重要。"},
+  {en:"obtain",     jp:"得る・取得する",  pos:"動詞", ex:"She obtained a driver's license.", exj:"彼女は運転免許証を取得しました。", memo:"get / acquire も類義語。書き言葉でよく使われる。"},
+  {en:"occur",      jp:"起こる・生じる",  pos:"動詞", ex:"Accidents occur when people are careless.", exj:"事故は人々が不注意なときに起きます。", memo:"occurrence（出来事）の動詞形。it occurs to me that〜（ふと〜と思う）も重要。"},
+  {en:"offer",      jp:"提供する・申し出る", pos:"動詞", ex:"He offered to help me.", exj:"彼は私を助けることを申し出ました。", memo:"offer O to〜 / offer to doの2形が重要。名詞「申し出」にもなる。"},
+  {en:"overcome",   jp:"克服する",        pos:"動詞", ex:"She overcame her fear of public speaking.", exj:"彼女は人前で話すことへの恐怖を克服しました。", memo:"over-（超える）+come。"},
+  {en:"perform",    jp:"行う・演じる・機能する", pos:"動詞", ex:"The team performed well in the competition.", exj:"チームはコンペティションでよく機能しました。", memo:"performance（パフォーマンス）の動詞形。"},
+  {en:"prevent",    jp:"防ぐ・妨げる",    pos:"動詞", ex:"Wash your hands to prevent illness.", exj:"病気を防ぐために手を洗いなさい。", memo:"prevent O from -ing（OがAするのを防ぐ）の形が最重要。"},
+  {en:"produce",    jp:"生産する・生み出す", pos:"動詞", ex:"This factory produces 1000 cars a day.", exj:"この工場は1日に1000台の車を生産します。", memo:"product（製品）、production（生産）も同語根。"},
+  {en:"provide",    jp:"提供する・与える", pos:"動詞", ex:"The school provides free meals.", exj:"その学校は無料の食事を提供しています。", memo:"provide O with〜 / provide〜 for O の2形を覚えよう。"},
+  {en:"realize",    jp:"気づく・実現する", pos:"動詞", ex:"She realized she had made a mistake.", exj:"彼女はミスをしたことに気づきました。", memo:"「気づく」「実現する」の2つの意味がある。realization（実現・気づき）も重要。"},
+  {en:"recognize",  jp:"認識する・認める", pos:"動詞", ex:"I recognized him immediately.", exj:"私はすぐに彼を認識しました。", memo:"recognition（認識・承認）の動詞形。"},
+  {en:"reduce",     jp:"減らす・低下させる", pos:"動詞", ex:"We need to reduce carbon emissions.", exj:"私たちは炭素排出量を減らす必要があります。", memo:"reduction（削減）の動詞形。reduce by〜（〜だけ減らす）も重要。"},
+  {en:"reflect",    jp:"反映する・熟考する", pos:"動詞", ex:"His work reflects his personality.", exj:"彼の作品は彼の個性を反映しています。", memo:"reflection（反映・熟考）の動詞形。reflect on〜（〜を熟考する）も重要。"},
+  {en:"relate",     jp:"関連する・共感する", pos:"動詞", ex:"These two events are closely related.", exj:"この2つの出来事は密接に関連しています。", memo:"be related to〜（〜と関連する）の形が重要。relationship（関係）も覚えよう。"},
+  {en:"rely",       jp:"頼る・信頼する",  pos:"動詞", ex:"Don't rely on others too much.", exj:"他人に頼り過ぎないようにしなさい。", memo:"rely on〜（〜に頼る）の形が最重要。reliable（信頼できる）も重要。"},
+  {en:"represent",  jp:"代表する・表す",  pos:"動詞", ex:"She represents Japan in the competition.", exj:"彼女は大会で日本を代表しています。", memo:"representative（代表者）の動詞形。"},
+  {en:"require",    jp:"必要とする・要求する", pos:"動詞", ex:"This job requires experience.", exj:"この仕事は経験を必要とします。", memo:"require O to do（Oに〜することを要求する）の形も重要。"},
+  {en:"respond",    jp:"反応する・答える", pos:"動詞", ex:"She responded to my email quickly.", exj:"彼女は私のメールに素早く返答しました。", memo:"respond to〜（〜に返答する）。response（返答）も覚えよう。"},
+  {en:"solve",      jp:"解決する",        pos:"動詞", ex:"We need to solve this problem quickly.", exj:"私たちはこの問題を素早く解決する必要があります。", memo:"solution（解決策）の動詞形。solve a problem（問題を解決する）は定番。"},
+  {en:"struggle",   jp:"苦労する・奮闘する", pos:"動詞", ex:"He struggled to understand the concept.", exj:"彼はその概念を理解するのに苦労しました。", memo:"struggle to do（〜するのに苦労する）の形が重要。名詞「苦闘」にもなる。"},
+  {en:"suggest",    jp:"提案する・示唆する", pos:"動詞", ex:"She suggested taking a break.", exj:"彼女は休憩を取ることを提案しました。", memo:"suggest -ing（〜することを提案する）で動名詞が続く。"},
+  {en:"support",    jp:"支持する・支援する", pos:"動詞", ex:"Please support our project.", exj:"私たちのプロジェクトを支援してください。", memo:"supporter（支持者）。名詞「支援」にもなる多義語。"},
+  {en:"transfer",   jp:"転送する・移転する", pos:"動詞", ex:"She transferred to a new school.", exj:"彼女は新しい学校に転校しました。", memo:"trans-（超えて）+fer（運ぶ）。名詞「転送・移転」にもなる。"},
+  // ── 形容詞 ──
+  {en:"accurate",   jp:"正確な",         pos:"形容詞", ex:"The weather forecast was accurate.", exj:"天気予報は正確でした。", memo:"accuracy（正確さ）の形容詞形。×acurate（スペル注意）。"},
+  {en:"adequate",   jp:"適切な・十分な",  pos:"形容詞", ex:"The salary is adequate for living.", exj:"その給料は生活するのに十分です。", memo:"adequate for〜（〜のために適切な）。inadequate（不十分な）の反意語。"},
+  {en:"appropriate",jp:"適切な",         pos:"形容詞", ex:"Please wear appropriate clothes.", exj:"適切な服を着てください。", memo:"appropriate for〜（〜に適した）。inappropriate（不適切な）も重要。"},
+  {en:"aware",      jp:"気づいている・意識している", pos:"形容詞", ex:"Are you aware of the risk?", exj:"リスクを認識していますか？", memo:"be aware of〜（〜に気づいている）の形が最重要。awareness（意識・認識）も重要。"},
+  {en:"capable",    jp:"能力がある",      pos:"形容詞", ex:"She is capable of handling the situation.", exj:"彼女はその状況を対処できます。", memo:"be capable of -ing（〜する能力がある）の形が重要。capability（能力）も覚えよう。"},
+  {en:"certain",    jp:"確かな・ある〜",  pos:"形容詞", ex:"I am certain that she will succeed.", exj:"私は彼女が成功すると確信しています。", memo:"certainly（確かに）。be certain of〜（〜を確信している）も重要。"},
+  {en:"complex",    jp:"複雑な",         pos:"形容詞", ex:"This is a complex problem.", exj:"これは複雑な問題です。", memo:"complexity（複雑さ）の形容詞形。complicated も類義語。"},
+  {en:"confident",  jp:"自信のある",      pos:"形容詞", ex:"She is confident in her abilities.", exj:"彼女は自分の能力に自信があります。", memo:"be confident in / about〜（〜に自信がある）の形が重要。"},
+  {en:"consistent", jp:"一貫した・安定した", pos:"形容詞", ex:"He is consistent in his efforts.", exj:"彼は努力において一貫しています。", memo:"consistently（一貫して）。consistency（一貫性）も重要。"},
+  {en:"convenient", jp:"便利な",         pos:"形容詞", ex:"This app is very convenient.", exj:"このアプリはとても便利です。", memo:"convenience（利便性）の形容詞形。It is convenient for O to do...も重要。"},
+  {en:"creative",   jp:"創造的な",        pos:"形容詞", ex:"She is a very creative person.", exj:"彼女はとても創造的な人です。", memo:"creativity（創造性）の形容詞形。"},
+  {en:"critical",   jp:"批判的な・重大な", pos:"形容詞", ex:"This is a critical moment.", exj:"これは重大な瞬間です。", memo:"2つの意味を持つ。criticism（批判）と同語根。"},
+  {en:"curious",    jp:"好奇心旺盛な",    pos:"形容詞", ex:"She is curious about everything.", exj:"彼女はあらゆることに好奇心旺盛です。", memo:"curiosity（好奇心）の形容詞形。be curious about〜が重要。"},
+  {en:"effective",  jp:"効果的な",        pos:"形容詞", ex:"Exercise is an effective way to stay healthy.", exj:"運動は健康を保つ効果的な方法です。", memo:"effect（効果）+ive。efficiency（効率）とは区別しよう。"},
+  {en:"efficient",  jp:"効率的な",        pos:"形容詞", ex:"She is an efficient worker.", exj:"彼女は効率的な働き手です。", memo:"efficiency（効率）の形容詞形。effective（効果的）と混同しない。"},
+  {en:"essential",  jp:"必要不可欠な",    pos:"形容詞", ex:"Water is essential for life.", exj:"水は生命に不可欠です。", memo:"essence（本質）の形容詞形。essentially（本質的に）も重要。"},
+  {en:"flexible",   jp:"柔軟な",         pos:"形容詞", ex:"We need a more flexible schedule.", exj:"もっと柔軟なスケジュールが必要です。", memo:"flexibility（柔軟性）の形容詞形。"},
+  {en:"frequent",   jp:"頻繁な",         pos:"形容詞", ex:"She makes frequent visits to the library.", exj:"彼女は図書館をよく訪ねます。", memo:"frequency（頻度）の形容詞形。frequently（頻繁に）も重要。"},
+  {en:"global",     jp:"世界的な・地球規模の", pos:"形容詞", ex:"Global warming is a serious issue.", exj:"地球温暖化は深刻な問題です。", memo:"globe（地球）の形容詞形。globally（世界的に）も重要。"},
+  {en:"harmful",    jp:"有害な",         pos:"形容詞", ex:"Smoking is harmful to your health.", exj:"喫煙は健康に有害です。", memo:"harm（傷つける）+ful。harmless（無害な）が反意語。"},
+  {en:"honest",     jp:"正直な",         pos:"形容詞", ex:"Please be honest with me.", exj:"私に正直にしてください。", memo:"honesty（正直）の形容詞形。dishonest（不正直な）が反意語。"},
+  {en:"immediate",  jp:"即座の・直接の",  pos:"形容詞", ex:"We need an immediate response.", exj:"私たちは即座の返答が必要です。", memo:"immediately（即座に）の形容詞形。"},
+  {en:"independent",jp:"独立した・自立した", pos:"形容詞", ex:"She wants to be financially independent.", exj:"彼女は経済的に自立したいと思っています。", memo:"independence（独立）の形容詞形。"},
+  {en:"likely",     jp:"ありそうな・〜しそうな", pos:"形容詞", ex:"It is likely to rain tomorrow.", exj:"明日は雨が降りそうです。", memo:"be likely to do（〜しそうだ）の形が超頻出。unlikely（ありそうもない）が反意語。"},
+  {en:"major",      jp:"主要な・大きな",  pos:"形容詞", ex:"She made a major breakthrough.", exj:"彼女は大きな突破口を開きました。", memo:"名詞「専攻」にもなる。majority（多数）も同語根。"},
+  {en:"negative",   jp:"否定的な・悪影響の", pos:"形容詞", ex:"Try not to have a negative attitude.", exj:"否定的な態度を持たないようにしましょう。", memo:"positive（肯定的な）の反意語。"},
+  {en:"numerous",   jp:"多数の",         pos:"形容詞", ex:"There are numerous ways to solve the problem.", exj:"問題を解決する方法は多数あります。", memo:"number（数）と同語根。many の書き言葉版。"},
+  {en:"obvious",    jp:"明らかな",        pos:"形容詞", ex:"The answer is obvious.", exj:"答えは明らかです。", memo:"obviously（明らかに）の形容詞形。It is obvious that...の形も重要。"},
+  {en:"particular", jp:"特定の・特別な",  pos:"形容詞", ex:"Is there any particular reason?", exj:"何か特定の理由はありますか？", memo:"in particular（特に）は副詞句として超頻出。"},
+  {en:"physical",   jp:"物理的な・身体的な", pos:"形容詞", ex:"Physical exercise is good for your health.", exj:"身体的な運動は健康に良いです。", memo:"physics（物理学）と同語根。"},
+  {en:"positive",   jp:"肯定的な・良い",  pos:"形容詞", ex:"Have a positive attitude.", exj:"肯定的な態度を持ちなさい。", memo:"negative（否定的な）の反意語。"},
+  {en:"practical",  jp:"実用的な",        pos:"形容詞", ex:"She gave us practical advice.", exj:"彼女は実用的なアドバイスをくれました。", memo:"practice（実践）の形容詞形。in practice（実際には）も重要。"},
+  {en:"previous",   jp:"前の・以前の",    pos:"形容詞", ex:"In the previous lesson, we learned about nouns.", exj:"前のレッスンで、私たちは名詞について学びました。", memo:"previously（以前に）の形容詞形。"},
+  {en:"primary",    jp:"主要な・最初の",  pos:"形容詞", ex:"The primary goal is to improve communication.", exj:"主要な目標はコミュニケーションを改善することです。", memo:"primarily（主に）の形容詞形。"},
+  {en:"proper",     jp:"適切な・正しい",  pos:"形容詞", ex:"Please use proper language.", exj:"適切な言葉を使ってください。", memo:"properly（適切に）の形容詞形。property（財産・性質）は別語。"},
+  {en:"significant",jp:"重要な・かなりの", pos:"形容詞", ex:"There has been a significant improvement.", exj:"重要な改善がありました。", memo:"significance（重要性）の形容詞形。significantly（大幅に）も重要。"},
+  {en:"similar",    jp:"似ている",        pos:"形容詞", ex:"These two words have similar meanings.", exj:"この2つの単語は似た意味を持っています。", memo:"be similar to〜（〜と似ている）の形が重要。similarity（類似点）も覚えよう。"},
+  {en:"successful", jp:"成功した",        pos:"形容詞", ex:"She is a successful businesswoman.", exj:"彼女は成功したビジネスウーマンです。", memo:"succeed（成功する）の形容詞形。"},
+  {en:"sufficient", jp:"十分な",         pos:"形容詞", ex:"Is the evidence sufficient?", exj:"証拠は十分ですか？", memo:"sufficient for〜（〜のために十分な）。inadequate / insufficient（不十分な）が反意語。"},
+  {en:"traditional",jp:"伝統的な",        pos:"形容詞", ex:"She wears traditional Japanese clothing.", exj:"彼女は伝統的な日本の服を着ます。", memo:"tradition（伝統）の形容詞形。"},
+  {en:"typical",    jp:"典型的な",        pos:"形容詞", ex:"This is a typical example.", exj:"これは典型的な例です。", memo:"typically（典型的に）の形容詞形。"},
+  {en:"unique",     jp:"独特な・唯一の",  pos:"形容詞", ex:"Each person is unique.", exj:"それぞれの人は独特です。", memo:"uni-（1つ）が語源。uniquely（独特に）も重要。"},
+  {en:"various",    jp:"様々な",         pos:"形容詞", ex:"There are various ways to learn English.", exj:"英語を学ぶ様々な方法があります。", memo:"variety（多様性）の形容詞形。"},
+  // ── 副詞 ──
+  {en:"actually",   jp:"実際に・実は",    pos:"副詞", ex:"I actually enjoy studying grammar.", exj:"私は実際に文法の勉強を楽しんでいます。", memo:"in fact / in reality も類義語。「実は」という意外性を示すときに便利。"},
+  {en:"approximately",jp:"およそ・約",   pos:"副詞", ex:"It takes approximately two hours.", exj:"約2時間かかります。", memo:"about / around も類義語だが書き言葉ではapproximatelyが多い。"},
+  {en:"automatically",jp:"自動的に",     pos:"副詞", ex:"The door opens automatically.", exj:"ドアは自動的に開きます。", memo:"automatic（自動の）の副詞形。"},
+  {en:"basically",  jp:"基本的に",        pos:"副詞", ex:"The plan is basically the same.", exj:"計画は基本的に同じです。", memo:"basic（基本的な）の副詞形。"},
+  {en:"carefully",  jp:"注意深く",        pos:"副詞", ex:"Please read the instructions carefully.", exj:"説明書を注意深く読んでください。", memo:"careful（注意深い）の副詞形。"},
+  {en:"clearly",    jp:"明確に・はっきりと", pos:"副詞", ex:"Please speak clearly.", exj:"明確に話してください。", memo:"clear（明確な）の副詞形。It is clearly that...の形も重要。"},
+  {en:"completely", jp:"完全に",          pos:"副詞", ex:"I completely forgot about it.", exj:"私はそれを完全に忘れていました。", memo:"complete（完全な）の副詞形。"},
+  {en:"constantly",  jp:"常に・絶えず",    pos:"副詞", ex:"Technology is constantly changing.", exj:"技術は常に変化しています。", memo:"constant（絶え間ない）の副詞形。"},
+  {en:"directly",   jp:"直接に",         pos:"副詞", ex:"She spoke directly to the manager.", exj:"彼女はマネージャーに直接話しました。", memo:"direct（直接の）の副詞形。"},
+  {en:"effectively",jp:"効果的に",        pos:"副詞", ex:"She communicates effectively.", exj:"彼女は効果的にコミュニケーションを取ります。", memo:"effective（効果的な）の副詞形。"},
+  {en:"especially", jp:"特に",           pos:"副詞", ex:"I especially like jazz music.", exj:"私は特にジャズ音楽が好きです。", memo:"particularly / in particular も類義語。"},
+  {en:"eventually", jp:"最終的に・やがて", pos:"副詞", ex:"She eventually passed the exam.", exj:"彼女は最終的に試験に合格しました。", memo:"in the end / finally も類義語。"},
+  {en:"exactly",    jp:"正確に・まさに",  pos:"副詞", ex:"That is exactly what I need.", exj:"それはまさに私が必要なものです。", memo:"exact（正確な）の副詞形。"},
+  {en:"generally",  jp:"一般的に",        pos:"副詞", ex:"Generally speaking, Japanese food is healthy.", exj:"一般的に言って、日本食は健康的です。", memo:"general（一般的な）の副詞形。generally speaking（一般的に言って）は超頻出。"},
+  {en:"gradually",  jp:"徐々に",         pos:"副詞", ex:"Her condition gradually improved.", exj:"彼女の状態は徐々に改善しました。", memo:"gradual（段階的な）の副詞形。"},
+  {en:"highly",     jp:"非常に・高く",    pos:"副詞", ex:"She is highly motivated.", exj:"彼女は非常にやる気があります。", memo:"high（高い）の副詞形（highlyは抽象的な意味）。"},
+  {en:"increasingly",jp:"ますます",      pos:"副詞", ex:"English is becoming increasingly important.", exj:"英語はますます重要になっています。", memo:"increase（増加する）の副詞形。more and more も類義語。"},
+  {en:"individually",jp:"個別に",        pos:"副詞", ex:"Please answer the questions individually.", exj:"質問に個別に答えてください。", memo:"individual（個別の）の副詞形。"},
+  {en:"particularly",jp:"特に",          pos:"副詞", ex:"I am particularly interested in history.", exj:"私は特に歴史に興味があります。", memo:"especially も類義語。in particular（特に）も同じ意味。"},
+  {en:"rapidly",    jp:"急速に",         pos:"副詞", ex:"Technology is developing rapidly.", exj:"技術は急速に発展しています。", memo:"rapid（急速な）の副詞形。"},
+  {en:"recently",   jp:"最近",           pos:"副詞", ex:"Have you seen her recently?", exj:"最近彼女に会いましたか？", memo:"recent（最近の）の副詞形。現在完了と一緒に使うことが多い。"},
+  {en:"regularly",  jp:"定期的に",        pos:"副詞", ex:"She exercises regularly.", exj:"彼女は定期的に運動します。", memo:"regular（定期的な）の副詞形。"},
+  {en:"relatively", jp:"比較的に",        pos:"副詞", ex:"The test was relatively easy.", exj:"テストは比較的簡単でした。", memo:"relative（相対的な）の副詞形。"},
+  {en:"seriously",  jp:"真剣に・深刻に",  pos:"副詞", ex:"Please take this seriously.", exj:"これを真剣に受け止めてください。", memo:"serious（真剣な）の副詞形。"},
+  {en:"significantly",jp:"大幅に・著しく", pos:"副詞", ex:"The results improved significantly.", exj:"結果は大幅に改善しました。", memo:"significant（重要な）の副詞形。"},
+  {en:"similarly",  jp:"同様に",         pos:"副詞", ex:"Similarly, the second group improved.", exj:"同様に、2つ目のグループも改善しました。", memo:"similar（似ている）の副詞形。"},
+  {en:"strongly",   jp:"強く",           pos:"副詞", ex:"I strongly recommend this book.", exj:"この本を強くお勧めします。", memo:"strong（強い）の副詞形。"},
+  {en:"truly",      jp:"本当に・真に",    pos:"副詞", ex:"She is truly talented.", exj:"彼女は本当に才能があります。", memo:"true（本当の）の副詞形。truly yours（敬具）も覚えよう。"},
+  {en:"typically",  jp:"典型的に・通常は", pos:"副詞", ex:"Classes typically start at 9am.", exj:"授業は通常9時に始まります。", memo:"typical（典型的な）の副詞形。"},
+  {en:"widely",     jp:"広く",           pos:"副詞", ex:"English is widely spoken.", exj:"英語は広く話されています。", memo:"wide（広い）の副詞形。"},
+  // ── 名詞 追加 ──
+  {en:"access",     jp:"アクセス・利用権", pos:"名詞", ex:"Everyone should have access to clean water.", exj:"誰もがきれいな水へのアクセスを持つべきです。", memo:"have access to〜（〜を利用できる）は頻出フレーズ。"},
+  {en:"approach",   jp:"方法・取り組み",   pos:"名詞", ex:"We need a new approach to the problem.", exj:"問題への新しい取り組みが必要です。", memo:"動詞「近づく・取り組む」にもなる多義語。approach to〜（〜への取り組み）。"},
+  {en:"concept",    jp:"概念・考え",       pos:"名詞", ex:"The concept of democracy is important.", exj:"民主主義の概念は重要です。", memo:"conceive（考える）の名詞形。conceptual（概念的な）も覚えよう。"},
+  {en:"cooperation",jp:"協力・協同",       pos:"名詞", ex:"International cooperation is essential.", exj:"国際的な協力は不可欠です。", memo:"cooperate（協力する）の名詞形。cooperation with〜（〜との協力）。"},
+  {en:"diversity",  jp:"多様性",           pos:"名詞", ex:"Diversity makes a team stronger.", exj:"多様性はチームをより強くします。", memo:"diverse（多様な）の名詞形。"},
+  {en:"economy",    jp:"経済",             pos:"名詞", ex:"The economy is recovering slowly.", exj:"経済はゆっくりと回復しています。", memo:"economic（経済の）・economical（経済的な）と区別しよう。"},
+  {en:"emergency",  jp:"緊急事態・非常時", pos:"名詞", ex:"Call 119 in case of a medical emergency.", exj:"医療上の緊急事態では119番に電話してください。", memo:"emerge（現れる）と同語根。emergency exit（非常口）も覚えよう。"},
+  {en:"generation", jp:"世代",             pos:"名詞", ex:"The younger generation uses smartphones constantly.", exj:"若い世代は常にスマートフォンを使っています。", memo:"generate（生み出す）と同語根。generation gap（世代格差）も重要。"},
+  {en:"input",      jp:"入力・意見",       pos:"名詞", ex:"We need your input on this plan.", exj:"この計画についてあなたの意見が必要です。", memo:"in＋put。output（出力）の反意語。"},
+  {en:"investigation",jp:"調査・捜査",     pos:"名詞", ex:"The investigation is still ongoing.", exj:"調査はまだ進行中です。", memo:"investigate（調査する）の名詞形。"},
+  {en:"majority",   jp:"大多数・過半数",   pos:"名詞", ex:"The majority of students passed the exam.", exj:"大多数の生徒が試験に合格しました。", memo:"major（主要な）の名詞形。minority（少数）が反意語。"},
+  {en:"motivation", jp:"動機・やる気",     pos:"名詞", ex:"She has a strong motivation to succeed.", exj:"彼女には成功しようとする強い動機があります。", memo:"motivate（動機づける）の名詞形。"},
+  {en:"network",    jp:"ネットワーク・人脈", pos:"名詞", ex:"Building a network is important in business.", exj:"人脈を作ることはビジネスで重要です。", memo:"動詞「ネットワークを作る」にもなる。"},
+  {en:"opportunity",jp:"機会・チャンス",   pos:"名詞", ex:"She took the opportunity to study abroad.", exj:"彼女は留学する機会を活かしました。", memo:"take an opportunity（機会を活かす）は頻出。opportunityとchanceは類義語。"},
+  {en:"perspective",jp:"視点・観点",       pos:"名詞", ex:"Try to see it from a different perspective.", exj:"違う視点から見てみてください。", memo:"from〜's perspective（〜の視点から）は超頻出フレーズ。"},
+  {en:"pollution",  jp:"汚染",             pos:"名詞", ex:"Air pollution is a serious problem in cities.", exj:"大気汚染は都市で深刻な問題です。", memo:"pollute（汚染する）の名詞形。water/noise pollutionも覚えよう。"},
+  {en:"population", jp:"人口",             pos:"名詞", ex:"Japan's population is declining.", exj:"日本の人口は減少しています。", memo:"不可算名詞として使う。a large population（多い人口）。"},
+  {en:"pressure",   jp:"プレッシャー・圧力", pos:"名詞", ex:"She works well under pressure.", exj:"彼女はプレッシャーの下でもうまく働きます。", memo:"press（押す）の名詞形。under pressure（プレッシャーの下で）は頻出。"},
+  {en:"progress",   jp:"進歩・前進",       pos:"名詞", ex:"She made great progress in English.", exj:"彼女は英語で大きな進歩を遂げました。", memo:"make progress（進歩する）は不可算名詞として使う。×a progress。"},
+  {en:"purpose",    jp:"目的・意図",       pos:"名詞", ex:"What is the purpose of your visit?", exj:"訪問の目的は何ですか？", memo:"for the purpose of〜（〜の目的で）・on purpose（わざと）も覚えよう。"},
+  {en:"quality",    jp:"質・品質",         pos:"名詞", ex:"Quality is more important than quantity.", exj:"量より質の方が重要です。", memo:"quantity（量）と対になる語。quality of life（生活の質）も頻出。"},
+  {en:"research",   jp:"研究・調査",       pos:"名詞", ex:"She is doing research on climate change.", exj:"彼女は気候変動について研究しています。", memo:"動詞「研究する」にもなる。do/conduct research（研究を行う）は頻出。"},
+  {en:"resource",   jp:"資源・リソース",   pos:"名詞", ex:"Natural resources are limited.", exj:"天然資源は限られています。", memo:"natural/human resources（天然/人的資源）などの複合語も重要。"},
+  {en:"responsibility",jp:"責任",          pos:"名詞", ex:"She took responsibility for the mistake.", exj:"彼女はそのミスに対して責任を取りました。", memo:"responsible（責任のある）の名詞形。take responsibility for〜は頻出。"},
+  {en:"risk",       jp:"危険・リスク",     pos:"名詞", ex:"There is a risk of failure.", exj:"失敗のリスクがあります。", memo:"take a risk（危険を冒す）・at risk（危険にさらされて）も重要。"},
+  {en:"role",       jp:"役割",             pos:"名詞", ex:"Teachers play an important role in education.", exj:"教師は教育において重要な役割を果たします。", memo:"play a role（役割を果たす）は超頻出フレーズ。"},
+  {en:"society",    jp:"社会",             pos:"名詞", ex:"Technology is changing society rapidly.", exj:"テクノロジーは社会を急速に変えています。", memo:"social（社会的な）の名詞形。"},
+  {en:"strategy",   jp:"戦略",             pos:"名詞", ex:"We need a clear strategy for success.", exj:"成功のための明確な戦略が必要です。", memo:"strategic（戦略的な）の名詞形。"},
+  {en:"structure",  jp:"構造・仕組み",     pos:"名詞", ex:"The structure of English sentences is important.", exj:"英語の文の構造は重要です。", memo:"construct（建設する）と同語根。structural（構造的な）も覚えよう。"},
+  {en:"survey",     jp:"調査・アンケート", pos:"名詞", ex:"We conducted a survey on student habits.", exj:"私たちは生徒の習慣についてアンケートを実施しました。", memo:"conduct a survey（調査を実施する）は頻出。動詞「調査する」にもなる。"},
+  {en:"technology", jp:"技術・テクノロジー", pos:"名詞", ex:"Modern technology has improved our lives.", exj:"現代技術は私たちの生活を向上させました。", memo:"technical（技術的な）・technological（技術上の）も覚えよう。"},
+  {en:"tradition",  jp:"伝統",             pos:"名詞", ex:"Respect for elders is a Japanese tradition.", exj:"目上の人への敬意は日本の伝統です。", memo:"traditional（伝統的な）の名詞形。"},
+  {en:"trend",      jp:"傾向・流行",       pos:"名詞", ex:"There is a growing trend toward remote work.", exj:"リモートワークへの傾向が高まっています。", memo:"follow/set a trend（流行を追う/生み出す）も覚えよう。"},
+  {en:"violence",   jp:"暴力",             pos:"名詞", ex:"Violence is never the answer.", exj:"暴力は決して答えではありません。", memo:"violent（暴力的な）の名詞形。domestic violence（家庭内暴力）も重要。"},
+  // ── 動詞 追加 ──
+  {en:"accept",     jp:"受け入れる",       pos:"動詞", ex:"She accepted the job offer.", exj:"彼女は仕事の申し出を受け入れました。", memo:"acceptance（受け入れ）の動詞形。accept vs receive：acceptは意思を持って受け入れる。"},
+  {en:"access",     jp:"アクセスする",     pos:"動詞", ex:"You can access the file online.", exj:"オンラインでそのファイルにアクセスできます。", memo:"名詞「アクセス」にもなる多義語。"},
+  {en:"adapt",      jp:"適応する・改作する", pos:"動詞", ex:"She adapted quickly to the new environment.", exj:"彼女はすぐに新しい環境に適応しました。", memo:"adapt to〜（〜に適応する）。adaptation（適応）も覚えよう。"},
+  {en:"adopt",      jp:"採用する・養子にする", pos:"動詞", ex:"The school adopted a new teaching method.", exj:"学校は新しい教授法を採用しました。", memo:"adapt（適応する）と混同しない。adoption（採用・養子縁組）も重要。"},
+  {en:"analyze",    jp:"分析する",         pos:"動詞", ex:"Scientists analyzed the data carefully.", exj:"科学者たちはデータを注意深く分析しました。", memo:"analysis（分析）の動詞形。analytical（分析的な）も覚えよう。"},
+  {en:"arise",      jp:"生じる・起こる",   pos:"動詞", ex:"Problems arise when people don't communicate.", exj:"人々がコミュニケーションを取らないと問題が生じます。", memo:"arise-arose-arisenと不規則変化。arise from〜（〜から生じる）も重要。"},
+  {en:"assume",     jp:"〜と思い込む・仮定する", pos:"動詞", ex:"Don't assume that everyone agrees.", exj:"全員が同意していると思い込まないでください。", memo:"assumption（思い込み）の動詞形。"},
+  {en:"attract",    jp:"引き付ける",       pos:"動詞", ex:"The event attracted thousands of people.", exj:"そのイベントは何千人もの人々を引き付けました。", memo:"attraction（魅力）・attractive（魅力的な）も同語根。"},
+  {en:"concentrate",jp:"集中する",         pos:"動詞", ex:"Please concentrate on the task.", exj:"作業に集中してください。", memo:"concentrate on〜（〜に集中する）は必須形。concentration（集中）も重要。"},
+  {en:"confirm",    jp:"確認する・確証する", pos:"動詞", ex:"Please confirm your reservation.", exj:"予約を確認してください。", memo:"confirmation（確認）の動詞形。"},
+  {en:"consist",    jp:"〜から成る",       pos:"動詞", ex:"Water consists of hydrogen and oxygen.", exj:"水は水素と酸素から成ります。", memo:"consist of〜（〜から成る）が最重要形。進行形にしない動詞。"},
+  {en:"decrease",   jp:"減少する・減らす", pos:"動詞", ex:"The number of students decreased last year.", exj:"昨年、生徒の数が減少しました。", memo:"increase（増加する）の反意語。名詞「減少」にもなる。"},
+  {en:"demonstrate",jp:"示す・実演する",   pos:"動詞", ex:"She demonstrated how to use the machine.", exj:"彼女は機械の使い方を実演しました。", memo:"demonstration（実演）の動詞形。"},
+  {en:"deserve",    jp:"〜に値する・受けるべきだ", pos:"動詞", ex:"She deserves to win the award.", exj:"彼女はその賞を受ける価値があります。", memo:"deserve to do（〜するに値する）の形が重要。"},
+  {en:"disappear",  jp:"消える・姿を消す", pos:"動詞", ex:"The pain gradually disappeared.", exj:"痛みは徐々に消えました。", memo:"appear（現れる）の反意語。dis-（否定）＋appear。"},
+  {en:"evaluate",   jp:"評価する",         pos:"動詞", ex:"Teachers evaluate students regularly.", exj:"教師は定期的に生徒を評価します。", memo:"evaluation（評価）の動詞形。"},
+  {en:"gather",     jp:"集める・集まる",   pos:"動詞", ex:"She gathered information from various sources.", exj:"彼女は様々な情報源から情報を集めました。", memo:"gather information/data（情報・データを集める）は頻出。"},
+  {en:"generate",   jp:"生み出す・発生させる", pos:"動詞", ex:"Solar panels generate electricity.", exj:"太陽光パネルは電気を生み出します。", memo:"generation（世代・発生）と同語根。"},
+  {en:"implement",  jp:"実施する・実行する", pos:"動詞", ex:"The company implemented a new policy.", exj:"会社は新しい方針を実施しました。", memo:"implementation（実施）の動詞形。"},
+  {en:"interpret",  jp:"解釈する・通訳する", pos:"動詞", ex:"How do you interpret this poem?", exj:"この詩をどう解釈しますか？", memo:"interpretation（解釈・通訳）の動詞形。"},
+  {en:"investigate",jp:"調査する",         pos:"動詞", ex:"Police investigated the crime scene.", exj:"警察は犯罪現場を調査しました。", memo:"investigation（調査）の動詞形。"},
+  {en:"participate",jp:"参加する",         pos:"動詞", ex:"She participated in the debate.", exj:"彼女はディベートに参加しました。", memo:"participate in〜（〜に参加する）が最重要形。participation（参加）も重要。"},
+  {en:"predict",    jp:"予測する",         pos:"動詞", ex:"Scientists can predict earthquakes.", exj:"科学者は地震を予測できます。", memo:"prediction（予測）の動詞形。"},
+  {en:"publish",    jp:"出版する・公表する", pos:"動詞", ex:"She published her first novel last year.", exj:"彼女は昨年初めての小説を出版しました。", memo:"publication（出版物）の動詞形。"},
+  {en:"pursue",     jp:"追求する・追いかける", pos:"動詞", ex:"She pursued her dream of becoming a singer.", exj:"彼女は歌手になるという夢を追求しました。", memo:"pursuit（追求）の動詞形。pursue a goal/dream（目標・夢を追う）は頻出。"},
+  {en:"reject",     jp:"拒否する・却下する", pos:"動詞", ex:"He rejected the offer.", exj:"彼はその申し出を断りました。", memo:"rejection（拒絶）の動詞形。accept（受け入れる）の反意語。"},
+  {en:"remove",     jp:"取り除く・除去する", pos:"動詞", ex:"Please remove your shoes at the door.", exj:"ドアで靴を脱いでください。", memo:"removal（除去）の動詞形。"},
+  {en:"resolve",    jp:"解決する・決意する", pos:"動詞", ex:"They resolved the conflict peacefully.", exj:"彼らは争いを平和的に解決しました。", memo:"resolution（解決・決意）の動詞形。solve も類義語。"},
+  {en:"restore",    jp:"回復させる・修復する", pos:"動詞", ex:"The medicine helped restore her health.", exj:"その薬は彼女の健康回復を助けました。", memo:"restoration（修復）の動詞形。"},
+  {en:"reveal",     jp:"明らかにする",     pos:"動詞", ex:"The investigation revealed the truth.", exj:"調査が真実を明らかにしました。", memo:"revelation（暴露・啓示）の動詞形。"},
+  {en:"strengthen", jp:"強化する・強くなる", pos:"動詞", ex:"Exercise strengthens your muscles.", exj:"運動は筋肉を強化します。", memo:"strength（強さ）の動詞形。strengthen〜 / become stronger。"},
+  {en:"submit",     jp:"提出する",         pos:"動詞", ex:"Please submit your report by Friday.", exj:"金曜日までにレポートを提出してください。", memo:"submission（提出）の動詞形。"},
+  {en:"survive",    jp:"生き残る・乗り越える", pos:"動詞", ex:"She survived the accident.", exj:"彼女はその事故を乗り越えました。", memo:"survival（生存）・survivor（生存者）も同語根。"},
+  {en:"tend",       jp:"〜する傾向がある", pos:"動詞", ex:"She tends to work late.", exj:"彼女は遅くまで働く傾向があります。", memo:"tend to do（〜する傾向がある）が最重要形。tendency（傾向）も重要。"},
+  // ── 形容詞 追加 ──
+  {en:"ambitious",  jp:"野心的な",         pos:"形容詞", ex:"She is an ambitious young leader.", exj:"彼女は野心的な若いリーダーです。", memo:"ambition（野心）の形容詞形。"},
+  {en:"anxious",    jp:"心配している・熱望している", pos:"形容詞", ex:"She is anxious about the exam.", exj:"彼女は試験について心配しています。", memo:"be anxious about〜（〜を心配する）。anxiety（不安）も覚えよう。"},
+  {en:"appropriate",jp:"適切な",           pos:"形容詞", ex:"Please choose appropriate words.", exj:"適切な言葉を選んでください。", memo:"appropriate for〜（〜に適した）。inappropriate（不適切）が反意語。"},
+  {en:"brief",      jp:"短い・簡潔な",     pos:"形容詞", ex:"Please give me a brief explanation.", exj:"簡潔な説明をしてください。", memo:"briefly（簡潔に）・in brief（要するに）も重要。名詞「要約」にもなる。"},
+  {en:"crucial",    jp:"非常に重要な",     pos:"形容詞", ex:"It is crucial to act quickly.", exj:"素早く行動することが非常に重要です。", memo:"critical / vital / essential も類義語。crucial to〜（〜にとって非常に重要）。"},
+  {en:"diverse",    jp:"多様な",           pos:"形容詞", ex:"Our team has diverse backgrounds.", exj:"私たちのチームは多様な背景を持っています。", memo:"diversity（多様性）の形容詞形。"},
+  {en:"dramatic",   jp:"劇的な・大きな",   pos:"形容詞", ex:"There has been a dramatic improvement.", exj:"劇的な改善がありました。", memo:"drama（ドラマ）の形容詞形。dramatically（劇的に）も重要。"},
+  {en:"eager",      jp:"熱心な・熱望している", pos:"形容詞", ex:"She is eager to learn new things.", exj:"彼女は新しいことを学ぶのに熱心です。", memo:"be eager to do（〜したくてたまらない）の形が重要。"},
+  {en:"ethical",    jp:"倫理的な",         pos:"形容詞", ex:"We must make ethical decisions.", exj:"私たちは倫理的な決断をしなければなりません。", memo:"ethics（倫理）の形容詞形。"},
+  {en:"excessive",  jp:"過度な・過剰な",   pos:"形容詞", ex:"Excessive use of smartphones is harmful.", exj:"スマートフォンの過度な使用は有害です。", memo:"exceed（超える）の形容詞形。excessively（過度に）も重要。"},
+  {en:"familiar",   jp:"よく知っている・親しみのある", pos:"形容詞", ex:"Are you familiar with this software?", exj:"このソフトウェアをよく知っていますか？", memo:"be familiar with〜（〜をよく知っている）が最重要形。"},
+  {en:"ideal",      jp:"理想的な",         pos:"形容詞", ex:"This is an ideal opportunity.", exj:"これは理想的な機会です。", memo:"ideally（理想的には）の形容詞形。名詞「理想」にもなる。"},
+  {en:"intense",    jp:"激しい・強烈な",   pos:"形容詞", ex:"The competition was intense.", exj:"競争は激しかったです。", memo:"intensity（強さ・激しさ）の形容詞形。"},
+  {en:"logical",    jp:"論理的な",         pos:"形容詞", ex:"Her argument is very logical.", exj:"彼女の議論はとても論理的です。", memo:"logic（論理）の形容詞形。logically（論理的に）も重要。"},
+  {en:"motivated",  jp:"やる気のある",     pos:"形容詞", ex:"She is highly motivated to succeed.", exj:"彼女は成功しようと非常にやる気があります。", memo:"motivation（動機）の形容詞形。be motivated to do（〜する意欲がある）。"},
+  {en:"mutual",     jp:"相互の・共通の",   pos:"形容詞", ex:"They have a mutual respect for each other.", exj:"彼らはお互いに相互尊重があります。", memo:"mutually（相互に）。mutual understanding（相互理解）も重要。"},
+  {en:"potential",  jp:"潜在的な",         pos:"形容詞", ex:"She has great potential.", exj:"彼女には大きな可能性があります。", memo:"名詞「可能性・潜在力」にもなる。potentially（潜在的に）も重要。"},
+  {en:"reliable",   jp:"信頼できる",       pos:"形容詞", ex:"She is a reliable partner.", exj:"彼女は信頼できるパートナーです。", memo:"rely（頼る）の形容詞形。reliability（信頼性）も覚えよう。"},
+  {en:"relevant",   jp:"関連する・適切な", pos:"形容詞", ex:"Please provide relevant information.", exj:"関連する情報を提供してください。", memo:"be relevant to〜（〜に関連する）の形が重要。irrelevant（無関係な）が反意語。"},
+  {en:"sustainable",jp:"持続可能な",       pos:"形容詞", ex:"We need sustainable energy sources.", exj:"私たちは持続可能なエネルギー源が必要です。", memo:"sustain（維持する）の形容詞形。sustainable development（持続可能な開発）は頻出。"},
+  {en:"urgent",     jp:"緊急の",           pos:"形容詞", ex:"This is an urgent matter.", exj:"これは緊急の案件です。", memo:"urgency（緊急性）の形容詞形。urgently（緊急に）も重要。"},
+  {en:"willing",    jp:"〜する意志がある・いとわない", pos:"形容詞", ex:"Are you willing to help?", exj:"手伝う意志がありますか？", memo:"be willing to do（〜することをいとわない）が最重要形。willingness（意志）も重要。"},
+  // ── 副詞 追加 ──
+  {en:"absolutely", jp:"絶対に・全くその通り", pos:"副詞", ex:"This is absolutely necessary.", exj:"これは絶対に必要です。", memo:"absolute（絶対的な）の副詞形。会話で同意を示すのにも使う（Absolutely!）。"},
+  {en:"accurately", jp:"正確に",           pos:"副詞", ex:"She described the situation accurately.", exj:"彼女は状況を正確に説明しました。", memo:"accurate（正確な）の副詞形。"},
+  {en:"apparently", jp:"どうやら・見たところ", pos:"副詞", ex:"He is apparently very busy.", exj:"どうやら彼はとても忙しいようです。", memo:"apparent（明らかな）の副詞形。It appears that... も同義。"},
+  {en:"briefly",    jp:"簡潔に・短時間",   pos:"副詞", ex:"She briefly explained the plan.", exj:"彼女は計画を簡潔に説明しました。", memo:"brief（簡潔な）の副詞形。in brief（要するに）も重要。"},
+  {en:"consistently",jp:"一貫して",        pos:"副詞", ex:"She consistently gets high scores.", exj:"彼女は一貫して高得点を取っています。", memo:"consistent（一貫した）の副詞形。"},
+  {en:"currently",  jp:"現在・今のところ", pos:"副詞", ex:"She is currently working in Tokyo.", exj:"彼女は現在東京で働いています。", memo:"current（現在の）の副詞形。at present / now も類義語。"},
+  {en:"deeply",     jp:"深く",             pos:"副詞", ex:"He was deeply moved by her speech.", exj:"彼は彼女のスピーチに深く感動しました。", memo:"deep（深い）の副詞形（deeplyは感情的な「深さ」に使うことが多い）。"},
+  {en:"essentially",jp:"本質的に",         pos:"副詞", ex:"The two plans are essentially the same.", exj:"2つの計画は本質的に同じです。", memo:"essential（本質的な）の副詞形。"},
+  {en:"fortunately",jp:"幸いにも",         pos:"副詞", ex:"Fortunately, no one was hurt.", exj:"幸いにも、誰も怪我をしませんでした。", memo:"fortunate（幸運な）の副詞形。unfortunately（残念ながら）が反意語。"},
+  {en:"frequently", jp:"頻繁に",           pos:"副詞", ex:"She frequently visits the library.", exj:"彼女は頻繁に図書館を訪れます。", memo:"frequent（頻繁な）の副詞形。often も類義語。"},
+  {en:"honestly",   jp:"正直に言うと",     pos:"副詞", ex:"Honestly, I don't know the answer.", exj:"正直に言うと、私は答えを知りません。", memo:"honest（正直な）の副詞形。"},
+  {en:"largely",    jp:"主に・大部分",     pos:"副詞", ex:"This is largely due to climate change.", exj:"これは主に気候変動によるものです。", memo:"large（大きい）の副詞形（largely＝mainly）。"},
+  {en:"meanwhile",  jp:"その間・一方で",   pos:"副詞", ex:"She studied. Meanwhile, he cooked dinner.", exj:"彼女は勉強した。一方で彼は夕食を作った。", memo:"mean（平均）＋while（の間）。接続副詞として文頭に来ることが多い。"},
+  {en:"naturally",  jp:"当然・自然に",     pos:"副詞", ex:"Naturally, she was disappointed.", exj:"当然、彼女は失望しました。", memo:"natural（自然な）の副詞形。of course も類義語。"},
+  {en:"otherwise",  jp:"そうでなければ・それ以外では", pos:"副詞", ex:"Hurry up, otherwise you'll miss the bus.", exj:"急いで、そうでないとバスに乗り遅れますよ。", memo:"接続副詞として「さもなければ」の意味で使う。"},
+  {en:"previously", jp:"以前に",           pos:"副詞", ex:"She previously worked in London.", exj:"彼女は以前ロンドンで働いていました。", memo:"previous（以前の）の副詞形。before も類義語。"},
+  {en:"properly",   jp:"適切に・ちゃんと", pos:"副詞", ex:"Please do the job properly.", exj:"仕事をちゃんとしてください。", memo:"proper（適切な）の副詞形。"},
+  {en:"thoroughly", jp:"徹底的に",         pos:"副詞", ex:"She studied the topic thoroughly.", exj:"彼女はそのトピックを徹底的に研究しました。", memo:"thorough（徹底的な）の副詞形（thoroughはghを発音しない）。"},
+  {en:"unfortunately",jp:"残念ながら",     pos:"副詞", ex:"Unfortunately, I couldn't attend.", exj:"残念ながら、参加できませんでした。", memo:"fortunately（幸いにも）の反意語。"},
+  {en:"virtually",  jp:"事実上・ほとんど", pos:"副詞", ex:"This problem is virtually impossible.", exj:"この問題は事実上不可能です。", memo:"virtual（仮想の）の副詞形。"},
+  // ── 前置詞（単語テスト用）──
+  {en:"according to",jp:"〜によると",     pos:"前置詞", ex:"According to the report, sales increased.", exj:"報告によると、売上は増加しました。", memo:"according to〜（〜によると）は情報の出典を示す。×according with は不可。"},
+  {en:"across",     jp:"〜を渡って・〜の向こうに", pos:"前置詞", ex:"She walked across the bridge.", exj:"彼女は橋を渡って歩きました。", memo:"「横切って」のイメージ。come across〜（〜に偶然出会う）も重要。"},
+  {en:"against",    jp:"〜に反対して・〜に対して", pos:"前置詞", ex:"Are you for or against the plan?", exj:"その計画に賛成ですか、反対ですか？", memo:"for（賛成）の反意語。against the rules（規則違反）も覚えよう。"},
+  {en:"along",      jp:"〜に沿って",       pos:"前置詞", ex:"We walked along the river.", exj:"私たちは川沿いを歩きました。", memo:"「長い線に沿って」のイメージ。get along（うまくやっていく）も重要。"},
+  {en:"among",      jp:"〜の中で（3つ以上）", pos:"前置詞", ex:"She was popular among her classmates.", exj:"彼女はクラスメートの中で人気がありました。", memo:"between（2者の間）との違いに注意。3つ以上のものの「中で」はamong。"},
+  {en:"around",     jp:"〜の周りに・約",   pos:"前置詞", ex:"There are trees around the house.", exj:"家の周りに木があります。", memo:"「囲んで」のイメージ。副詞「約」の意味にもなる（around 100 people）。"},
+  {en:"as",         jp:"〜として・〜のとき", pos:"前置詞", ex:"She works as a teacher.", exj:"彼女は教師として働いています。", memo:"接続詞・副詞にもなる多義語。as a result（結果として）も頻出。"},
+  {en:"despite",    jp:"〜にもかかわらず", pos:"前置詞", ex:"Despite the rain, they played outside.", exj:"雨にもかかわらず、彼らは外で遊びました。", memo:"in spite of〜 も同義。後ろに名詞・動名詞が続く（×despite of は誤り）。"},
+  {en:"due to",     jp:"〜のために・〜が原因で", pos:"前置詞", ex:"The flight was delayed due to fog.", exj:"フライトは霧のために遅延しました。", memo:"because of〜 も同義。due to〜は名詞・動名詞が続く。"},
+  {en:"except",     jp:"〜を除いて",       pos:"前置詞", ex:"Everyone came except Tom.", exj:"トムを除いて全員来ました。", memo:"except for〜 も同義。but（=except）も同じ意味になることがある。"},
+  {en:"instead of", jp:"〜の代わりに",     pos:"前置詞", ex:"She drank water instead of coffee.", exj:"彼女はコーヒーの代わりに水を飲みました。", memo:"instead（代わりに）の副詞形と区別。instead of〜の後は名詞・動名詞。"},
+  {en:"onto",       jp:"〜の上に（移動）",  pos:"前置詞", ex:"The cat jumped onto the table.", exj:"猫はテーブルの上に飛び乗りました。", memo:"on（場所）との違いに注意。ontoは「上に移動する」動作を表す。"},
+  {en:"throughout", jp:"〜を通じて・〜の間ずっと", pos:"前置詞", ex:"He studied throughout the night.", exj:"彼は一晩中勉強しました。", memo:"through＋out。全体を通してのイメージ。"},
+  {en:"toward",     jp:"〜に向かって",     pos:"前置詞", ex:"She walked toward the exit.", exj:"彼女は出口に向かって歩きました。", memo:"towardsも同義。方向・傾向を表す。attitude toward〜（〜への態度）も重要。"},
+  {en:"within",     jp:"〜以内に・〜の中で", pos:"前置詞", ex:"Please finish within an hour.", exj:"1時間以内に終わらせてください。", memo:"within a week（1週間以内に）・within reach（手の届く範囲に）も重要。"},
+  {en:"without",    jp:"〜なしに",         pos:"前置詞", ex:"She left without saying goodbye.", exj:"彼女は別れを告げずに去りました。", memo:"with（〜と一緒に）の反意語。without -ing（〜せずに）の形が頻出。"},
+  // ── 接続詞（単語テスト用）──
+  {en:"although",   jp:"〜にもかかわらず・〜だけれども", pos:"接続詞", ex:"Although it was cold, she went out.", exj:"寒かったけれど、彼女は外出しました。", memo:"though / even though も類義語。接続詞なので後ろにS＋Vが続く。"},
+  {en:"as long as", jp:"〜する限り・〜である限り", pos:"接続詞", ex:"You can stay as long as you want.", exj:"好きなだけいていいですよ。", memo:"条件を表す接続詞。as long as you study（勉強する限り）のように使う。"},
+  {en:"as soon as", jp:"〜するとすぐに",   pos:"接続詞", ex:"Call me as soon as you arrive.", exj:"到着したらすぐに電話してください。", memo:"時を表す接続詞。as soon as＋S＋V（〜するとすぐ）。未来の内容でも現在形を使う。"},
+  {en:"as well as", jp:"〜だけでなく…も",  pos:"接続詞", ex:"She speaks English as well as French.", exj:"彼女は英語だけでなくフランス語も話します。", memo:"B as well as A（AだけでなくBも）の語順に注意。not only...but also も類義語。"},
+  {en:"even if",    jp:"たとえ〜でも",     pos:"接続詞", ex:"Even if it rains, we will go.", exj:"たとえ雨が降っても、私たちは行きます。", memo:"even though（実際に〜なのに）との違いに注意。even ifは仮定の意味が強い。"},
+  {en:"even though",jp:"〜にもかかわらず（実際に）", pos:"接続詞", ex:"Even though he was tired, he kept working.", exj:"疲れていたにもかかわらず、彼は働き続けました。", memo:"even if（仮定）との違いに注意。even thoughは実際に起きていることに使う。"},
+  {en:"in case",    jp:"〜の場合に備えて", pos:"接続詞", ex:"Take an umbrella in case it rains.", exj:"雨が降る場合に備えて傘を持っていきなさい。", memo:"in case〜（〜に備えて）。just in case（念のために）も重要。"},
+  {en:"now that",   jp:"今や〜なので",     pos:"接続詞", ex:"Now that you've graduated, what's your plan?", exj:"今や卒業したので、計画は何ですか？", memo:"since（〜なので）と似ているが、状況の変化を強調するときに使う。"},
+  {en:"provided",   jp:"〜という条件で",   pos:"接続詞", ex:"I'll help you, provided you work hard.", exj:"あなたが一生懸命働くという条件で手伝います。", memo:"provided that / providing that も同義。if の書き言葉バージョン。"},
+  {en:"so that",    jp:"〜するために・〜するように", pos:"接続詞", ex:"She studied hard so that she could pass.", exj:"合格できるよう一生懸命勉強しました。", memo:"in order that〜 も同義。so that S can/could doの形が頻出。"},
+  {en:"unless",     jp:"〜しない限り",     pos:"接続詞", ex:"You'll fail unless you study.", exj:"勉強しない限り、失敗するでしょう。", memo:"if not と同義。unless＝if〜not（〜しなければ）。"},
+  {en:"whereas",    jp:"〜である一方",     pos:"接続詞", ex:"She likes tea, whereas he prefers coffee.", exj:"彼女はお茶が好きである一方、彼はコーヒーを好む。", memo:"対比を表す接続詞。while も同義で使えるが、whereasの方が書き言葉的。"},
+  {en:"whether",    jp:"〜かどうか",       pos:"接続詞", ex:"I don't know whether she will come.", exj:"彼女が来るかどうかわかりません。", memo:"if と区別：whetherは選択肢がある場合。whether A or B（AかBか）の形も重要。"},
+  {en:"while",      jp:"〜している間・〜である一方", pos:"接続詞", ex:"She listened to music while studying.", exj:"彼女は勉強しながら音楽を聴いていました。", memo:"2つの意味を持つ接続詞。「同時」と「対比」のどちらかを文脈で判断しよう。"},
+];
+
+// ════════════════════════════════════
+// VOCAB STATE
+// ════════════════════════════════════
+let vFilter  = 'all';
+let vDir     = 'en';     // 'en'→jp, 'jp'→en
+let vCount   = 30;
+let vQuestions = [];
+let vIdx     = 0;
+let vOk      = 0;
+let vNg      = 0;
+let vMisses  = [];
+let vAnswered = false;
+
+function setVFilter(f) {
+  vFilter = f;
+  document.querySelectorAll('.vf-btn').forEach(b => b.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  const pool = f === 'all' ? VOCAB : VOCAB.filter(v => v.pos === f);
+  document.getElementById('vpCountBadge').textContent = pool.length + '語';
+}
+
+function setVDir(d) {
+  vDir = d;
+  document.getElementById('vdir-en').classList.toggle('active', d==='en');
+  document.getElementById('vdir-jp').classList.toggle('active', d==='jp');
+}
+
+function setVCount(n) {
+  vCount = n;
+  ['10','20','30','50'].forEach(x => document.getElementById('vn'+x).classList.toggle('active', x==n));
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length-1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+
+function startVocab() {
+  const pool = vFilter === 'all' ? [...VOCAB] : VOCAB.filter(v => v.pos === vFilter);
+  if (pool.length === 0) return;
+  vQuestions = shuffle(pool).slice(0, Math.min(vCount, pool.length));
+  vIdx = 0; vOk = 0; vNg = 0; vMisses = []; vAnswered = false;
+  renderVocabQ();
+}
+
+function renderVocabQ() {
+  const body = document.getElementById('vpBody');
+  if (vIdx >= vQuestions.length) { renderVocabResult(); return; }
+
+  const q = vQuestions[vIdx];
+  const pct = Math.round((vIdx / vQuestions.length) * 100);
+
+  // build 4 choices: 1 correct + 3 random wrongs
+  const posColor = {名詞:'#4ecdc4',動詞:'#ff6b9d',形容詞:'#e6a800',副詞:'#a29bfe'}[q.pos] || '#aaa';
+  const same = VOCAB.filter(v => v !== q);
+  const wrongs = shuffle(same).slice(0, 3);
+  const allChoices = shuffle([q, ...wrongs]);
+
+  body.innerHTML = `
+    <div class="vq-progress-row">
+      <span class="vq-prog-label">Q${vIdx+1} / ${vQuestions.length}</span>
+      <div class="vq-prog-bar"><div class="vq-prog-fill" style="width:${pct}%"></div></div>
+      <span class="vq-prog-label" style="color:var(--mint)">✅${vOk}</span>
+    </div>
+
+    <div class="vq-card">
+      <div class="vq-mode-label">${vDir==='en' ? '次の英単語の意味は？' : '次の意味に当てはまる英単語は？'}</div>
+      <div class="vq-word">${vDir==='en' ? q.en : q.jp}</div>
+      <span class="vq-pos-badge" style="color:${posColor};border-color:${posColor};background:${posColor}18">${q.pos}</span>
+      ${vDir==='en' ? `<div class="vq-ex">${q.ex}<div class="vq-ex-jp">${q.exj}</div></div>` : ''}
+    </div>
+
+    <div class="vq-choices">
+      ${allChoices.map(c => {
+        const label = vDir==='en' ? c.jp : c.en;
+        return `<button class="vq-choice" onclick="answerVocab(this,'${c.en}')">${label}</button>`;
+      }).join('')}
+    </div>
+
+    <div class="vq-reveal" id="vqReveal"></div>
+  `;
+}
+
+function answerVocab(btn, selectedEn) {
+  if (vAnswered) return;
+  vAnswered = true;
+  const q = vQuestions[vIdx];
+  const ok = selectedEn === q.en;
+
+  document.querySelectorAll('.vq-choice').forEach(b => {
+    b.disabled = true;
+    const bEn = vDir==='en'
+      ? Object.values(VOCAB.reduce((acc,v)=>{acc[v.jp]=v;return acc;},{})).find(v=>v.jp===b.textContent)?.en || b.textContent
+      : b.textContent;
+    if (b === btn && ok)  b.classList.add('correct');
+    if (b === btn && !ok) b.classList.add('wrong');
+    // highlight the correct one
+    const isCorrect = vDir==='en' ? b.textContent===q.jp : b.textContent===q.en;
+    if (!ok && isCorrect) b.classList.add('correct');
+  });
+
+  if (ok) vOk++; else { vNg++; vMisses.push(q); }
+
+  const posColor = {名詞:'#4ecdc4',動詞:'#ff6b9d',形容詞:'#e6a800',副詞:'#a29bfe'}[q.pos]||'#aaa';
+  const reveal = document.getElementById('vqReveal');
+  const isLast = vIdx === vQuestions.length - 1;
+  reveal.innerHTML = `
+    <div class="vq-reveal-title">${ok ? '✅ 正解！' : '❌ 不正解'}</div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <div class="vq-reveal-ans">${q.en}</div>
+      <div style="font-size:.9rem;font-weight:900;color:var(--ink)">＝ ${q.jp}</div>
+      <span style="font-size:.68rem;font-weight:900;padding:2px 9px;border-radius:20px;border:2px solid;color:${posColor};border-color:${posColor};background:${posColor}18">${q.pos}</span>
+    </div>
+    <div class="vq-reveal-memo">💡 ${q.memo}</div>
+    ${vDir==='jp' ? `<div class="vq-ex" style="margin-top:4px">${q.ex}<div class="vq-ex-jp">${q.exj}</div></div>` : ''}
+    <button class="vq-next-btn" onclick="nextVocab()">${isLast ? '📊 結果を見る' : '次へ →'}</button>
+  `;
+  reveal.classList.add('show');
+  setTimeout(()=>reveal.scrollIntoView({behavior:'smooth',block:'nearest'}),80);
+}
+
+function nextVocab() {
+  vIdx++;
+  vAnswered = false;
+  renderVocabQ();
+}
+
+function renderVocabResult() {
+  const total = vQuestions.length;
+  const pct = Math.round(vOk / total * 100);
+  const data = pct===100?{e:'🏆',t:'PERFECT!!'}:pct>=80?{e:'🎉',t:'EXCELLENT!'}:pct>=60?{e:'😊',t:'GOOD JOB!'}:{e:'😅',t:'もう一回！'};
+
+  const missHTML = vMisses.length === 0
+    ? '<div style="text-align:center;color:#2d9e50;font-weight:900;font-size:.88rem;padding:10px">全問正解！完璧です🎉</div>'
+    : vMisses.map(q=>`
+        <div class="vq-miss-item">
+          <span class="vq-miss-en">${q.en}</span>
+          <span class="vq-miss-jp">${q.jp}</span>
+          <span class="vq-miss-pos">[${q.pos}]</span>
+        </div>`).join('');
+
+  document.getElementById('vpBody').innerHTML = `
+    <div class="vq-result show">
+      <div class="vq-result-emoji">${data.e}</div>
+      <div class="vq-result-title">${data.t}</div>
+      <div class="vq-result-score">${vOk}<span style="font-size:1.5rem;color:var(--muted)"> / ${total}</span></div>
+      <div class="vq-result-stats">
+        <div class="vq-stat-box"><div class="vq-stat-label">正解 ✅</div><div class="vq-stat-val" style="color:var(--sky)">${vOk}</div></div>
+        <div class="vq-stat-box"><div class="vq-stat-label">ミス ❌</div><div class="vq-stat-val" style="color:var(--pink)">${vNg}</div></div>
+        <div class="vq-stat-box"><div class="vq-stat-label">正答率 📊</div><div class="vq-stat-val" style="color:var(--orange)">${pct}%</div></div>
+        <div class="vq-stat-box"><div class="vq-stat-label">出題数</div><div class="vq-stat-val" style="color:var(--purple)">${total}</div></div>
+      </div>
+      <div style="font-size:.72rem;font-weight:900;color:var(--muted);text-align:center;width:100%;max-width:480px">間違えた単語 📝</div>
+      <div class="vq-miss-list" style="max-height:220px;overflow-y:auto">${missHTML}</div>
+      <button class="vq-restart-btn" onclick="startVocab()">🔄 もう一度！</button>
+      <button onclick="goSelect()" style="background:var(--white);border:2px solid var(--border);border-radius:12px;color:var(--muted);font-family:'M PLUS Rounded 1c',sans-serif;font-size:.8rem;font-weight:700;padding:10px 20px;cursor:pointer;max-width:280px;width:100%;box-shadow:0 3px 0 var(--border)">← 設定を変える</button>
+    </div>
+  `;
+  if(pct>=80)confetti();
+}
+
+function goSelect() {
+  document.getElementById('vpBody').innerHTML = `
+    <div style="text-align:center;color:var(--muted);font-size:.85rem;font-weight:700;padding:30px 0">
+      設定を選んで「スタート！」を押してね 🎉
+    </div>`;
+}
+</script>
+
+<!-- ══════════════════════════════════
+     GRAMMAR PAGE CSS
+══════════════════════════════════ -->
+<style>
+#grammarPage { background: var(--bg); }
+
+.gp-header {
+  background: var(--white); border-bottom: 2px solid var(--border);
+  padding: 14px 16px 12px; position: sticky; top: 0; z-index: 50;
+  box-shadow: 0 2px 12px rgba(100,80,160,.08);
+}
+.gp-title-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.gp-title { font-family:'Fredoka',sans-serif; font-size:1.3rem; font-weight:700; color:var(--mint); }
+.gp-pool-badge {
+  font-family:'Fredoka',sans-serif; font-size:.75rem; font-weight:600;
+  background:#edfff2; border:2px solid var(--mint); border-radius:20px;
+  padding:2px 10px; color:#2d9e50; margin-left:auto;
+}
+.gp-level-row { display:flex; gap:8px; margin-bottom:8px; }
+.gl-btn {
+  flex:1; font-family:'M PLUS Rounded 1c',sans-serif; font-size:.78rem; font-weight:900;
+  padding:9px; border-radius:var(--radius-sm); border:2.5px solid var(--border);
+  background:var(--bg); color:var(--muted); cursor:pointer; transition:all .18s;
+}
+.gl-btn.jhs.active  { border-color:var(--sky);  background:#e8fafb; color:var(--sky); }
+.gl-btn.shs.active  { border-color:var(--pink); background:#fff0f6; color:var(--pink); }
+.gl-btn.mix2.active { border-color:var(--mint); background:#edfff2; color:#2d9e50; }
+.gp-count-row { display:flex; gap:6px; }
+.gc-btn {
+  flex:1; font-family:'Fredoka',sans-serif; font-size:.88rem; font-weight:600;
+  padding:7px; border-radius:var(--radius-sm); border:2px solid var(--border);
+  background:var(--bg); color:var(--muted); cursor:pointer; transition:all .18s;
+}
+.gc-btn.active { border-color:var(--mint); background:#edfff2; color:#2d9e50; }
+.gp-start-row { text-align:right; margin-top:8px; }
+.gp-start-btn {
+  background:linear-gradient(135deg,#4ecdc4,#2db8b0); border:none; border-radius:20px;
+  color:var(--white); font-family:'M PLUS Rounded 1c',sans-serif;
+  font-size:.82rem; font-weight:900; padding:7px 20px; cursor:pointer;
+  box-shadow:0 3px 0 #2a9990; transition:all .18s;
+}
+.gp-start-btn:hover { transform:translateY(-2px); box-shadow:0 5px 0 #2a9990; }
+
+/* quiz body */
+.gp-body { padding:16px 14px 28px; max-width:700px; margin:0 auto; display:flex; flex-direction:column; gap:14px; }
+
+.gq-prog-row { display:flex; align-items:center; gap:10px; }
+.gq-prog-label { font-size:.72rem; font-weight:900; color:var(--muted); white-space:nowrap; }
+.gq-prog-bar { flex:1; height:6px; background:var(--border); border-radius:4px; overflow:hidden; }
+.gq-prog-fill {
+  height:100%; background:linear-gradient(90deg,var(--sky),var(--mint));
+  transition:width .4s cubic-bezier(.34,1.56,.64,1); border-radius:4px;
+}
+
+/* question card */
+.gq-card {
+  background:var(--white); border:2.5px solid var(--border);
+  border-radius:var(--radius-lg); padding:18px 18px 16px;
+  box-shadow:var(--sh); position:relative; overflow:hidden;
+}
+.gq-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:4px;
+  background:linear-gradient(90deg,var(--sky),var(--mint),var(--yellow));
+}
+.gq-meta { display:flex; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap; }
+.gq-level-badge {
+  font-family:'Fredoka',sans-serif; font-size:.68rem; font-weight:600;
+  padding:2px 10px; border-radius:20px; border:2px solid;
+}
+.gq-level-badge.jhs  { background:#e8fafb; color:var(--sky);  border-color:var(--sky); }
+.gq-level-badge.shs  { background:#fff0f6; color:var(--pink); border-color:var(--pink); }
+.gq-type-badge {
+  font-family:'Fredoka',sans-serif; font-size:.65rem; font-weight:600;
+  padding:2px 9px; border-radius:20px; border:1.5px solid var(--border);
+  color:var(--muted); background:var(--bg);
+}
+.gq-num { font-family:'Fredoka',sans-serif; font-size:.72rem; color:var(--muted); margin-left:auto; }
+.gq-question {
+  font-size:clamp(.9rem,3vw,1.05rem); font-weight:700; line-height:2;
+  color:var(--ink); word-break:break-word;
+}
+.gq-blank {
+  display:inline-block; min-width:60px; border-bottom:3px solid var(--sky);
+  color:var(--sky); font-family:'Fredoka',sans-serif; font-size:1.1em;
+  text-align:center; padding:0 4px; letter-spacing:1px;
+}
+.gq-hint {
+  font-size:.75rem; color:var(--muted); font-weight:700; margin-top:8px;
+  background:var(--bg); border-radius:var(--radius-sm); padding:6px 10px;
+  border:1.5px dashed var(--border);
+}
+
+/* choices */
+.gq-choices { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+.gq-choice {
+  background:var(--white); border:2.5px solid var(--border);
+  border-radius:var(--radius-md); padding:13px 10px;
+  font-family:'M PLUS Rounded 1c',sans-serif; font-size:.86rem; font-weight:900;
+  color:var(--ink); cursor:pointer; transition:all .16s;
+  box-shadow:0 3px 0 var(--border); text-align:center; line-height:1.5;
+}
+.gq-choice:hover { transform:translateY(-2px); box-shadow:0 5px 0 var(--border); border-color:var(--sky); color:var(--sky); }
+.gq-choice:active { transform:translateY(1px); box-shadow:0 1px 0 var(--border); }
+.gq-choice.correct { border-color:var(--mint)!important; background:#edfff2!important; color:#2d9e50!important; box-shadow:0 3px 0 #86c99a!important; animation:bounce-correct .4s ease; }
+.gq-choice.wrong   { border-color:var(--coral)!important; background:#fff0ef!important; color:var(--coral)!important; box-shadow:0 3px 0 #e5a0a0!important; animation:shake-wrong .4s ease; }
+
+/* explanation */
+.gq-explain {
+  background:var(--white); border:2.5px solid var(--border);
+  border-radius:var(--radius-lg); padding:15px 17px;
+  box-shadow:var(--sh); display:none; flex-direction:column; gap:10px;
+  animation:slide-up .25s ease;
+}
+.gq-explain.show { display:flex; }
+.gq-explain-ok   { border-color:var(--mint)!important; }
+.gq-explain-ng   { border-color:var(--coral)!important; }
+.gq-explain-verdict { font-family:'Fredoka',sans-serif; font-size:.78rem; font-weight:700; }
+.gq-explain-ans {
+  font-family:'Fredoka',sans-serif; font-size:1.1rem; font-weight:700;
+  color:var(--sky); background:#e8fafb; border-radius:var(--radius-sm);
+  padding:7px 12px; border:2px solid var(--sky);
+}
+.gq-explain-body {
+  font-size:.79rem; color:var(--ink); font-weight:700; line-height:1.85;
+  background:#fffae8; border:2px dashed var(--yellow);
+  border-radius:var(--radius-sm); padding:9px 12px;
+}
+.gq-next-btn {
+  padding:13px; border:none; border-radius:var(--radius-md);
+  font-family:'M PLUS Rounded 1c',sans-serif; font-size:.9rem; font-weight:900;
+  background:linear-gradient(135deg,var(--sky),#2db8b0);
+  color:var(--white); cursor:pointer; transition:all .2s;
+  box-shadow:0 4px 0 #2a9990;
+}
+.gq-next-btn:hover { transform:translateY(-2px); box-shadow:0 6px 0 #2a9990; }
+.gq-next-btn:active { transform:translateY(1px); box-shadow:0 1px 0 #2a9990; }
+
+/* result */
+.gq-result { display:flex; flex-direction:column; align-items:center; gap:14px; padding:10px 0; }
+.gq-result-emoji { font-size:3.5rem; animation:bounce-in .6s cubic-bezier(.34,1.56,.64,1); }
+.gq-result-title { font-family:'Fredoka',sans-serif; font-size:1.8rem; font-weight:700; text-align:center; }
+.gq-result-score { font-family:'Fredoka',sans-serif; font-size:clamp(3rem,10vw,4.5rem); font-weight:700; color:var(--sky); text-shadow:3px 3px 0 rgba(78,205,196,.2); }
+.gq-result-stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; max-width:300px; }
+.gq-sbox { background:var(--white); border:2.5px solid var(--border); border-radius:var(--radius-md); padding:12px 8px; text-align:center; box-shadow:0 3px 0 var(--border); }
+.gq-slabel { font-size:.6rem; font-weight:900; color:var(--muted); letter-spacing:1px; text-transform:uppercase; margin-bottom:3px; }
+.gq-sval { font-family:'Fredoka',sans-serif; font-size:1.4rem; font-weight:700; }
+
+/* review list */
+.gq-review-list { width:100%; display:flex; flex-direction:column; gap:8px; max-height:260px; overflow-y:auto; }
+.gq-review-item {
+  background:var(--white); border:2px solid var(--border); border-left:4px solid var(--coral);
+  border-radius:var(--radius-sm); padding:10px 13px;
+  box-shadow:0 2px 0 var(--border); font-size:.78rem; line-height:1.7;
+}
+.gq-ri-q { font-weight:700; color:var(--ink); margin-bottom:3px; }
+.gq-ri-wrong { color:var(--coral); text-decoration:line-through; font-size:.75rem; }
+.gq-ri-ans { color:#2d9e50; font-weight:900; }
+.gq-restart-btn {
+  width:100%; max-width:280px; padding:14px; border:none; border-radius:var(--radius-md);
+  font-family:'M PLUS Rounded 1c',sans-serif; font-size:.92rem; font-weight:900;
+  background:linear-gradient(135deg,var(--sky),var(--mint));
+  color:var(--white); cursor:pointer; transition:all .2s; box-shadow:0 5px 0 #2a9990;
+}
+.gq-restart-btn:hover { transform:translateY(-2px); box-shadow:0 7px 0 #2a9990; }
+</style>
+
+<!-- ══════════════════════════════════
+     GRAMMAR PAGE HTML
+══════════════════════════════════ -->
+<div class="page" id="grammarPage">
+  <div class="gp-header">
+    <div class="gp-title-row">
+      <div class="gp-title">📐 文法問題</div>
+      <div class="gp-pool-badge" id="gpPoolBadge">0問</div>
+    </div>
+    <div class="gp-level-row">
+      <button class="gl-btn jhs active" onclick="setGLevel('jhs')">🏫 中学レベル</button>
+      <button class="gl-btn shs"        onclick="setGLevel('shs')">🎓 高校1年レベル</button>
+      <button class="gl-btn mix2"       onclick="setGLevel('mix')">⚡ ミックス</button>
+    </div>
+    <div class="gp-count-row">
+      <button class="gc-btn active" id="gn10"  onclick="setGCount(10)">10問</button>
+      <button class="gc-btn"        id="gn20"  onclick="setGCount(20)">20問</button>
+      <button class="gc-btn"        id="gn30"  onclick="setGCount(30)">30問</button>
+      <button class="gc-btn"        id="gn50"  onclick="setGCount(50)">50問</button>
+    </div>
+    <div class="gp-start-row">
+      <button class="gp-start-btn" onclick="startGrammar()">▶ スタート！</button>
+    </div>
+  </div>
+  <div class="gp-body" id="gpBody">
+    <div style="text-align:center;color:var(--muted);font-size:.85rem;font-weight:700;padding:30px 0">
+      レベルと問題数を選んで「スタート！」を押してね 📐
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════
+// GRAMMAR QUESTIONS DATA
+// level: 'jhs'=中学 'shs'=高校1年
+// type: 'blank'=空所補充 'error'=誤文訂正 'order'=整序
+// q: 問題文（___が空所）
+// choices: 4択
+// ans: 正解
+// explain: 解説
+// ════════════════════════════════════
+const GRAMMAR_Q = [
+
+  // ════════════ 中学レベル ════════════
+
+  // ── be動詞 ──
+  {level:'jhs', type:'blank', q:"I ___ a student.", choices:["am","is","are","be"], ans:"am", explain:"主語がIのとき be動詞はam。 you→are, he/she/it→is, we/they→are を覚えよう。"},
+  {level:'jhs', type:'blank', q:"She ___ from Japan.", choices:["is","am","are","be"], ans:"is", explain:"主語がShe（三人称単数）のとき be動詞はis。"},
+  {level:'jhs', type:'blank', q:"We ___ students.", choices:["are","is","am","be"], ans:"are", explain:"主語がWe（複数）のとき be動詞はare。"},
+  {level:'jhs', type:'blank', q:"They ___ happy.", choices:["are","is","am","was"], ans:"are", explain:"主語がThey（複数）のとき be動詞はare。"},
+  {level:'jhs', type:'blank', q:"He ___ at home yesterday.", choices:["was","is","were","be"], ans:"was", explain:"過去形：I/he/she/it → was、you/we/they → were。yesterdayは過去のサイン。"},
+  {level:'jhs', type:'blank', q:"You ___ very kind.", choices:["are","is","am","be"], ans:"are", explain:"主語がYouのとき be動詞はare（現在形）。"},
+
+  // ── 一般動詞・三単現 ──
+  {level:'jhs', type:'blank', q:"She ___ English every day.", choices:["studies","study","studying","studied"], ans:"studies", explain:"主語が三人称単数（She）＋現在形 → 動詞に-s/-esをつける。study→studiesと-yをiに変えて-esを加える。"},
+  {level:'jhs', type:'blank', q:"He ___ soccer on weekends.", choices:["plays","play","playing","played"], ans:"plays", explain:"主語がHe（三人称単数）＋現在形 → plays（play＋s）。"},
+  {level:'jhs', type:'blank', q:"My father ___ to work by train.", choices:["goes","go","going","went"], ans:"goes", explain:"go→goesと-esをつける特殊形。三単現の-s/-esに注意。"},
+  {level:'jhs', type:'blank', q:"She does not ___ meat.", choices:["eat","eats","eating","ate"], ans:"eat", explain:"does not（否定）の後は動詞の原形。×eatsではなくeat。"},
+  {level:'jhs', type:'blank', q:"___ he play tennis?", choices:["Does","Do","Is","Are"], ans:"Does", explain:"三人称単数（he）の疑問文はDoes〜?。Does he play...の形に注意（playに-sはつかない）。"},
+
+  // ── 過去形 ──
+  {level:'jhs', type:'blank', q:"I ___ a book last night.", choices:["read","reads","reading","am reading"], ans:"read", explain:"last nightは過去のサイン。readの過去形もread（発音はレッド）。"},
+  {level:'jhs', type:'blank', q:"She ___ to Tokyo yesterday.", choices:["went","goes","go","going"], ans:"went", explain:"yesterdayは過去のサイン。goの過去形はwent（不規則変化）。"},
+  {level:'jhs', type:'blank', q:"They ___ dinner together.", choices:["had","have","has","having"], ans:"had", explain:"過去の文でhaveの過去形はhad。"},
+  {level:'jhs', type:'blank', q:"He ___ his homework last night.", choices:["did","do","does","doing"], ans:"did", explain:"last nightは過去のサイン。doの過去形はdid（不規則変化）。"},
+  {level:'jhs', type:'blank', q:"___ you watch TV last night?", choices:["Did","Do","Were","Was"], ans:"Did", explain:"一般動詞の過去疑問文はDid〜?。Didの後は動詞の原形（watch）。"},
+
+  // ── 進行形 ──
+  {level:'jhs', type:'blank', q:"She ___ English now.", choices:["is studying","studies","studied","study"], ans:"is studying", explain:"nowは進行形のサイン。be動詞＋〜ingで「〜しているところ」を表す。She→is studying。"},
+  {level:'jhs', type:'blank', q:"They ___ in the park at that time.", choices:["were playing","played","play","are playing"], ans:"were playing", explain:"at that timeは過去の特定時点。過去進行形：were/was＋〜ing。"},
+  {level:'jhs', type:'blank', q:"What ___ you doing now?", choices:["are","is","do","were"], ans:"are", explain:"主語がyou＋現在進行形 → are〜ing。What are you doing?は定番フレーズ。"},
+
+  // ── 助動詞 ──
+  {level:'jhs', type:'blank', q:"You ___ study harder.", choices:["should","are","do","have"], ans:"should", explain:"shouldは「〜すべき」という助言・義務を表す助動詞。後ろは動詞の原形。"},
+  {level:'jhs', type:'blank', q:"She ___ speak French.", choices:["can","is","does","will"], ans:"can", explain:"canは「〜できる」という能力を表す助動詞。後ろは動詞の原形。"},
+  {level:'jhs', type:'blank', q:"___ I use your pen?", choices:["May","Does","Is","Was"], ans:"May", explain:"Mayは「〜してもよいですか」という許可を求める表現。May I〜?は丁寧な許可要求。"},
+  {level:'jhs', type:'blank', q:"It ___ rain tomorrow.", choices:["may","is","does","was"], ans:"may", explain:"mayは「〜かもしれない」という可能性も表す。mightより確率がやや高い。"},
+
+  // ── 不定詞・動名詞 ──
+  {level:'jhs', type:'blank', q:"I want ___ go to Kyoto.", choices:["to","of","for","at"], ans:"to", explain:"want to do（〜したい）。want の後はto不定詞（to＋動詞原形）。"},
+  {level:'jhs', type:'blank', q:"She likes ___ music.", choices:["listening to","listen","listens","listened"], ans:"listening to", explain:"like -ing（〜するのが好き）。likeの後は動名詞（〜ing）。listen to〜（〜を聞く）もセット。"},
+  {level:'jhs', type:'blank', q:"He is good at ___ soccer.", choices:["playing","play","played","to play"], ans:"playing", explain:"be good at -ing（〜するのが得意）。前置詞atの後は動名詞（〜ing）。"},
+  {level:'jhs', type:'blank', q:"I enjoy ___ with friends.", choices:["talking","talk","to talk","talked"], ans:"talking", explain:"enjoy -ing（〜するのを楽しむ）。enjoyの後は動名詞（〜ing）。×enjoy to talk は誤り。"},
+  {level:'jhs', type:'blank', q:"She decided ___ study abroad.", choices:["to","of","at","on"], ans:"to", explain:"decide to do（〜することを決める）。decideの後はto不定詞。"},
+
+  // ── 比較 ──
+  {level:'jhs', type:'blank', q:"This book is ___ than that one.", choices:["more interesting","interestinger","most interesting","interesting"], ans:"more interesting", explain:"長い形容詞（interesting）の比較級はmore〜を使う。×interestinger は不可。"},
+  {level:'jhs', type:'blank', q:"She is the ___ student in the class.", choices:["tallest","taller","more tall","most tall"], ans:"tallest", explain:"最上級はthe 〜estを使う（短い形容詞）。tall→tallest。the〜estの形に注意。"},
+  {level:'jhs', type:'blank', q:"He runs ___ than I do.", choices:["faster","more fast","fastest","fast"], ans:"faster", explain:"短い形容詞・副詞の比較級は〜erを使う。fast→faster。"},
+  {level:'jhs', type:'blank', q:"This is ___ city in Japan.", choices:["the largest","larger","the large","most large"], ans:"the largest", explain:"最上級はthe〜estの形。large→largestとeを落として〜stにする。"},
+
+  // ── 受動態 ──
+  {level:'jhs', type:'blank', q:"English ___ in many countries.", choices:["is spoken","speaks","spoke","speaking"], ans:"is spoken", explain:"受動態：be動詞＋過去分詞（PP）。「英語が話される」はis spoken。speak→spoke→spoken。"},
+  {level:'jhs', type:'blank', q:"This picture ___ by Picasso.", choices:["was painted","painted","paint","paints"], ans:"was painted", explain:"過去の受動態：was/were＋過去分詞。paint→painted（規則変化）。"},
+  {level:'jhs', type:'blank', q:"The cake ___ by my mother.", choices:["was made","made","is make","makes"], ans:"was made", explain:"過去受動態。make→made（不規則）→過去分詞もmade。was madeが正解。"},
+
+  // ── 現在完了 ──
+  {level:'jhs', type:'blank', q:"She ___ already finished her homework.", choices:["has","have","is","was"], ans:"has", explain:"現在完了：have/has＋過去分詞。主語がShe→has。alreadyは現在完了のサイン。"},
+  {level:'jhs', type:'blank', q:"I ___ never eaten sushi.", choices:["have","has","had","am"], ans:"have", explain:"主語がI→have。neverは現在完了の否定でよく使う（経験）。"},
+  {level:'jhs', type:'blank', q:"How long ___ you lived here?", choices:["have","has","do","did"], ans:"have", explain:"How long have you〜?（どのくらい〜していますか）。現在完了の継続用法。"},
+  {level:'jhs', type:'blank', q:"She has ___ to Paris three times.", choices:["been","go","went","gone"], ans:"been", explain:"have been to〜（〜に行ったことがある）。have gone toは「〜に行ってしまった（今ここにいない）」と区別しよう。"},
+
+  // ── 関係代名詞 ──
+  {level:'jhs', type:'blank', q:"This is the book ___ I bought yesterday.", choices:["that","who","whom","whose"], ans:"that", explain:"先行詞がもの（book）のとき関係代名詞はthatまたはwhich。目的格なので省略も可。"},
+  {level:'jhs', type:'blank', q:"The girl ___ is singing is my sister.", choices:["who","which","that","what"], ans:"who", explain:"先行詞が人（girl）＋主格 → who。関係代名詞whoは「人」に使う。"},
+  {level:'jhs', type:'blank', q:"I have a friend ___ speaks three languages.", choices:["who","which","what","whose"], ans:"who", explain:"先行詞が人（friend）＋主格の関係代名詞 → who。"},
+  {level:'jhs', type:'blank', q:"The cat ___ tail is white is mine.", choices:["whose","who","which","that"], ans:"whose", explain:"whoseは所有格の関係代名詞。「〜の」という意味。猫の尻尾なのでwhose tail。"},
+
+  // ── 接続詞・前置詞 ──
+  {level:'jhs', type:'blank', q:"She was tired, ___ she kept working.", choices:["but","and","so","because"], ans:"but", explain:"逆接の等位接続詞but（しかし）。tiredなのに働き続けたという逆接関係。"},
+  {level:'jhs', type:'blank', q:"He stayed home ___ it was raining.", choices:["because","but","and","so"], ans:"because", explain:"because（〜なので）は理由を表す従属接続詞。雨が降っていたから家にいた。"},
+  {level:'jhs', type:'blank', q:"Please call me ___ you arrive.", choices:["when","while","because","but"], ans:"when", explain:"when（〜したとき）は時を表す従属接続詞。未来のことでも節内は現在形を使う。"},
+  {level:'jhs', type:'blank', q:"I have been here ___ three hours.", choices:["for","since","during","in"], ans:"for", explain:"forは期間（〜の間）を表す。sinceは起点（〜から）。three hoursは期間なのでfor。"},
+  {level:'jhs', type:'blank', q:"She has lived here ___ 2010.", choices:["since","for","in","at"], ans:"since", explain:"since＋起点（〜から）。2010は時点なのでsince。継続を表す現在完了とセット。"},
+  {level:'jhs', type:'blank', q:"He arrived ___ the airport ___ 8 a.m.", choices:["at / at","in / at","at / in","in / in"], ans:"at / at", explain:"atは「特定の場所・時刻」に使う。airport（建物）→at、8 a.m.（時刻）→at。"},
+
+  // ── 文型・語順 ──
+  {level:'jhs', type:'blank', q:"She gave ___ a present.", choices:["me","I","my","mine"], ans:"me", explain:"give O1 O2（O1にO2を与える）。「私に」は目的格のme。×I は主格なので不可。"},
+  {level:'jhs', type:'blank', q:"He made ___ a cup of tea.", choices:["her","she","hers","herself"], ans:"her", explain:"make O1 O2（O1にO2を作ってあげる）。目的語は目的格のher。"},
+  {level:'jhs', type:'blank', q:"The news made her ___.", choices:["happy","happily","happiness","happier"], ans:"happy", explain:"make O C（OをCにする）。第5文型のC（補語）には形容詞が入る。×happily（副詞）は不可。"},
+
+  // ══════════════ 高校1年レベル ════════════
+
+  // ── 時制の一致・仮定法 ──
+  {level:'shs', type:'blank', q:"If I ___ a bird, I could fly.", choices:["were","am","was","be"], ans:"were", explain:"仮定法過去：If S were〜（現実と反する仮定）。主語に関わらずwereを使う（口語ではwasも可）。"},
+  {level:'shs', type:'blank', q:"If she had studied harder, she ___ passed.", choices:["would have","will have","would","had"], ans:"would have", explain:"仮定法過去完了：If S had PP, S would have PP（過去の反事実）。"},
+  {level:'shs', type:'blank', q:"I wish I ___ taller.", choices:["were","am","was","will be"], ans:"were", explain:"I wish〜（〜だったらいいのに）は仮定法過去。be動詞はwere（主語不問）。"},
+  {level:'shs', type:'blank', q:"She told me that she ___ busy.", choices:["was","is","were","be"], ans:"was", explain:"時制の一致：主節が過去（told）なら従属節も過去（was）に変わる。"},
+  {level:'shs', type:'blank', q:"He said he ___ come the next day.", choices:["would","will","shall","can"], ans:"would", explain:"時制の一致：will → wouldに変わる。the next dayもtomorrowが変化した形。"},
+
+  // ── 不定詞の応用 ──
+  {level:'shs', type:'blank', q:"She was surprised ___ see him there.", choices:["to","of","for","at"], ans:"to", explain:"感情の原因を表す不定詞（副詞的用法）。be surprised to do（〜して驚く）。"},
+  {level:'shs', type:'blank', q:"It is difficult ___ learn Japanese.", choices:["to","of","for","at"], ans:"to", explain:"It is〜 to do...（〜することは…だ）の形式主語構文。Itが形式主語でto以下が真主語。"},
+  {level:'shs', type:'blank', q:"He was the first person ___ solve the problem.", choices:["to","of","who","that"], ans:"to", explain:"the first/last/only＋名詞＋to do（〜した最初の人）。不定詞の形容詞的用法。"},
+  {level:'shs', type:'blank', q:"I want you ___ study harder.", choices:["to","of","that","for"], ans:"to", explain:"want O to do（Oに〜してほしい）。この形はSVOCの第5文型。"},
+  {level:'shs', type:'blank', q:"She seems ___ be happy.", choices:["to","of","for","at"], ans:"to", explain:"seem to do（〜するように見える）。seemの後はto不定詞。"},
+
+  // ── 分詞・分詞構文 ──
+  {level:'shs', type:'blank', q:"The boy ___ by the window is my brother.", choices:["sitting","sat","sit","to sit"], ans:"sitting", explain:"現在分詞（〜ing）が後ろから名詞を修飾。「窓のそばに座っている少年」。"},
+  {level:'shs', type:'blank', q:"The letter ___ in French was hard to read.", choices:["written","writing","wrote","write"], ans:"written", explain:"過去分詞（PP）が後ろから名詞を修飾（受動の意味）。「フランス語で書かれた手紙」。"},
+  {level:'shs', type:'blank', q:"___ her homework, she watched TV.", choices:["Finishing","Finished","Finish","To finish"], ans:"Finishing", explain:"分詞構文（〜して・〜しながら）。主節と同じ主語で能動関係 → 現在分詞（〜ing）。"},
+  {level:'shs', type:'blank', q:"___ from the hill, the village looked beautiful.", choices:["Seen","Seeing","See","To see"], ans:"Seen", explain:"分詞構文（受動）。「丘から見ると」は受身の意味 → 過去分詞（Seen）。"},
+
+  // ── 関係詞の応用 ──
+  {level:'shs', type:'blank', q:"This is the house ___ I was born.", choices:["where","which","who","that"], ans:"where", explain:"先行詞が場所（house）で、後ろに完全な文が続く → 関係副詞where。"},
+  {level:'shs', type:'blank', q:"Do you know the reason ___ she cried?", choices:["why","where","when","how"], ans:"why", explain:"先行詞がthe reason → 関係副詞why。Do you know the reason why〜?の形。"},
+  {level:'shs', type:'blank', q:"I remember the day ___ we first met.", choices:["when","where","why","how"], ans:"when", explain:"先行詞が時（the day）→ 関係副詞when。"},
+  {level:'shs', type:'blank', q:"He can do ___ he likes.", choices:["what","which","that","who"], ans:"what", explain:"whatは先行詞を含む関係代名詞（=the thing which）。「彼が好きなこと（もの）」。"},
+
+  // ── 完了形の応用 ──
+  {level:'shs', type:'blank', q:"By the time she arrived, he ___ already left.", choices:["had","has","have","was"], ans:"had", explain:"過去完了：had＋PP。「彼女が到着したとき（過去）、彼はすでに去っていた（それより前の過去）」。"},
+  {level:'shs', type:'blank', q:"She ___ been studying for three hours.", choices:["has","have","had","is"], ans:"has", explain:"現在完了進行形：has/have been〜ing（ずっと〜している）。主語がShe→has been studying。"},
+  {level:'shs', type:'blank', q:"This is the best movie I ___ ever seen.", choices:["have","had","has","am"], ans:"have", explain:"the 最上級 S have ever PP（今まで〜した中で最も…）。経験の現在完了。"},
+
+  // ── 受動態の応用 ──
+  {level:'shs', type:'blank', q:"She is said ___ be a great singer.", choices:["to","of","for","at"], ans:"to", explain:"S is said to be〜（Sは〜だと言われている）。受動態＋to不定詞の重要構文。"},
+  {level:'shs', type:'blank', q:"The project must ___ finished by Friday.", choices:["be","have","to be","is"], ans:"be", explain:"助動詞＋be＋PP（助動詞受動態）。must be finished（終わらせられなければならない）。"},
+  {level:'shs', type:'blank', q:"I was made ___ wait for an hour.", choices:["to","of","for","at"], ans:"to", explain:"受動態でmakeはto不定詞を使う。make O do → be made to do（〜させられる）。"},
+
+  // ── 接続詞の応用 ──
+  {level:'shs', type:'blank', q:"___ she was tired, she kept studying.", choices:["Although","Because","If","When"], ans:"Although", explain:"although（〜にもかかわらず）は逆接の従属接続詞。tired なのに勉強し続けたという逆接。"},
+  {level:'shs', type:'blank', q:"She left early ___ catch the last train.", choices:["so as to","so that","in order that","because"], ans:"so as to", explain:"so as to do（〜するために）は目的を表す不定詞句。in order toも同義。"},
+  {level:'shs', type:'blank', q:"It had been raining ___ she arrived.", choices:["since","for","while","during"], ans:"since", explain:"sinceは起点を表す（〜から）。過去完了＋sinceで「〜してからずっと」。"},
+  {level:'shs', type:'blank', q:"___ hard she tried, she couldn't solve it.", choices:["However","Whatever","Wherever","Whenever"], ans:"However", explain:"however hard（いくら頑張っても）は譲歩の複合接続詞。however＋形容詞/副詞の語順。"},
+
+  // ── 強調・倒置・省略 ──
+  {level:'shs', type:'blank', q:"It was she ___ solved the problem.", choices:["that","which","who","what"], ans:"that", explain:"強調構文：It is/was 〜 that...（〜したのは…だ）。強調する要素をIt was〜の後に置く。"},
+  {level:'shs', type:'blank', q:"Never ___ I seen such a beautiful view.", choices:["have","had","did","was"], ans:"have", explain:"否定語（Never）が文頭に来ると倒置が起こる。Never have I〜（一度も〜したことがない）。"},
+  {level:'shs', type:'blank', q:"She can swim, and so ___ I.", choices:["can","do","am","have"], ans:"can", explain:"「〜もそうだ」の構文：so＋助動詞＋S。前の文の助動詞（can）を使う。"},
+
+  // ── 前置詞の応用 ──
+  {level:'shs', type:'blank', q:"She succeeded ___ passing the exam.", choices:["in","at","to","on"], ans:"in", explain:"succeed in -ing（〜することに成功する）。inは達成の意味を持つ前置詞。"},
+  {level:'shs', type:'blank', q:"He insisted ___ paying for dinner.", choices:["on","in","at","to"], ans:"on", explain:"insist on -ing（〜することを主張する）。onは継続・固執のニュアンス。"},
+  {level:'shs', type:'blank', q:"She is proud ___ her son's achievement.", choices:["of","in","at","for"], ans:"of", explain:"be proud of〜（〜を誇りに思う）。ofは所属・関連を表す前置詞。"},
+  {level:'shs', type:'blank', q:"He is capable ___ solving the problem.", choices:["of","in","at","to"], ans:"of", explain:"be capable of -ing（〜する能力がある）。ofの後は名詞・動名詞。"},
+  {level:'shs', type:'blank', q:"She is looking forward ___ seeing you.", choices:["to","for","at","of"], ans:"to", explain:"look forward to -ing（〜するのを楽しみにしている）。このtoは前置詞なので後ろは名詞・動名詞。"},
+
+  // ── 語法・コロケーション ──
+  {level:'shs', type:'blank', q:"I ___ a mistake in the report.", choices:["made","did","had","took"], ans:"made", explain:"make a mistake（ミスをする）は定番コロケーション。×do a mistakeは不可。"},
+  {level:'shs', type:'blank', q:"She ___ a decision to study abroad.", choices:["made","did","took","had"], ans:"made", explain:"make a decision（決断する）。makeとdoの使い分けは頻出。"},
+  {level:'shs', type:'blank', q:"He ___ a chance to meet the president.", choices:["had","made","took","gave"], ans:"had", explain:"have a chance（機会がある）。hadはhaveの過去形。"},
+  {level:'shs', type:'blank', q:"Please ___ care of your health.", choices:["take","make","have","do"], ans:"take", explain:"take care of〜（〜の面倒を見る・気をつける）は重要フレーズ。"},
+  {level:'shs', type:'blank', q:"She ___ advantage of the opportunity.", choices:["took","made","had","did"], ans:"took", explain:"take advantage of〜（〜を利用する）。takeとmakeの区別は超頻出。"},
+  {level:'shs', type:'blank', q:"It ___ me three hours to finish the report.", choices:["took","spent","needed","required"], ans:"took", explain:"It takes O（時間）to do（〜するのにO時間かかる）。主語はItが必須。×I took... は不可。"},
+
+  // ── 比較の応用 ──
+  {level:'shs', type:'blank', q:"She is ___ as tall as her sister.", choices:["not","no","none","neither"], ans:"not", explain:"not as〜as...（…ほど〜でない）は否定の同等比較。×no as〜as は不可。"},
+  {level:'shs', type:'blank', q:"The more you practice, ___ you become.", choices:["the better","better","the best","best"], ans:"the better", explain:"The 比較級〜, the 比較級...（〜すればするほど…）の構文。両方に the が必要。"},
+  {level:'shs', type:'blank', q:"Mt. Fuji is higher than ___ mountain in Japan.", choices:["any other","other any","the other","another"], ans:"any other", explain:"最上級の言い換え：比較級＋than any other＋名詞単数（他のどの〜よりも）。"},
+
+  // ── 名詞構文・構文 ──
+  {level:'shs', type:'blank', q:"There ___ many students in the library.", choices:["are","is","be","were"], ans:"are", explain:"There are〜（〜がある/いる）。後ろの名詞（students）が複数なのでare。"},
+  {level:'shs', type:'blank', q:"It is important ___ us to protect the environment.", choices:["for","of","to","that"], ans:"for", explain:"It is〜 for O to do（Oにとって〜することは…）。forはtoの意味上の主語を示す。"},
+  {level:'shs', type:'blank', q:"It was kind ___ her to help me.", choices:["of","for","to","at"], ans:"of", explain:"It is〜 of O to do（Oが〜することは…）。kindなど人の性格を表す形容詞にはofを使う。"},
+  {level:'shs', type:'blank', q:"___ is no use crying over spilt milk.", choices:["There","It","This","That"], ans:"There", explain:"There is no use -ing（〜しても無駄だ）。It is no use -ing も同義だが、ここはThereが入る。"},
+
+  // ════════════ 中学レベル 追加 ════════════
+
+  // ── 疑問文・否定文 ──
+  {level:'jhs', type:'blank', q:"___ your brother like sports?", choices:["Does","Do","Is","Has"], ans:"Does",
+   explain:"【三単現の疑問文】主語がyour brotherなので Does〜? を使う。Does のあとは動詞の原形（like）に戻る。"},
+  {level:'jhs', type:'blank', q:"He ___ not speak Chinese.", choices:["does","do","is","has"], ans:"does",
+   explain:"【三単現の否定文】主語が三人称単数（He）の否定は does not〜。does の後は動詞の原形（speak）。"},
+  {level:'jhs', type:'blank', q:"She ___ studying math right now.", choices:["is","was","has","does"], ans:"is",
+   explain:"【現在進行形】right now（今まさに）は進行形のサイン。She → be動詞はis。is + studying の形。"},
+  {level:'jhs', type:'blank', q:"I ___ not watched that movie yet.", choices:["have","has","had","am"], ans:"have",
+   explain:"【現在完了・否定】yet（まだ〜ない）は現在完了のサイン。主語がI → have not PP の形。"},
+  {level:'jhs', type:'blank', q:"___ your parents been to Europe?", choices:["Have","Has","Did","Do"], ans:"Have",
+   explain:"【現在完了の疑問文】主語がyour parents（複数）→ Have〜? で始める。Have S PP?（〜したことがありますか）。"},
+
+  // ── 時制 ──
+  {level:'jhs', type:'blank', q:"When I ___ home, she was cooking.", choices:["arrived","arrive","was arriving","arrives"], ans:"arrived",
+   explain:"【過去形 vs 過去進行形】「帰ったとき」は一点の過去の出来事 → 過去形 arrived。「料理していた」は背景 → was cooking。"},
+  {level:'jhs', type:'blank', q:"She ___ in Tokyo for two years.", choices:["has lived","lived","lives","is living"], ans:"has lived",
+   explain:"【現在完了・継続】for two years（2年間ずっと）は現在完了継続のサイン。今も住んでいる → has lived。"},
+  {level:'jhs', type:'blank', q:"I ___ my keys. I can't find them.", choices:["have lost","lost","lose","am losing"], ans:"have lost",
+   explain:"【現在完了・結果】「なくしてしまって今見つからない」→ 現在に影響が残る結果の現在完了 have lost。"},
+  {level:'jhs', type:'blank', q:"He ___ to Australia twice.", choices:["has been","was","went","is"], ans:"has been",
+   explain:"【現在完了・経験】twice（2回）は経験の現在完了のサイン。have been to〜（〜に行ったことがある）。"},
+  {level:'jhs', type:'blank', q:"It ___ raining since this morning.", choices:["has been","is","was","have been"], ans:"has been",
+   explain:"【現在完了進行形】since this morning（今朝からずっと）→ has been -ing（ずっと〜している）。"},
+
+  // ── 助動詞 ──
+  {level:'jhs', type:'blank', q:"You ___ see a doctor if you feel sick.", choices:["should","must not","don't have to","couldn't"], ans:"should",
+   explain:"【should】「〜すべきだ」という助言を表す。mustよりやわらかい表現。"},
+  {level:'jhs', type:'blank', q:"You ___ eat in the library.", choices:["must not","don't have to","should","can"], ans:"must not",
+   explain:"【must not vs don't have to】must not は「〜してはいけない（禁止）」。don't have to は「〜しなくてよい（不要）」で全く意味が違う！"},
+  {level:'jhs', type:'blank', q:"You ___ bring anything. Everything is provided.", choices:["don't have to","must not","cannot","should not"], ans:"don't have to",
+   explain:"【don't have to】「〜しなくてよい（義務なし）」。must not（禁止）と混同しやすいが意味が全く違う！"},
+  {level:'jhs', type:'blank', q:"She ___ be at home now. Her car is in the driveway.", choices:["must","should","may","will"], ans:"must",
+   explain:"【must の推量】「〜に違いない」という強い推量。証拠（車がある）から推測する。"},
+  {level:'jhs', type:'blank', q:"It ___ be true. Nobody believes it.", choices:["can't","must","should","may"], ans:"can't",
+   explain:"【can't の推量】「〜のはずがない」という否定の推量。can't = cannot（強い否定）。"},
+
+  // ── 前置詞・接続詞 ──
+  {level:'jhs', type:'blank', q:"She was absent ___ school because of a cold.", choices:["from","in","at","of"], ans:"from",
+   explain:"【absent from〜】be absent from〜（〜を欠席する）は重要な前置詞のコロケーション。"},
+  {level:'jhs', type:'blank', q:"He is interested ___ Japanese history.", choices:["in","at","of","for"], ans:"in",
+   explain:"【interested in〜】be interested in〜（〜に興味がある）は超頻出フレーズ。inは「関心の中に入る」イメージ。"},
+  {level:'jhs', type:'blank', q:"I have known her ___ we were children.", choices:["since","for","while","during"], ans:"since",
+   explain:"【since vs for】since＋起点（〜から）、for＋期間（〜の間）。we were childrenは時点なのでsince。"},
+  {level:'jhs', type:'blank', q:"Study hard ___ you will fail the exam.", choices:["or","and","but","so"], ans:"or",
+   explain:"【命令文 or〜】命令文＋or〜は「〜しなさい、さもないと…」。Study hard or you will fail.（勉強しなさい、さもないと失敗するよ）。"},
+  {level:'jhs', type:'blank', q:"Work hard ___ you will succeed.", choices:["and","or","but","so"], ans:"and",
+   explain:"【命令文 and〜】命令文＋and〜は「〜しなさい、そうすれば…」。Work hard and you will succeed.（頑張れば成功するよ）。"},
+
+  // ── 不定詞 応用 ──
+  {level:'jhs', type:'blank', q:"She went to the store ___ buy some milk.", choices:["to","for","of","at"], ans:"to",
+   explain:"【不定詞・目的】to buy（〜を買うために）は目的を表す不定詞（副詞的用法）。in order to buy〜 も同義。"},
+  {level:'jhs', type:'blank', q:"He was happy ___ see his old friend.", choices:["to","of","for","at"], ans:"to",
+   explain:"【感情＋不定詞】感情を表す形容詞（happy）の後のto不定詞は原因・理由を表す（副詞的用法）。「〜して嬉しい」。"},
+  {level:'jhs', type:'blank', q:"She has a lot of homework ___ do.", choices:["to","of","for","at"], ans:"to",
+   explain:"【不定詞・形容詞的用法】homework to do（やるべき宿題）。名詞の後のto不定詞は形容詞的用法（〜するための）。"},
+  {level:'jhs', type:'blank', q:"It is impossible ___ him to lift that box.", choices:["for","of","to","at"], ans:"for",
+   explain:"【It is〜 for O to do】It is impossible for him to...（彼にとって…は不可能だ）。forはto不定詞の意味上の主語を示す。"},
+  {level:'jhs', type:'blank', q:"It is kind ___ you to help me.", choices:["of","for","to","at"], ans:"of",
+   explain:"【It is〜 of O to do】kind・nice・careless など人の性格・評価を表す形容詞はofを使う。forとのセットで覚えよう。"},
+
+  // ── 受動態 ──
+  {level:'jhs', type:'blank', q:"The window ___ broken by the ball.", choices:["was","is","had","did"], ans:"was",
+   explain:"【過去受動態】「割られた」という過去の受動。was/were + PP（過去分詞）。break → broke → broken。"},
+  {level:'jhs', type:'blank', q:"This song ___ loved by everyone.", choices:["is","was","has","does"], ans:"is",
+   explain:"【現在受動態】「今も愛されている」→ 現在の受動態 is + PP。"},
+  {level:'jhs', type:'blank', q:"The letter was written ___ English.", choices:["in","by","with","at"], ans:"in",
+   explain:"【言語の前置詞】言語を使って何かをする場合はin。written in English（英語で書かれた）。"},
+  {level:'jhs', type:'blank', q:"She was surprised ___ the news.", choices:["at","by","in","of"], ans:"at",
+   explain:"【be surprised at〜】「〜に驚く」はbe surprised at〜。驚きの原因にはatを使う（byは動作主を表す）。"},
+
+  // ── 関係代名詞 応用 ──
+  {level:'jhs', type:'blank', q:"This is the school ___ my mother went to.", choices:["that","who","whom","which"], ans:"that",
+   explain:"【目的格の関係代名詞】先行詞がthe school（もの）で、後ろのwent toの目的語 → that/which。省略も可能。"},
+  {level:'jhs', type:'blank', q:"The man ___ called you is my uncle.", choices:["who","which","whom","that"], ans:"who",
+   explain:"【主格の関係代名詞】先行詞がthe man（人）で、後ろのcalledの主語 → who。that も可だが whoが自然。"},
+  {level:'jhs', type:'blank', q:"I met a girl ___ father is a famous actor.", choices:["whose","who","which","that"], ans:"whose",
+   explain:"【所有格の関係代名詞】「〜の」という所有の意味 → whose。a girl whose father is...（父親が〜の少女）。"},
+
+  // ════════════ 高校1年レベル 追加 ════════════
+
+  // ── 仮定法 ──
+  {level:'shs', type:'blank', q:"If I had more time, I ___ study more.", choices:["would","will","should","could have"], ans:"would",
+   explain:"【仮定法過去】If S were/PP, S would/could do。現実と反する仮定。「もっと時間があれば（実際はない）」→ would do。"},
+  {level:'shs', type:'blank', q:"If he ___ worked harder, he could have passed.", choices:["had","has","would have","was"], ans:"had",
+   explain:"【仮定法過去完了】If S had PP, S would have PP。過去の反事実。「もっと頑張っていたら（実際はしなかった）」。"},
+  {level:'shs', type:'blank', q:"I wish I ___ speak three languages.", choices:["could","can","will","would"], ans:"could",
+   explain:"【I wish＋仮定法】I wish S could do（〜できたらいいのに）。現在の事実と反する願い。"},
+  {level:'shs', type:'blank', q:"Without your help, I ___ have finished.", choices:["couldn't have","can't","won't","shouldn't"], ans:"couldn't have",
+   explain:"【Without＋仮定法】Without〜, S would/could have PP（〜なしでは…できなかったろう）。過去の反事実。"},
+  {level:'shs', type:'blank', q:"It's time you ___ to bed.", choices:["went","go","will go","have gone"], ans:"went",
+   explain:"【It's time S PP】It's time S 過去形（もう〜すべき時間だ）。これも仮定法過去。went（過去形）が入る。"},
+
+  // ── 分詞構文 ──
+  {level:'shs', type:'blank', q:"___ the train, she noticed her wallet was missing.", choices:["Taking","Taken","To take","Take"], ans:"Taking",
+   explain:"【分詞構文・能動】主語（she）と分詞の関係が能動（彼女が電車に乗った）→ 現在分詞Taking。「電車に乗りながら」。"},
+  {level:'shs', type:'blank', q:"___ from a distance, the mountain looked small.", choices:["Seen","Seeing","To see","See"], ans:"Seen",
+   explain:"【分詞構文・受動】「距離から見られると」→ 受動の意味 → 過去分詞Seen。Being seen を省略した形。"},
+  {level:'shs', type:'blank', q:"Not ___ what to say, she kept silent.", choices:["knowing","know","known","to know"], ans:"knowing",
+   explain:"【否定の分詞構文】分詞構文の否定は Not〜ingの形。「何を言えばいいかわからなかったので」。"},
+  {level:'shs', type:'blank', q:"___ the work, she went home.", choices:["Having finished","Finishing","Finished","To finish"], ans:"Having finished",
+   explain:"【完了分詞構文】主節の動作より前に終わった動作を表す → Having PP。「仕事を終えた後、家に帰った」。"},
+  {level:'shs', type:'blank', q:"The weather ___ fine, we went for a walk.", choices:["being","is","was","be"], ans:"being",
+   explain:"【独立分詞構文】主節と分詞構文の主語が異なる場合、分詞の前に主語を置く。The weather being fine（天気がよかったので）。"},
+
+  // ── 知覚動詞・使役動詞 ──
+  {level:'shs', type:'blank', q:"I saw her ___ across the street.", choices:["run","runs","running","to run"], ans:"run",
+   explain:"【知覚動詞＋原形】see/hear/watch＋O＋原形（Oが〜するのを見る）。runningも可だが「全体を見た」のでrunが適切。"},
+  {level:'shs', type:'blank', q:"She had her car ___.", choices:["repaired","repair","repairing","to repair"], ans:"repaired",
+   explain:"【haveの使役・受動】have＋O＋PP は「Oを〜してもらう/される」。車は修理される側なのでrepaired（受動）。"},
+  {level:'shs', type:'blank', q:"He made his son ___ his homework.", choices:["do","to do","doing","done"], ans:"do",
+   explain:"【makeの使役】make＋O＋原形（Oに強制的に〜させる）。makeは原形不定詞を取る（toなし）。"},
+  {level:'shs', type:'blank', q:"She let him ___ her notes.", choices:["use","to use","using","used"], ans:"use",
+   explain:"【letの使役】let＋O＋原形（Oが〜するのを許可する）。letも原形不定詞を取る（toなし）。"},
+  {level:'shs', type:'blank', q:"I heard my name ___.", choices:["called","call","calling","to call"], ans:"called",
+   explain:"【知覚動詞＋PP】hear＋O＋PP（Oが〜されるのを聞く）。my nameは呼ばれる側なのでcalled（受動）。"},
+
+  // ── 関係詞 応用 ──
+  {level:'shs', type:'blank', q:"Tell me ___ you think is the best way.", choices:["what","that","which","who"], ans:"what",
+   explain:"【whatの先行詞内包】what＝the thing which。先行詞を含む関係代名詞。「あなたが最善だと思うもの」。"},
+  {level:'shs', type:'blank', q:"The town ___ I was born has changed a lot.", choices:["where","which","that","when"], ans:"where",
+   explain:"【関係副詞 where】先行詞がthe town（場所）で後ろに完全な文 → 関係副詞where（=in which）。"},
+  {level:'shs', type:'blank', q:"I remember the summer ___ I first met her.", choices:["when","where","which","that"], ans:"when",
+   explain:"【関係副詞 when】先行詞がthe summer（時）で後ろに完全な文 → 関係副詞when（=in which）。"},
+  {level:'shs', type:'blank', q:"She is the reason ___ I smile every day.", choices:["why","when","where","which"], ans:"why",
+   explain:"【関係副詞 why】先行詞がthe reason → 関係副詞why。the reason why S V（SがVする理由）。"},
+  {level:'shs', type:'blank', q:"___ comes first will get the best seat.", choices:["Whoever","Whatever","However","Wherever"], ans:"Whoever",
+   explain:"【複合関係代名詞 whoever】whoever＝anyone who（〜する人は誰でも）。先行詞を含む関係代名詞。"},
+
+  // ── 否定・強調 ──
+  {level:'shs', type:'blank', q:"___ did I expect to see him there.", choices:["Little","Hardly","No","Not"], ans:"Little",
+   explain:"【否定語倒置】Little / Hardly / Never などの否定語が文頭に来ると倒置。Little did I expect〜（まさか〜とは思わなかった）。"},
+  {level:'shs', type:'blank', q:"It was ___ that made her happy.", choices:["his smile","him smiled","he smiled","his smiling"], ans:"his smile",
+   explain:"【強調構文】It was 〜 that...（〜こそが…した）。強調するのはhis smile（名詞）。強調構文ではItとthatの間に強調要素が入る。"},
+  {level:'shs', type:'blank', q:"Not only did she win, ___ she broke the record.", choices:["but also","and","yet","so"], ans:"but also",
+   explain:"【not only〜but also】Not only A but also B（AだけでなくBも）。Not onlyが文頭に来ると倒置（did she win）。"},
+  {level:'shs', type:'blank', q:"Only then ___ realize how important it was.", choices:["did she","she did","she has","has she"], ans:"did she",
+   explain:"【Only then＋倒置】Only then / Only when などが文頭に来ると倒置が起こる。Only then did she realize〜（その時初めて気づいた）。"},
+
+  // ── 形式主語・形式目的語 ──
+  {level:'shs', type:'blank', q:"I found ___ difficult to solve the problem.", choices:["it","that","this","what"], ans:"it",
+   explain:"【形式目的語it】find＋O＋C（OがCだとわかる）でOが長い場合、itを形式目的語にしてto不定詞を後ろに置く。"},
+  {level:'shs', type:'blank', q:"She made ___ clear that she disagreed.", choices:["it","that","this","her"], ans:"it",
+   explain:"【make it clear that〜】make it clear that〜（〜を明確にする）。itは形式目的語。"},
+  {level:'shs', type:'blank', q:"It goes without ___ that health is important.", choices:["saying","say","said","to say"], ans:"saying",
+   explain:"【It goes without saying that〜】「〜は言うまでもない」は超重要慣用表現。without の後は動名詞（saying）。"},
+
+  // ── 比較の応用 ──
+  {level:'shs', type:'blank', q:"She is ___ more talented than anyone else.", choices:["far","very","too","much"], ans:"far",
+   explain:"【比較級の強調】比較級の前に far / much / even / still / a lot をつけて「はるかに〜」と強調。×very more は不可。"},
+  {level:'shs', type:'blank', q:"He is no ___ a student here.", choices:["longer","more","less","later"], ans:"longer",
+   explain:"【no longer】no longer（もはや〜ない）。not〜any longer も同義。"},
+  {level:'shs', type:'blank', q:"She is ___ beautiful than smart.", choices:["more","less","much","very"], ans:"less",
+   explain:"【less〜than】less〜than...（…ほど〜でない）。more〜than の反意語の比較表現。"},
+  {level:'shs', type:'blank', q:"___ you know about something, the better.", choices:["The more","More","The most","Most"], ans:"The more",
+   explain:"【The 比較級, the 比較級】The more〜, the better.（知れば知るほどよい）。両方にtheが必要。"},
+
+  // ── 接続詞・前置詞の応用 ──
+  {level:'shs', type:'blank', q:"She passed the exam ___ having little time to study.", choices:["despite","although","because","since"], ans:"despite",
+   explain:"【despite vs although】despite の後は名詞・動名詞。although の後は S＋V。ここはhaving（動名詞）なのでdespite。"},
+  {level:'shs', type:'blank', q:"___ difficult it is, she never gives up.", choices:["However","Whatever","Whenever","Wherever"], ans:"However",
+   explain:"【however 形容詞 S V】however difficult it is（どんなに難しくても）は譲歩節。however＋形容詞/副詞＋S＋Vの語順。"},
+  {level:'shs', type:'blank', q:"She kept studying ___ she could pass.", choices:["so that","despite","because of","in spite of"], ans:"so that",
+   explain:"【so that S could】so that S could（〜できるように）は目的を表す。could / would / might をセットで覚えよう。"},
+  {level:'shs', type:'blank', q:"He succeeded ___ it being very difficult.", choices:["despite","although","because","since"], ans:"despite",
+   explain:"【despite ＋ 動名詞句】despite it being very difficult（それがとても難しかったにもかかわらず）。despiteの後に動名詞句。"},
+
+  // ── 動詞の語法 ──
+  {level:'shs', type:'blank', q:"She ___ her students to work harder.", choices:["encouraged","suggested","proposed","recommended"], ans:"encouraged",
+   explain:"【encourage O to do】encourage O to do（Oに〜するよう励ます）。suggest/propose/recommendはto不定詞を直接取れない。"},
+  {level:'shs', type:'blank', q:"He suggested ___ to a movie.", choices:["going","to go","go","went"], ans:"going",
+   explain:"【suggest -ing】suggest / recommend / propose の後は動名詞（-ing）。×suggest to go は誤り。"},
+  {level:'shs', type:'blank', q:"She admitted ___ the mistake.", choices:["making","to make","made","make"], ans:"making",
+   explain:"【admit -ing】admit（認める）の後は動名詞（-ing）。admit making a mistake（ミスを犯したと認める）。"},
+  {level:'shs', type:'blank', q:"He promised ___ on time.", choices:["to be","being","be","that be"], ans:"to be",
+   explain:"【promise to do】promise / decide / plan / hope / want の後はto不定詞（-ing は不可）。"},
+  {level:'shs', type:'blank', q:"She is used to ___ up early.", choices:["getting","get","got","have gotten"], ans:"getting",
+   explain:"【be used to -ing】be used to〜（〜に慣れている）のtoは前置詞なので後ろは動名詞。used to do（かつて〜した）と区別！"},
+];
+
+// ════════════════════════════════════
+// GRAMMAR STATE
+// ════════════════════════════════════
+let gLevel   = 'jhs';
+let gCount   = 10;
+let gQuestions = [];
+let gIdx     = 0;
+let gOk      = 0;
+let gNg      = 0;
+let gMisses  = [];
+let gAnswered = false;
+
+// init pool count
+window.addEventListener('DOMContentLoaded', () => {
+  updateGPoolBadge();
+});
+
+function updateGPoolBadge() {
+  const pool = gLevel === 'mix'
+    ? GRAMMAR_Q
+    : GRAMMAR_Q.filter(q => q.level === gLevel);
+  document.getElementById('gpPoolBadge').textContent = pool.length + '問';
+}
+
+function setGLevel(lv) {
+  gLevel = lv;
+  document.querySelectorAll('.gl-btn').forEach(b => b.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  updateGPoolBadge();
+}
+
+function setGCount(n) {
+  gCount = n;
+  ['10','20','30','50'].forEach(x =>
+    document.getElementById('gn'+x).classList.toggle('active', x==n)
+  );
+}
+
+function startGrammar() {
+  const pool = gLevel === 'mix'
+    ? [...GRAMMAR_Q]
+    : GRAMMAR_Q.filter(q => q.level === gLevel);
+  if (!pool.length) return;
+  gQuestions = shuffle(pool).slice(0, Math.min(gCount, pool.length));
+  gIdx = 0; gOk = 0; gNg = 0; gMisses = []; gAnswered = false;
+  renderGrammarQ();
+}
+
+function renderGrammarQ() {
+  const body = document.getElementById('gpBody');
+  if (gIdx >= gQuestions.length) { renderGrammarResult(); return; }
+
+  const q   = gQuestions[gIdx];
+  const pct = Math.round((gIdx / gQuestions.length) * 100);
+  const lvLabel  = q.level === 'jhs' ? '中学レベル' : '高校1年';
+  const lvClass  = q.level === 'jhs' ? 'jhs' : 'shs';
+  const typeLabel = { blank:'空所補充', error:'誤文訂正', order:'整序' }[q.type] || q.type;
+
+  // highlight blank
+  const qHtml = q.q.replace(/___/, `<span class="gq-blank">　　</span>`);
+
+  // shuffle choices fresh each render
+  const choices = shuffle([...q.choices]);
+
+  body.innerHTML = `
+    <div class="gq-prog-row">
+      <span class="gq-prog-label">Q${gIdx+1} / ${gQuestions.length}</span>
+      <div class="gq-prog-bar"><div class="gq-prog-fill" style="width:${pct}%"></div></div>
+      <span class="gq-prog-label" style="color:var(--mint)">✅${gOk}</span>
+    </div>
+
+    <div class="gq-card">
+      <div class="gq-meta">
+        <span class="gq-level-badge ${lvClass}">${lvLabel}</span>
+        <span class="gq-type-badge">${typeLabel}</span>
+        <span class="gq-num">Q${gIdx+1}</span>
+      </div>
+      <div class="gq-question">${qHtml}</div>
+      ${q.hint ? `<div class="gq-hint">💡 ${q.hint}</div>` : ''}
+    </div>
+
+    <div class="gq-choices">
+      ${choices.map(c =>
+        `<button class="gq-choice" onclick="answerGrammar(this,'${c.replace(/'/g,"\\'")}')">
+          ${c}
+        </button>`
+      ).join('')}
+    </div>
+
+    <div class="gq-explain" id="gqExplain"></div>
+  `;
+}
+
+function answerGrammar(btn, selected) {
+  if (gAnswered) return;
+  gAnswered = true;
+  const q  = gQuestions[gIdx];
+  const ok = selected === q.ans;
+
+  document.querySelectorAll('.gq-choice').forEach(b => {
+    b.disabled = true;
+    if (b.textContent.trim() === q.ans) b.classList.add('correct');
+    else if (b === btn && !ok) b.classList.add('wrong');
+  });
+
+  if (ok) gOk++;
+  else { gNg++; gMisses.push({ q, selected }); }
+
+  const isLast = gIdx === gQuestions.length - 1;
+  const ex = document.getElementById('gqExplain');
+  ex.className = 'gq-explain show ' + (ok ? 'gq-explain-ok' : 'gq-explain-ng');
+  ex.innerHTML = `
+    <div class="gq-explain-verdict">${ok ? '✅ 正解！' : '❌ 不正解'}</div>
+    <div class="gq-explain-ans">正解：${q.ans}</div>
+    <div class="gq-explain-body">💡 ${q.explain}</div>
+    <button class="gq-next-btn" onclick="nextGrammar()">${isLast ? '📊 結果を見る' : '次へ →'}</button>
+  `;
+  setTimeout(() => ex.scrollIntoView({ behavior:'smooth', block:'nearest' }), 80);
+}
+
+function nextGrammar() {
+  gIdx++;
+  gAnswered = false;
+  renderGrammarQ();
+}
+
+function renderGrammarResult() {
+  const total = gQuestions.length;
+  const pct   = Math.round(gOk / total * 100);
+  const score = gOk * 100 - gNg * 10;
+  const data  = pct===100?{e:'🏆',t:'PERFECT!!'}:pct>=80?{e:'🎉',t:'EXCELLENT!'}:pct>=60?{e:'😊',t:'GOOD JOB!'}:{e:'😅',t:'もう一回！'};
+
+  const missHTML = gMisses.length === 0
+    ? '<div style="text-align:center;color:#2d9e50;font-weight:900;font-size:.88rem;padding:10px">全問正解！すごい🎉</div>'
+    : gMisses.map(({q, selected}) => `
+        <div class="gq-review-item">
+          <div class="gq-ri-q">${q.q.replace(/___/,'＿＿＿')}</div>
+          <div><span class="gq-ri-wrong">✗ ${selected}</span>　→　<span class="gq-ri-ans">✓ ${q.ans}</span></div>
+        </div>`).join('');
+
+  document.getElementById('gpBody').innerHTML = `
+    <div class="gq-result">
+      <div class="gq-result-emoji">${data.e}</div>
+      <div class="gq-result-title">${data.t}</div>
+      <div class="gq-result-score">${gOk}<span style="font-size:1.5rem;color:var(--muted)"> / ${total}</span></div>
+      <div class="gq-result-stats">
+        <div class="gq-sbox"><div class="gq-slabel">正解 ✅</div><div class="gq-sval" style="color:var(--sky)">${gOk}</div></div>
+        <div class="gq-sbox"><div class="gq-slabel">ミス ❌</div><div class="gq-sval" style="color:var(--pink)">${gNg}</div></div>
+        <div class="gq-sbox"><div class="gq-slabel">正答率 📊</div><div class="gq-sval" style="color:var(--orange)">${pct}%</div></div>
+        <div class="gq-sbox"><div class="gq-slabel">スコア 🌟</div><div class="gq-sval" style="color:var(--purple)">${Math.max(0,score)}</div></div>
+      </div>
+      <div style="font-size:.72rem;font-weight:900;color:var(--muted);text-align:center;width:100%;max-width:480px">間違えた問題 📝</div>
+      <div class="gq-review-list">${missHTML}</div>
+      <button class="gq-restart-btn" onclick="startGrammar()">🔄 もう一度！</button>
+      <button onclick="resetGrammar()" style="background:var(--white);border:2px solid var(--border);border-radius:12px;color:var(--muted);font-family:'M PLUS Rounded 1c',sans-serif;font-size:.8rem;font-weight:700;padding:10px 20px;cursor:pointer;max-width:280px;width:100%;box-shadow:0 3px 0 var(--border)">← 設定を変える</button>
+    </div>
+  `;
+  if (pct >= 80) confetti();
+}
+
+function resetGrammar() {
+  document.getElementById('gpBody').innerHTML = `
+    <div style="text-align:center;color:var(--muted);font-size:.85rem;font-weight:700;padding:30px 0">
+      レベルと問題数を選んで「スタート！」を押してね 📐
+    </div>`;
+}
+
+// update switchPage for 5 tabs
+function switchPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
+  const map = {
+    gamePage:'bnav-game', guidePage:'bnav-guide',
+    practicePage:'bnav-practice', vocabPage:'bnav-vocab',
+    grammarPage:'bnav-grammar'
+  };
+  document.getElementById(map[id])?.classList.add('active');
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
 </script>
 </body>
 </html>
