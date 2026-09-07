@@ -1005,6 +1005,9 @@ body::before {
     <div class="guide-nav-brand">📖 GUIDE</div>
     <button class="guide-tab active" onclick="showGuide('svocm')">文の成分</button>
     <button class="guide-tab" onclick="showGuide('pos')">品詞</button>
+    <button class="guide-tab" onclick="showGuide('pattern')">文型</button>
+    <button class="guide-tab" onclick="showGuide('grammar-jhs')">中学文法</button>
+    <button class="guide-tab" onclick="showGuide('grammar-shs')">高校文法</button>
     <button class="guide-tab" onclick="showGuide('tips')">まとめ</button>
   </nav>
 
@@ -1405,6 +1408,687 @@ body::before {
       </div>
     </div>
 
+    <!-- ═══════════════════════
+         中学文法
+    ═══════════════════════ -->
+    <div class="gsec" id="gsec-grammar-jhs">
+      <div class="g-header">
+        <div class="g-tag" style="background:#e8fafb;color:var(--sky);border-color:var(--sky)">中学文法</div>
+        <div class="g-title" style="color:var(--sky)">中学レベル文法 🏫</div>
+        <div class="g-desc">be動詞から現在完了まで。基礎をしっかり固めよう！</div>
+      </div>
+
+      <!-- be動詞 -->
+      <div class="sec-title">① be動詞</div>
+      <div class="concept" style="--cc:var(--sky)">
+        <div class="c-body">主語によって形が変わります。<strong style="color:var(--sky)">「〜は…です/いる/ある」</strong> を表します。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">現在形</div>
+          <div class="ex-sent" style="font-size:.85rem;line-height:2.4">
+            I → <span class="w" style="background:#e8fafb;color:var(--sky);border-color:var(--sky)">am</span>　
+            You/We/They → <span class="w" style="background:#e8fafb;color:var(--sky);border-color:var(--sky)">are</span>　
+            He/She/It → <span class="w" style="background:#e8fafb;color:var(--sky);border-color:var(--sky)">is</span>
+          </div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">過去形</div>
+          <div class="ex-sent" style="font-size:.85rem;line-height:2.4">
+            I/He/She/It → <span class="w" style="background:#e8fafb;color:var(--sky);border-color:var(--sky)">was</span>　
+            You/We/They → <span class="w" style="background:#e8fafb;color:var(--sky);border-color:var(--sky)">were</span>
+          </div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>疑問文はbe動詞を主語の前に出す。否定文はbe動詞の後にnotを置く。</div></div>
+      </div>
+
+      <!-- 一般動詞・三単現 -->
+      <div class="sec-title">② 一般動詞・三単現のs</div>
+      <div class="concept" style="--cc:var(--V)">
+        <div class="c-body">主語が<strong style="color:var(--V)">三人称単数（he/she/it/固有名詞）</strong>で現在形のとき、動詞に<strong style="color:var(--V)">-s/-es</strong> をつけます。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">変化のルール</div>
+          <div class="ex-sent" style="font-size:.83rem;line-height:2.3">
+            原則 → play → <span class="w" style="background:#fff0f6;color:var(--V);border-color:var(--V)">plays</span><br>
+            語尾-s/-sh/-ch/-x/-o → teach → <span class="w" style="background:#fff0f6;color:var(--V);border-color:var(--V)">teaches</span><br>
+            語尾-y（子音+y） → study → <span class="w" style="background:#fff0f6;color:var(--V);border-color:var(--V)">studies</span>（y→i＋es）<br>
+            不規則 → have → <span class="w" style="background:#fff0f6;color:var(--V);border-color:var(--V)">has</span>
+          </div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">疑問文・否定文</div>
+          <div class="ex-sent" style="font-size:.83rem;line-height:2.2">
+            疑問：<span class="w" style="background:#fff0f6;color:var(--V);border-color:var(--V)">Does</span> she study English?（studyに戻る）<br>
+            否定：She <span class="w" style="background:#fff0f6;color:var(--V);border-color:var(--V)">does not</span> study English.
+          </div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>DoesやDoes notの後は<strong>動詞の原形</strong>に戻る（×studies → ○study）！</div></div>
+      </div>
+
+      <!-- 進行形 -->
+      <div class="sec-title">③ 進行形</div>
+      <div class="concept" style="--cc:var(--orange)">
+        <div class="c-body"><strong style="color:var(--orange)">be動詞 ＋ 動詞-ing</strong> で「〜しているところ」を表します。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">形</div>
+          <div class="ex-sent" style="font-size:.83rem;line-height:2.3">
+            現在進行：She <span class="w" style="background:#fff5e8;color:var(--orange);border-color:var(--orange)">is studying</span> now.<br>
+            過去進行：She <span class="w" style="background:#fff5e8;color:var(--orange);border-color:var(--orange)">was studying</span> at that time.
+          </div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">-ingの作り方</div>
+          <div class="ex-sent" style="font-size:.83rem;line-height:2.2">
+            原則：study → studying　/ run → <span class="w" style="background:#fff5e8;color:var(--orange);border-color:var(--orange)">running</span>（最後の子音を重ねる）<br>
+            語尾-e：make → <span class="w" style="background:#fff5e8;color:var(--orange);border-color:var(--orange)">making</span>（eを取る）
+          </div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>now / right now / at that time などがヒントになる。サインを見逃さない！</div></div>
+      </div>
+
+      <!-- 助動詞 -->
+      <div class="sec-title">④ 助動詞</div>
+      <div class="concept" style="--cc:var(--purple)">
+        <div class="c-body">助動詞の後は<strong style="color:var(--purple)">動詞の原形</strong>が必ず来ます。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">主な助動詞</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.5">
+            <span class="w" style="background:#f3f0ff;color:var(--purple);border-color:var(--purple)">can</span>：〜できる（能力）<br>
+            <span class="w" style="background:#f3f0ff;color:var(--purple);border-color:var(--purple)">may</span>：〜してもよい（許可）／〜かもしれない（可能性）<br>
+            <span class="w" style="background:#f3f0ff;color:var(--purple);border-color:var(--purple)">must</span>：〜しなければならない（義務）／〜に違いない（強い推量）<br>
+            <span class="w" style="background:#f3f0ff;color:var(--purple);border-color:var(--purple)">should</span>：〜すべきだ（助言・義務）<br>
+            <span class="w" style="background:#f3f0ff;color:var(--purple);border-color:var(--purple)">will</span>：〜するだろう（未来）／〜するつもり（意志）
+          </div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">❗ must not vs don't have to</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.2">
+            <span class="w" style="background:#fff0ef;color:var(--coral);border-color:var(--coral)">must not</span>：〜してはいけない（<strong>禁止</strong>）<br>
+            <span class="w" style="background:#edfff2;color:#2d9e50;border-color:var(--mint)">don't have to</span>：〜しなくてよい（<strong>義務なし</strong>）
+          </div>
+          <div class="ex-jp">→ 全く意味が違う！混同に注意 ⚠️</div>
+        </div>
+      </div>
+
+      <!-- 不定詞・動名詞 -->
+      <div class="sec-title">⑤ 不定詞・動名詞</div>
+      <div class="concept" style="--cc:var(--mint)">
+        <div class="c-body"><strong style="color:#2d9e50">to ＋ 動詞の原形</strong>（to不定詞）と<strong style="color:#2d9e50">動詞-ing</strong>（動名詞）の使い分けが重要です。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">to不定詞の3つの用法</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.4">
+            名詞的：I want <span class="w" style="background:#edfff2;color:#2d9e50;border-color:var(--mint)">to study</span> English.（〜すること）<br>
+            形容詞的：I have homework <span class="w" style="background:#edfff2;color:#2d9e50;border-color:var(--mint)">to do</span>.（〜するための）<br>
+            副詞的：She went to the store <span class="w" style="background:#edfff2;color:#2d9e50;border-color:var(--mint)">to buy</span> milk.（〜するために）
+          </div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">❗ 動詞によって後ろに来るものが違う</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.4">
+            <span class="w" style="background:#edfff2;color:#2d9e50;border-color:var(--mint)">to不定詞のみ</span>：want / decide / hope / promise / plan<br>
+            <span class="w" style="background:#fff5e8;color:var(--orange);border-color:var(--orange)">動名詞のみ</span>：enjoy / avoid / finish / mind / suggest / admit<br>
+            <span class="w" style="background:#f3f0ff;color:var(--purple);border-color:var(--purple)">両方OK</span>：like / love / start / begin / continue
+          </div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>be good at <strong>-ing</strong>（〜が得意）、look forward to <strong>-ing</strong>（楽しみにしている）→ toの後でも動名詞！toが前置詞のとき。</div></div>
+      </div>
+
+      <!-- 比較 -->
+      <div class="sec-title">⑥ 比較</div>
+      <div class="concept" style="--cc:var(--yellow)">
+        <div class="c-body">形容詞・副詞の<strong style="color:#b8941a">比較級・最上級</strong>の作り方を覚えよう。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">作り方</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.4">
+            短い語：<span class="w" style="background:#fffae8;color:#b8941a;border-color:var(--yellow)">tall → taller → tallest</span><br>
+            -eで終わる：<span class="w" style="background:#fffae8;color:#b8941a;border-color:var(--yellow)">large → larger → largest</span><br>
+            長い語：<span class="w" style="background:#fffae8;color:#b8941a;border-color:var(--yellow)">beautiful → more beautiful → most beautiful</span><br>
+            不規則：<span class="w" style="background:#fffae8;color:#b8941a;border-color:var(--yellow)">good→better→best / bad→worse→worst</span>
+          </div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">重要パターン</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.4">
+            比較：She is <span class="w" style="background:#fffae8;color:#b8941a;border-color:var(--yellow)">taller than</span> him.<br>
+            最上級：She is <span class="w" style="background:#fffae8;color:#b8941a;border-color:var(--yellow)">the tallest</span> in the class.<br>
+            同等：She is <span class="w" style="background:#fffae8;color:#b8941a;border-color:var(--yellow)">as tall as</span> him.<br>
+            否定同等：She is <span class="w" style="background:#fffae8;color:#b8941a;border-color:var(--yellow)">not as tall as</span> him.
+          </div>
+        </div>
+      </div>
+
+      <!-- 受動態 -->
+      <div class="sec-title">⑦ 受動態（受け身）</div>
+      <div class="concept" style="--cc:var(--coral)">
+        <div class="c-body"><strong style="color:var(--coral)">be動詞 ＋ 過去分詞（PP）</strong> で「〜される・〜られる」を表します。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">形</div>
+          <div class="ex-sent" style="font-size:.83rem;line-height:2.4">
+            現在：English <span class="w" style="background:#fff0ef;color:var(--coral);border-color:var(--coral)">is spoken</span> here.<br>
+            過去：This car <span class="w" style="background:#fff0ef;color:var(--coral);border-color:var(--coral)">was made</span> in Japan.<br>
+            動作主：This song was written <span class="w" style="background:#fff0ef;color:var(--coral);border-color:var(--coral)">by</span> her.（byで動作主を示す）
+          </div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>言語の前置詞はin（written in English）、驚きはbe surprised at〜 と前置詞に注意！</div></div>
+      </div>
+
+      <!-- 現在完了 -->
+      <div class="sec-title">⑧ 現在完了</div>
+      <div class="concept" style="--cc:var(--blue)">
+        <div class="c-body"><strong style="color:var(--blue)">have/has ＋ 過去分詞（PP）</strong> で、過去と現在をつなぐ表現です。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">3つの用法</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.5">
+            経験（〜したことがある）：She <span class="w" style="background:#eef5ff;color:var(--blue);border-color:var(--blue)">has visited</span> Paris twice.　→ サイン：ever / never / once / before<br>
+            完了（〜し終えた）：She <span class="w" style="background:#eef5ff;color:var(--blue);border-color:var(--blue)">has just finished</span> her work.　→ サイン：just / already / yet<br>
+            継続（ずっと〜している）：She <span class="w" style="background:#eef5ff;color:var(--blue);border-color:var(--blue)">has lived</span> here for 5 years.　→ サイン：for / since
+          </div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">have been to vs have gone to</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.2">
+            <span class="w" style="background:#eef5ff;color:var(--blue);border-color:var(--blue)">have been to</span>〜：〜に行ったことがある（今はここにいる）<br>
+            <span class="w" style="background:#fff0ef;color:var(--coral);border-color:var(--coral)">have gone to</span>〜：〜に行ってしまった（今はここにいない）
+          </div>
+        </div>
+      </div>
+
+      <!-- 関係代名詞 -->
+      <div class="sec-title">⑨ 関係代名詞</div>
+      <div class="concept" style="--cc:var(--pink)">
+        <div class="c-body">2つの文をつなぐ働きをします。<strong style="color:var(--pink)">先行詞（修飾する名詞）</strong>によって使う語が変わります。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">使い分け</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.5">
+            人・主格：the girl <span class="w" style="background:#fff0f6;color:var(--pink);border-color:var(--pink)">who</span> sings<br>
+            人・目的格：the girl <span class="w" style="background:#fff0f6;color:var(--pink);border-color:var(--pink)">whom/who</span> I met（省略可）<br>
+            人・所有格：the girl <span class="w" style="background:#fff0f6;color:var(--pink);border-color:var(--pink)">whose</span> bag is red<br>
+            もの・主格：the book <span class="w" style="background:#fff0f6;color:var(--pink);border-color:var(--pink)">which/that</span> is interesting<br>
+            もの・目的格：the book <span class="w" style="background:#fff0f6;color:var(--pink);border-color:var(--pink)">which/that</span> I read（省略可）
+          </div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>後ろに「主語が続けば主格」「主語＋動詞が続けば目的格」「名詞が続けば所有格（whose）」と判断しよう。</div></div>
+      </div>
+
+      <div class="game-banner">
+        <div style="font-size:1.7rem">📐</div>
+        <div class="game-banner-text"><div class="game-banner-title">中学文法問題に挑戦！</div><div class="game-banner-sub">覚えたらゲームで確認しよう💪</div></div>
+        <button class="game-banner-btn" onclick="switchPage('grammarPage');setGLevel('jhs')">文法問題へ →</button>
+      </div>
+    </div><!-- /gsec-grammar-jhs -->
+
+
+    <!-- ═══════════════════════
+         高校1年文法
+    ═══════════════════════ -->
+    <div class="gsec" id="gsec-grammar-shs">
+      <div class="g-header">
+        <div class="g-tag" style="background:#fff0f6;color:var(--pink);border-color:var(--pink)">高校文法</div>
+        <div class="g-title" style="color:var(--pink)">高校1年レベル文法 🎓</div>
+        <div class="g-desc">仮定法・分詞構文・関係副詞など。中学の土台の上に積み上げよう！</div>
+      </div>
+
+      <!-- 仮定法 -->
+      <div class="sec-title">① 仮定法</div>
+      <div class="concept" style="--cc:var(--purple)">
+        <div class="c-body"><strong style="color:var(--purple)">現実と反することを仮定する</strong>表現。動詞の時制を1つ過去にずらすのがポイント。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">仮定法過去（現在の反事実）</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.3">
+            If I <span class="w" style="background:#f3f0ff;color:var(--purple);border-color:var(--purple)">were</span> a bird, I <span class="w" style="background:#f3f0ff;color:var(--purple);border-color:var(--purple)">could fly</span>.<br>
+            （実際は鳥ではない）　→　If＋過去形, would/could/might＋動詞原形
+          </div>
+          <div class="ex-jp">be動詞は主語に関わらず were を使う（口語では was も可）</div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">仮定法過去完了（過去の反事実）</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.3">
+            If she <span class="w" style="background:#f3f0ff;color:var(--purple);border-color:var(--purple)">had studied</span> harder, she <span class="w" style="background:#f3f0ff;color:var(--purple);border-color:var(--purple)">would have passed</span>.<br>
+            （実際は勉強しなかった）　→　If＋had PP, would have PP
+          </div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">重要表現</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.4">
+            <span class="w" style="background:#f3f0ff;color:var(--purple);border-color:var(--purple)">I wish</span> I could fly.（〜できたらいいのに）<br>
+            <span class="w" style="background:#f3f0ff;color:var(--purple);border-color:var(--purple)">Without</span> your help, I couldn't have done it.<br>
+            <span class="w" style="background:#f3f0ff;color:var(--purple);border-color:var(--purple)">It's time</span> you went to bed.（もう〜すべき時間だ）
+          </div>
+        </div>
+      </div>
+
+      <!-- 分詞・分詞構文 -->
+      <div class="sec-title">② 分詞・分詞構文</div>
+      <div class="concept" style="--cc:var(--orange)">
+        <div class="c-body">分詞は形容詞のように名詞を修飾します。<strong style="color:var(--orange)">能動（〜している）→ 現在分詞 / 受動（〜された）→ 過去分詞</strong></div>
+        <div class="ex-wrap">
+          <div class="ex-label">名詞修飾</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.3">
+            a <span class="w" style="background:#fff5e8;color:var(--orange);border-color:var(--orange)">sleeping</span> baby（眠っている赤ちゃん）← 能動<br>
+            a letter <span class="w" style="background:#fff5e8;color:var(--orange);border-color:var(--orange)">written</span> in French（フランス語で書かれた手紙）← 受動
+          </div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">分詞構文のパターン</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.5">
+            能動：<span class="w" style="background:#fff5e8;color:var(--orange);border-color:var(--orange)">Finishing</span> her work, she went home.<br>
+            受動：<span class="w" style="background:#fff5e8;color:var(--orange);border-color:var(--orange)">Seen</span> from above, the city looks beautiful.<br>
+            完了：<span class="w" style="background:#fff5e8;color:var(--orange);border-color:var(--orange)">Having finished</span> her work, she went home.<br>
+            否定：<span class="w" style="background:#fff5e8;color:var(--orange);border-color:var(--orange)">Not knowing</span> the way, she got lost.
+          </div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>分詞構文の主語は主節の主語と同じ。「主語が〜しながら／〜して」というイメージで読もう。</div></div>
+      </div>
+
+      <!-- 関係副詞 -->
+      <div class="sec-title">③ 関係副詞</div>
+      <div class="concept" style="--cc:var(--sky)">
+        <div class="c-body">先行詞が<strong style="color:var(--sky)">場所・時・理由・方法</strong>のときは、関係代名詞ではなく関係副詞を使います。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">使い分け</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.5">
+            場所（the place / city…）→ <span class="w" style="background:#e8fafb;color:var(--sky);border-color:var(--sky)">where</span><br>
+            時（the day / time…）→ <span class="w" style="background:#e8fafb;color:var(--sky);border-color:var(--sky)">when</span><br>
+            理由（the reason）→ <span class="w" style="background:#e8fafb;color:var(--sky);border-color:var(--sky)">why</span><br>
+            方法（the way）→ <span class="w" style="background:#e8fafb;color:var(--sky);border-color:var(--sky)">how</span>（the wayとhowは一緒に使えない）
+          </div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">関係副詞 vs 関係代名詞</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.2">
+            関係副詞の後 → <span class="w" style="background:#edfff2;color:#2d9e50;border-color:var(--mint)">完全な文</span>（主語・動詞がそろっている）<br>
+            関係代名詞の後 → <span class="w" style="background:#fff0ef;color:var(--coral);border-color:var(--coral)">不完全な文</span>（主語や目的語が欠けている）
+          </div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div><strong>what</strong>は先行詞を含む関係代名詞。what＝the thing which。「〜すること/もの」という意味になる。</div></div>
+      </div>
+
+      <!-- 知覚動詞・使役動詞 -->
+      <div class="sec-title">④ 知覚動詞・使役動詞</div>
+      <div class="concept" style="--cc:var(--mint)">
+        <div class="c-body">SVOCの補語（C）に<strong style="color:#2d9e50">動詞の原形・-ing・過去分詞</strong>が入るパターン。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">知覚動詞（see / hear / watch / feel…）</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.4">
+            O＋<span class="w" style="background:#edfff2;color:#2d9e50;border-color:var(--mint)">原形</span>：全体を見る。I saw him <span class="w" style="background:#edfff2;color:#2d9e50;border-color:var(--mint)">run</span>.<br>
+            O＋<span class="w" style="background:#edfff2;color:#2d9e50;border-color:var(--mint)">-ing</span>：途中を見る。I saw him <span class="w" style="background:#edfff2;color:#2d9e50;border-color:var(--mint)">running</span>.<br>
+            O＋<span class="w" style="background:#edfff2;color:#2d9e50;border-color:var(--mint)">PP</span>：受動。I heard my name <span class="w" style="background:#edfff2;color:#2d9e50;border-color:var(--mint)">called</span>.
+          </div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">使役動詞</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.5">
+            <span class="w" style="background:#edfff2;color:#2d9e50;border-color:var(--mint)">make</span> O＋原形：強制。He made me <span class="w" style="background:#edfff2;color:#2d9e50;border-color:var(--mint)">do</span> it.<br>
+            <span class="w" style="background:#edfff2;color:#2d9e50;border-color:var(--mint)">let</span> O＋原形：許可。She let him <span class="w" style="background:#edfff2;color:#2d9e50;border-color:var(--mint)">use</span> her car.<br>
+            <span class="w" style="background:#edfff2;color:#2d9e50;border-color:var(--mint)">have</span> O＋原形/PP：She had him <span class="w" style="background:#edfff2;color:#2d9e50;border-color:var(--mint)">fix</span> / had her car <span class="w" style="background:#edfff2;color:#2d9e50;border-color:var(--mint)">repaired</span>.
+          </div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>make/let/haveは原形（toなし）。getは to不定詞（get him to do）。受動になるとmade→be made <strong>to</strong> do（toが復活）！</div></div>
+      </div>
+
+      <!-- 強調・倒置 -->
+      <div class="sec-title">⑤ 強調構文・倒置</div>
+      <div class="concept" style="--cc:var(--coral)">
+        <div class="c-body">強調したい要素を目立たせる構文です。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">強調構文</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.3">
+            <span class="w" style="background:#fff0ef;color:var(--coral);border-color:var(--coral)">It was she that</span> solved the problem.<br>
+            （問題を解いたのは彼女だ）← 「she」を強調<br>
+            It＋is/was＋<strong>強調要素</strong>＋that...の形。thatの後は不完全な文。
+          </div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">否定語倒置</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.4">
+            <span class="w" style="background:#fff0ef;color:var(--coral);border-color:var(--coral)">Never</span> have I seen such a view.<br>
+            <span class="w" style="background:#fff0ef;color:var(--coral);border-color:var(--coral)">Not only</span> did she win, but she broke the record.<br>
+            <span class="w" style="background:#fff0ef;color:var(--coral);border-color:var(--coral)">Only then</span> did she realize the truth.
+          </div>
+          <div class="ex-jp">→ 否定語・Only〜が文頭 → 疑問文の語順（助動詞＋S）になる</div>
+        </div>
+      </div>
+
+      <!-- 動詞の語法 -->
+      <div class="sec-title">⑥ 動詞の語法（to不定詞 vs 動名詞）</div>
+      <div class="concept" style="--cc:var(--yellow)">
+        <div class="c-body">紛らわしい動詞の語法をまとめて覚えよう。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">❗ used toとbe used toの違い</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.4">
+            <span class="w" style="background:#fffae8;color:#b8941a;border-color:var(--yellow)">used to</span> do：かつて〜した（今はしない）<br>
+            <span class="w" style="background:#fffae8;color:#b8941a;border-color:var(--yellow)">be used to</span> -ing：〜することに慣れている（toは前置詞！）<br>
+            <span class="w" style="background:#fffae8;color:#b8941a;border-color:var(--yellow)">be used to</span> do：〜するために使われる（受動態＋to不定詞）
+          </div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">重要コロケーション</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.5">
+            <span class="w" style="background:#fffae8;color:#b8941a;border-color:var(--yellow)">make</span> a decision / mistake / effort<br>
+            <span class="w" style="background:#fffae8;color:#b8941a;border-color:var(--yellow)">take</span> care of / advantage of / part in<br>
+            <span class="w" style="background:#fffae8;color:#b8941a;border-color:var(--yellow)">have</span> an effect / a chance / a good time<br>
+            <span class="w" style="background:#fffae8;color:#b8941a;border-color:var(--yellow)">do</span> one's best / harm / research
+          </div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>It takes O（時間）to do〜（〜するのにO時間かかる）も最重要構文！主語はItが必要。</div></div>
+      </div>
+
+      <!-- 形式主語・形式目的語 -->
+      <div class="sec-title">⑦ 形式主語・形式目的語</div>
+      <div class="concept" style="--cc:var(--blue)">
+        <div class="c-body">長い主語・目的語をitで代用する構文です。</div>
+        <div class="ex-wrap">
+          <div class="ex-label">形式主語</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.4">
+            <span class="w" style="background:#eef5ff;color:var(--blue);border-color:var(--blue)">It</span> is important <span class="w" style="background:#eef5ff;color:var(--blue);border-color:var(--blue)">for</span> us to study English.<br>
+            <span class="w" style="background:#eef5ff;color:var(--blue);border-color:var(--blue)">It</span> was kind <span class="w" style="background:#eef5ff;color:var(--blue);border-color:var(--blue)">of</span> you to help me.
+          </div>
+          <div class="ex-jp">性格系形容詞（kind / nice / foolish / brave）→ <strong>of</strong>　/ その他 → <strong>for</strong></div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">形式目的語</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.3">
+            I found <span class="w" style="background:#eef5ff;color:var(--blue);border-color:var(--blue)">it</span> difficult to solve the problem.<br>
+            She made <span class="w" style="background:#eef5ff;color:var(--blue);border-color:var(--blue)">it</span> clear that she disagreed.
+          </div>
+        </div>
+      </div>
+
+      <div class="game-banner">
+        <div style="font-size:1.7rem">🎓</div>
+        <div class="game-banner-text"><div class="game-banner-title">高校文法問題に挑戦！</div><div class="game-banner-sub">解説を読んだらすぐ練習しよう🔥</div></div>
+        <button class="game-banner-btn" onclick="switchPage('grammarPage');setGLevel('shs')">文法問題へ →</button>
+      </div>
+    </div><!-- /gsec-grammar-shs -->
+
+    <!-- ═══════════════════════
+         文型解説
+    ═══════════════════════ -->
+    <div class="gsec" id="gsec-pattern">
+      <div class="g-header">
+        <div class="g-tag" style="background:#fff5e8;color:#ff9f43;border-color:#ff9f43">文型</div>
+        <div class="g-title" style="background:linear-gradient(135deg,#ff9f43,var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">5つの文型 🔢</div>
+        <div class="g-desc">英語の文はすべて5つの文型のどれかに当てはまります。<br>各文型のパターンと見分け方を覚えよう！</div>
+      </div>
+
+      <!-- 文型カラー凡例 -->
+      <div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:20px">
+        <span class="w" style="background:#e8fafb;color:#4ecdc4;border:2px solid #4ecdc4">S 主語</span>
+        <span class="w" style="background:#fff0f6;color:#ff6b9d;border:2px solid #ff6b9d">V 動詞</span>
+        <span class="w" style="background:#fffae8;color:#e6a800;border:2px solid #e6a800">O 目的語</span>
+        <span class="w" style="background:#f3f0ff;color:#a29bfe;border:2px solid #a29bfe">C 補語</span>
+        <span class="w" style="background:var(--bg);color:#bbb;border:2px solid #ddd">M 修飾語</span>
+      </div>
+
+      <!-- 概要一覧 -->
+      <div class="sec-title">📋 5文型まとめ</div>
+      <div class="ov-grid" style="margin-bottom:24px">
+        <div class="ov-row" style="border-left:4px solid #4ecdc4">
+          <div class="ov-badge" style="background:#e8fafb;color:#4ecdc4;border-color:#4ecdc4;font-size:.75rem">第1<br>SV</div>
+          <div><div class="ov-name" style="color:#4ecdc4">S＋V</div><div class="ov-desc">主語と動詞だけ。Vは自動詞。Birds sing. / She cried.</div></div>
+        </div>
+        <div class="ov-row" style="border-left:4px solid #ff9f43">
+          <div class="ov-badge" style="background:#fff5e8;color:#ff9f43;border-color:#ff9f43;font-size:.75rem">第2<br>SVC</div>
+          <div><div class="ov-name" style="color:#ff9f43">S＋V＋C</div><div class="ov-desc">S＝C の関係が成立。She is a teacher. / He looks happy.</div></div>
+        </div>
+        <div class="ov-row" style="border-left:4px solid #ff6b9d">
+          <div class="ov-badge" style="background:#fff0f6;color:#ff6b9d;border-color:#ff6b9d;font-size:.75rem">第3<br>SVO</div>
+          <div><div class="ov-name" style="color:#ff6b9d">S＋V＋O</div><div class="ov-desc">S≠O の関係。Vは他動詞。She studies English.</div></div>
+        </div>
+        <div class="ov-row" style="border-left:4px solid #a29bfe">
+          <div class="ov-badge" style="background:#f3f0ff;color:#a29bfe;border-color:#a29bfe;font-size:.75rem">第4<br>SVOO</div>
+          <div><div class="ov-name" style="color:#a29bfe">S＋V＋O₁＋O₂</div><div class="ov-desc">目的語が2つ。She gave him a flower.</div></div>
+        </div>
+        <div class="ov-row" style="border-left:4px solid #69ff94">
+          <div class="ov-badge" style="background:#edfff2;color:#2d9e50;border-color:#69ff94;font-size:.75rem">第5<br>SVOC</div>
+          <div><div class="ov-name" style="color:#2d9e50">S＋V＋O＋C</div><div class="ov-desc">O＝C の関係が成立。She made him happy.</div></div>
+        </div>
+      </div>
+
+      <div class="sep"></div>
+
+      <!-- 第1文型 SV -->
+      <div class="sec-title">① 第1文型 SV</div>
+      <div class="concept" style="--cc:#4ecdc4">
+        <div class="concept-head">
+          <div class="c-badge" style="background:#e8fafb;color:#4ecdc4;border-color:#4ecdc4;font-size:.78rem;font-weight:900">SV</div>
+          <div><div class="c-name" style="color:#4ecdc4">主語（S）＋動詞（V）</div><div class="c-en">Vは自動詞。M（修飾語）は文型の数に含めない</div></div>
+        </div>
+        <div class="c-body">
+          動詞だけで意味が完結する文型。目的語も補語も不要な<strong style="color:#4ecdc4">自動詞</strong>が来ます。<br>
+          場所・時間などの修飾語（M）が加わっても第1文型のまま。
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">例文</div>
+          <div class="ex-sent" style="font-size:.88rem;line-height:2.2">
+            <span class="w" style="background:#e8fafb;color:#4ecdc4;border:2px solid #4ecdc4">She</span>
+            <span class="w" style="background:#fff0f6;color:#ff6b9d;border:2px solid #ff6b9d">cried</span>
+            <span style="color:#bbb;font-size:.8em">.</span>
+          </div>
+          <div class="ex-jp">彼女は泣いた。← M なし、最もシンプルな第1文型</div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">M（修飾語）が加わった例</div>
+          <div class="ex-sent" style="font-size:.88rem;line-height:2.2">
+            <span class="w" style="background:#e8fafb;color:#4ecdc4;border:2px solid #4ecdc4">He</span>
+            <span class="w" style="background:#fff0f6;color:#ff6b9d;border:2px solid #ff6b9d">runs</span>
+            <span style="color:#bbb;font-family:'Fredoka',sans-serif">every morning[M]</span>
+            <span style="color:#bbb;font-size:.8em">.</span>
+          </div>
+          <div class="ex-jp">every morning は修飾語（M）→ 文型は第1文型のまま</div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">第1文型によく使う自動詞</div>
+          <div class="ex-sent" style="font-size:.84rem;line-height:2.2">
+            <span class="w" style="background:#e8fafb;color:#4ecdc4;border:2px solid #4ecdc4">cry</span>
+            <span class="w" style="background:#e8fafb;color:#4ecdc4;border:2px solid #4ecdc4">run</span>
+            <span class="w" style="background:#e8fafb;color:#4ecdc4;border:2px solid #4ecdc4">smile</span>
+            <span class="w" style="background:#e8fafb;color:#4ecdc4;border:2px solid #4ecdc4">arrive</span>
+            <span class="w" style="background:#e8fafb;color:#4ecdc4;border:2px solid #4ecdc4">sleep</span>
+            <span class="w" style="background:#e8fafb;color:#4ecdc4;border:2px solid #4ecdc4">rise</span>
+            <span class="w" style="background:#e8fafb;color:#4ecdc4;border:2px solid #4ecdc4">bark</span>
+          </div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>「前置詞＋名詞（前置詞句）」はMなので文型に含めない！arrive <strong>at the station</strong>（at the station はM）も第1文型。</div></div>
+      </div>
+
+      <!-- 第2文型 SVC -->
+      <div class="sec-title">② 第2文型 SVC</div>
+      <div class="concept" style="--cc:#ff9f43">
+        <div class="concept-head">
+          <div class="c-badge" style="background:#fff5e8;color:#ff9f43;border-color:#ff9f43;font-size:.78rem;font-weight:900">SVC</div>
+          <div><div class="c-name" style="color:#ff9f43">S＋V＋C（補語）</div><div class="c-en">S＝C の関係が成立する</div></div>
+        </div>
+        <div class="c-body">
+          補語（C）は主語（S）の状態・性質を説明します。<strong style="color:#ff9f43">S＝C の関係が必ず成立</strong>します。<br>
+          Vには<strong style="color:#ff9f43">連結動詞（リンキング動詞）</strong>が来ます。
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">例文</div>
+          <div class="ex-sent" style="font-size:.88rem;line-height:2.2">
+            <span class="w" style="background:#e8fafb;color:#4ecdc4;border:2px solid #4ecdc4">She</span>
+            <span class="w" style="background:#fff0f6;color:#ff6b9d;border:2px solid #ff6b9d">is</span>
+            <span class="w" style="background:#fff5e8;color:#e6a800;border:2px solid #e6a800">a teacher</span>
+            <span style="color:#bbb;font-size:.8em">.</span>
+          </div>
+          <div class="ex-jp">She ＝ a teacher ✅ → 第2文型</div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">連結動詞の種類</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.4">
+            <strong style="color:#ff9f43">be動詞系</strong>：is / am / are / was / were<br>
+            <strong style="color:#ff9f43">感覚系</strong>：look（〜に見える）/ sound / smell / taste / feel<br>
+            <strong style="color:#ff9f43">変化系</strong>：become / get / turn / grow / go<br>
+            <strong style="color:#ff9f43">状態継続系</strong>：remain / keep / stay / seem / appear
+          </div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">Cになれるもの</div>
+          <div class="ex-sent" style="font-size:.84rem;line-height:2.2">
+            形容詞：She looks <span class="w" style="background:#fff5e8;color:#e6a800;border:2px solid #e6a800">happy</span>.<br>
+            名詞：She is <span class="w" style="background:#fff5e8;color:#e6a800;border:2px solid #e6a800">a teacher</span>.<br>
+            過去分詞：She seems <span class="w" style="background:#fff5e8;color:#e6a800;border:2px solid #e6a800">tired</span>.
+          </div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>「S is C」に書き換えてみよう！成立すれば第2文型。He looks <u>happy</u> → He is happy ✅。</div></div>
+      </div>
+
+      <!-- 第3文型 SVO -->
+      <div class="sec-title">③ 第3文型 SVO</div>
+      <div class="concept" style="--cc:#ff6b9d">
+        <div class="concept-head">
+          <div class="c-badge" style="background:#fff0f6;color:#ff6b9d;border-color:#ff6b9d;font-size:.78rem;font-weight:900">SVO</div>
+          <div><div class="c-name" style="color:#ff6b9d">S＋V＋O（目的語）</div><div class="c-en">S≠O の関係。Vは他動詞</div></div>
+        </div>
+        <div class="c-body">
+          目的語（O）は「〜を・〜に」に当たる語です。<strong style="color:#ff6b9d">S≠O の関係</strong>で、動詞は<strong style="color:#ff6b9d">他動詞</strong>。<br>
+          OにはC（名詞・形容詞）と違い、名詞・代名詞・動名詞・to不定詞が来ます。
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">例文</div>
+          <div class="ex-sent" style="font-size:.88rem;line-height:2.2">
+            <span class="w" style="background:#e8fafb;color:#4ecdc4;border:2px solid #4ecdc4">She</span>
+            <span class="w" style="background:#fff0f6;color:#ff6b9d;border:2px solid #ff6b9d">studies</span>
+            <span class="w" style="background:#fffae8;color:#e6a800;border:2px solid #e6a800">English</span>
+            <span style="color:#bbb;font-size:.8em">.</span>
+          </div>
+          <div class="ex-jp">She ≠ English ✅ → O（目的語） → 第3文型</div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">Oになれるもの</div>
+          <div class="ex-sent" style="font-size:.84rem;line-height:2.4">
+            名詞：She loves <span class="w" style="background:#fffae8;color:#e6a800;border:2px solid #e6a800">music</span>.<br>
+            動名詞：She enjoys <span class="w" style="background:#fffae8;color:#e6a800;border:2px solid #e6a800">playing soccer</span>.<br>
+            to不定詞：She wants <span class="w" style="background:#fffae8;color:#e6a800;border:2px solid #e6a800">to study</span> abroad.<br>
+            that節：She knows <span class="w" style="background:#fffae8;color:#e6a800;border:2px solid #e6a800">that he is kind</span>.
+          </div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>×discuss about → ○discuss〜（他動詞は前置詞不要！）。×marry with → ○marry〜 も同じ。</div></div>
+      </div>
+
+      <!-- 第4文型 SVOO -->
+      <div class="sec-title">④ 第4文型 SVOO</div>
+      <div class="concept" style="--cc:#a29bfe">
+        <div class="concept-head">
+          <div class="c-badge" style="background:#f3f0ff;color:#a29bfe;border-color:#a29bfe;font-size:.78rem;font-weight:900">SVOO</div>
+          <div><div class="c-name" style="color:#a29bfe">S＋V＋O₁＋O₂</div><div class="c-en">O₁＝間接目的語（〜に）、O₂＝直接目的語（〜を）</div></div>
+        </div>
+        <div class="c-body">
+          目的語が2つある文型。<strong style="color:#a29bfe">O₁（〜に：人）＋O₂（〜を：もの）</strong>の順番。<br>
+          第3文型に書き換えるときは前置詞（to / for）が必要になります。
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">例文</div>
+          <div class="ex-sent" style="font-size:.88rem;line-height:2.2">
+            <span class="w" style="background:#e8fafb;color:#4ecdc4;border:2px solid #4ecdc4">She</span>
+            <span class="w" style="background:#fff0f6;color:#ff6b9d;border:2px solid #ff6b9d">gave</span>
+            <span class="w" style="background:#fffae8;color:#e6a800;border:2px solid #e6a800">him</span>
+            <span class="w" style="background:#fffae8;color:#e6a800;border:2px solid #e6a800">a flower</span>
+            <span style="color:#bbb;font-size:.8em">.</span>
+          </div>
+          <div class="ex-jp">him＝O₁（彼に）、a flower＝O₂（花を） → 第4文型</div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">第3文型への書き換え</div>
+          <div class="ex-sent" style="font-size:.84rem;line-height:2.4">
+            第4：She gave <span class="w" style="background:#fffae8;color:#e6a800;border:2px solid #e6a800">him</span> <span class="w" style="background:#fffae8;color:#e6a800;border:2px solid #e6a800">a flower</span>.<br>
+            第3：She gave <span class="w" style="background:#fffae8;color:#e6a800;border:2px solid #e6a800">a flower</span> <strong>to</strong> <span class="w" style="background:#fffae8;color:#e6a800;border:2px solid #e6a800">him</span>.
+          </div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">第4文型を作る動詞と前置詞</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.4">
+            <strong style="color:#a29bfe">to を使う</strong>：give / send / tell / show / teach / lend / write<br>
+            <strong style="color:#a29bfe">for を使う</strong>：buy / cook / make / get / choose / find
+          </div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>O₁は「人」、O₂は「もの・こと」が多い。S give O₁ O₂ → S give O₂ <strong>to</strong> O₁ で書き換えられる。</div></div>
+      </div>
+
+      <!-- 第5文型 SVOC -->
+      <div class="sec-title">⑤ 第5文型 SVOC</div>
+      <div class="concept" style="--cc:#2d9e50">
+        <div class="concept-head">
+          <div class="c-badge" style="background:#edfff2;color:#2d9e50;border-color:#69ff94;font-size:.78rem;font-weight:900">SVOC</div>
+          <div><div class="c-name" style="color:#2d9e50">S＋V＋O＋C（補語）</div><div class="c-en">O＝C の関係が成立する</div></div>
+        </div>
+        <div class="c-body">
+          補語（C）は目的語（O）の状態・性質を説明します。<strong style="color:#2d9e50">O＝C の関係が必ず成立</strong>します。<br>
+          第4文型との混同に注意：SVOO は O₁≠O₂、SVOC は O＝C。
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">例文</div>
+          <div class="ex-sent" style="font-size:.88rem;line-height:2.2">
+            <span class="w" style="background:#e8fafb;color:#4ecdc4;border:2px solid #4ecdc4">She</span>
+            <span class="w" style="background:#fff0f6;color:#ff6b9d;border:2px solid #ff6b9d">made</span>
+            <span class="w" style="background:#fffae8;color:#e6a800;border:2px solid #e6a800">him</span>
+            <span class="w" style="background:#f3f0ff;color:#a29bfe;border:2px solid #a29bfe">happy</span>
+            <span style="color:#bbb;font-size:.8em">.</span>
+          </div>
+          <div class="ex-jp">him ＝ happy ✅ → C（補語） → 第5文型</div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">第5文型を作る動詞</div>
+          <div class="ex-sent" style="font-size:.82rem;line-height:2.4">
+            <strong style="color:#2d9e50">O＋形容詞C</strong>：make / keep / find / leave / get<br>
+            <strong style="color:#2d9e50">O＋名詞C</strong>：call / name / elect / appoint<br>
+            <strong style="color:#2d9e50">O＋原形C（知覚動詞）</strong>：see / hear / watch / feel<br>
+            <strong style="color:#2d9e50">O＋原形C（使役動詞）</strong>：make / let / have<br>
+            <strong style="color:#2d9e50">O＋PP（受動のC）</strong>：have / get / find
+          </div>
+        </div>
+        <div class="ex-wrap">
+          <div class="ex-label">Cになれるもの</div>
+          <div class="ex-sent" style="font-size:.84rem;line-height:2.4">
+            形容詞：She kept the room <span class="w" style="background:#f3f0ff;color:#a29bfe;border:2px solid #a29bfe">clean</span>.<br>
+            名詞：They named the dog <span class="w" style="background:#f3f0ff;color:#a29bfe;border:2px solid #a29bfe">Hachi</span>.<br>
+            原形動詞：I saw her <span class="w" style="background:#f3f0ff;color:#a29bfe;border:2px solid #a29bfe">run</span>.<br>
+            過去分詞：He got his car <span class="w" style="background:#f3f0ff;color:#a29bfe;border:2px solid #a29bfe">repaired</span>.（受動）
+          </div>
+        </div>
+        <div class="tip"><span class="tip-icon">💡</span><div>「O is C」に書き換えて成立すれば第5文型。him is happy → He is happy ✅。</div></div>
+      </div>
+
+      <div class="sep"></div>
+
+      <!-- 見分け方チートシート -->
+      <div class="sec-title">🔍 文型の見分け方フロー</div>
+      <div class="diagram">
+        <div class="diagram-title">文型判別の手順</div>
+        <div style="font-size:.82rem;color:var(--muted);line-height:2.3;font-weight:700">
+          <div>① まずVを探す（動詞）</div>
+          <div>② Vの後に何も続かない → <strong style="color:#4ecdc4">第1文型 SV</strong></div>
+          <div>③ Vの後に名詞/形容詞が1つ → S＝C なら <strong style="color:#ff9f43">第2文型 SVC</strong>、S≠C なら <strong style="color:#ff6b9d">第3文型 SVO</strong></div>
+          <div>④ Vの後に名詞が2つ連続 → <strong style="color:#a29bfe">第4文型 SVOO</strong>（O₁≠O₂）</div>
+          <div>⑤ Vの後に名詞＋形容詞/名詞/原形 → O＝C なら <strong style="color:#2d9e50">第5文型 SVOC</strong></div>
+        </div>
+      </div>
+
+      <div class="diagram">
+        <div class="diagram-title">第2文型と第3文型の見分け方（最重要！）</div>
+        <div style="font-size:.82rem;line-height:2.3;font-weight:700">
+          <div style="color:#ff9f43">第2文型：「S is C」に書き換えて意味が成立する</div>
+          <div style="padding-left:1em;color:var(--muted)">He looks <u>happy</u>. → He is happy. ✅ → 第2文型</div>
+          <div style="color:#ff6b9d;margin-top:6px">第3文型：「S is C」に書き換えると意味をなさない</div>
+          <div style="padding-left:1em;color:var(--muted)">She studies <u>English</u>. → She is English? ❌ → 第3文型</div>
+        </div>
+      </div>
+
+      <div class="diagram">
+        <div class="diagram-title">第4文型と第5文型の見分け方</div>
+        <div style="font-size:.82rem;line-height:2.3;font-weight:700">
+          <div style="color:#a29bfe">第4文型：O₁ ≠ O₂（2つの目的語は別のもの）</div>
+          <div style="padding-left:1em;color:var(--muted)">She gave him a flower. → him ≠ a flower ✅ → 第4文型</div>
+          <div style="color:#2d9e50;margin-top:6px">第5文型：O ＝ C（O is C に書き換えて成立）</div>
+          <div style="padding-left:1em;color:var(--muted)">She made him happy. → him is happy ✅ → 第5文型</div>
+        </div>
+      </div>
+
+      <div class="game-banner">
+        <div style="font-size:1.8rem">🔢</div>
+        <div class="game-banner-text"><div class="game-banner-title">文型クイズに挑戦しよう！</div><div class="game-banner-sub">解説を読んだら実戦で確認🎯</div></div>
+        <button class="game-banner-btn" onclick="switchPage('patternPage');startPattern()">文型クイズへ →</button>
+      </div>
+    </div><!-- /gsec-pattern -->
+
   </div>
 </div><!-- /guidePage -->
 
@@ -1498,6 +2182,10 @@ body::before {
   <button class="bnav-btn" id="bnav-grammar" onclick="switchPage('grammarPage')" style="--tab-color:var(--mint)">
     <div class="bnav-pip" style="background:var(--mint)"></div>
     <span class="bnav-icon">📐</span>文法
+  </button>
+  <button class="bnav-btn" id="bnav-pattern" onclick="switchPage('patternPage')" style="--tab-color:#ff9f43">
+    <div class="bnav-pip" style="background:#ff9f43"></div>
+    <span class="bnav-icon">🔢</span>文型
   </button>
   <button class="bnav-btn" id="bnav-guide" onclick="switchPage('guidePage')">
     <div class="bnav-pip"></div>
@@ -1742,7 +2430,8 @@ function showGuide(id) {
   document.querySelectorAll('.gsec').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.guide-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('gsec-' + id).classList.add('active');
-  ['svocm','pos','tips'].forEach((k,i) => { if(k===id) document.querySelectorAll('.guide-tab')[i]?.classList.add('active'); });
+  const keys = ['svocm','pos','pattern','grammar-jhs','grammar-shs','tips'];
+  keys.forEach((k,i) => { if(k===id) document.querySelectorAll('.guide-tab')[i]?.classList.add('active'); });
   window.scrollTo({ top:0, behavior:'smooth' });
 }
 
@@ -3793,10 +4482,612 @@ function switchPage(id) {
   const map = {
     gamePage:'bnav-game', guidePage:'bnav-guide',
     practicePage:'bnav-practice', vocabPage:'bnav-vocab',
-    grammarPage:'bnav-grammar'
+    grammarPage:'bnav-grammar', patternPage:'bnav-pattern'
   };
   document.getElementById(map[id])?.classList.add('active');
   window.scrollTo({ top:0, behavior:'smooth' });
+}
+</script>
+
+<!-- ══════════════════════════════════
+     SENTENCE PATTERN PAGE CSS
+══════════════════════════════════ -->
+<style>
+#patternPage { background: var(--bg); }
+
+/* ── header ── */
+.pp-header {
+  background: var(--white); border-bottom: 2px solid var(--border);
+  padding: 14px 16px 12px; position: sticky; top: 0; z-index: 50;
+  box-shadow: 0 2px 12px rgba(100,80,160,.08);
+}
+.pp-title-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.pp-title {
+  font-family:'Fredoka',sans-serif; font-size:1.3rem; font-weight:700;
+  background:linear-gradient(135deg,#ff9f43,var(--pink));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.pp-pool-badge {
+  font-family:'Fredoka',sans-serif; font-size:.75rem; font-weight:600;
+  background:#fff5e8; border:2px solid #ff9f43; border-radius:20px;
+  padding:2px 10px; color:#ff9f43; margin-left:auto;
+}
+.pp-mode-row { display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap; }
+.pm-btn {
+  flex:1; min-width:60px; font-family:'M PLUS Rounded 1c',sans-serif; font-size:.75rem; font-weight:900;
+  padding:8px 6px; border-radius:var(--radius-sm); border:2.5px solid var(--border);
+  background:var(--bg); color:var(--muted); cursor:pointer; transition:all .18s; text-align:center;
+}
+.pm-btn.active { border-color:#ff9f43; background:#fff5e8; color:#ff9f43; }
+.pp-count-row { display:flex; gap:6px; }
+.pc-btn {
+  flex:1; font-family:'Fredoka',sans-serif; font-size:.88rem; font-weight:600;
+  padding:7px; border-radius:var(--radius-sm); border:2px solid var(--border);
+  background:var(--bg); color:var(--muted); cursor:pointer; transition:all .18s;
+}
+.pc-btn.active { border-color:#ff9f43; background:#fff5e8; color:#ff9f43; }
+.pp-start-row { text-align:right; margin-top:8px; }
+.pp-start-btn {
+  background:linear-gradient(135deg,#ff9f43,var(--pink)); border:none; border-radius:20px;
+  color:var(--white); font-family:'M PLUS Rounded 1c',sans-serif;
+  font-size:.82rem; font-weight:900; padding:7px 20px; cursor:pointer;
+  box-shadow:0 3px 0 #c06020; transition:all .18s;
+}
+.pp-start-btn:hover { transform:translateY(-2px); box-shadow:0 5px 0 #c06020; }
+
+/* ── pattern legend (sticky below header in quiz) ── */
+.pp-legend {
+  display:flex; gap:6px; flex-wrap:wrap;
+  padding:10px 14px; background:var(--white);
+  border-bottom:2px solid var(--border);
+}
+.pp-lchip {
+  font-family:'Fredoka',sans-serif; font-size:.72rem; font-weight:700;
+  padding:3px 10px; border-radius:20px; border:2px solid;
+}
+
+/* ── body ── */
+.pp-body { padding:14px 14px 28px; max-width:700px; margin:0 auto; display:flex; flex-direction:column; gap:14px; }
+
+/* progress */
+.pq-prog-row { display:flex; align-items:center; gap:10px; }
+.pq-prog-label { font-size:.72rem; font-weight:900; color:var(--muted); white-space:nowrap; }
+.pq-prog-bar { flex:1; height:6px; background:var(--border); border-radius:4px; overflow:hidden; }
+.pq-prog-fill {
+  height:100%; background:linear-gradient(90deg,#ff9f43,var(--pink));
+  transition:width .4s cubic-bezier(.34,1.56,.64,1); border-radius:4px;
+}
+
+/* question card */
+.pq-card {
+  background:var(--white); border:2.5px solid var(--border);
+  border-radius:var(--radius-lg); padding:18px 18px 14px;
+  box-shadow:var(--sh); position:relative; overflow:hidden;
+}
+.pq-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:4px;
+  background:linear-gradient(90deg,#ff9f43,var(--pink),var(--yellow));
+}
+.pq-label { font-size:.6rem; font-weight:900; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:8px; }
+.pq-sent {
+  font-size:clamp(.95rem,3.5vw,1.2rem); font-weight:700; line-height:2;
+  color:var(--ink); word-break:break-word;
+}
+.pq-jp { font-size:.78rem; color:var(--muted); font-weight:700; margin-top:7px; border-top:2px dashed var(--border); padding-top:7px; }
+.pq-hint { font-size:.74rem; color:var(--muted); font-weight:700; margin-top:6px; background:var(--bg); border-radius:var(--radius-sm); padding:5px 10px; border:1.5px dashed var(--border); }
+
+/* word role mode: sentence with colored chips */
+.pq-word-row { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; align-items:flex-end; }
+.pq-wchip {
+  display:inline-flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer;
+  transition:transform .15s;
+}
+.pq-wchip:hover { transform:translateY(-2px); }
+.pq-wchip-word {
+  font-family:'Fredoka',sans-serif; font-size:1rem; font-weight:700;
+  padding:4px 12px; border-radius:9px; border:2.5px solid var(--border);
+  background:var(--bg); color:var(--ink); transition:all .2s; white-space:nowrap;
+}
+.pq-wchip-label {
+  font-family:'Fredoka',sans-serif; font-size:.62rem; font-weight:700;
+  color:transparent; transition:color .2s;
+}
+.pq-wchip.assigned .pq-wchip-label { color:inherit; }
+.pq-wchip.correct-chip .pq-wchip-word { border-color:var(--mint)!important; background:#edfff2!important; }
+.pq-wchip.wrong-chip   .pq-wchip-word { border-color:var(--coral)!important; background:#fff0ef!important; }
+
+/* choices */
+.pq-choices { display:grid; grid-template-columns:repeat(5,1fr); gap:7px; }
+.pq-choice {
+  background:var(--white); border:2.5px solid var(--border); border-radius:var(--radius-sm);
+  padding:10px 6px; font-family:'Fredoka',sans-serif; font-size:.9rem; font-weight:700;
+  color:var(--ink); cursor:pointer; transition:all .16s;
+  box-shadow:0 3px 0 var(--border); text-align:center;
+}
+.pq-choice:hover { transform:translateY(-2px); box-shadow:0 5px 0 var(--border); }
+.pq-choice:active { transform:translateY(1px); box-shadow:0 1px 0 var(--border); }
+.pq-choice[data-pat="1"]  { --pc:var(--sky); }
+.pq-choice[data-pat="2"]  { --pc:var(--mint); }
+.pq-choice[data-pat="3"]  { --pc:#ff9f43; }
+.pq-choice[data-pat="4"]  { --pc:var(--purple); }
+.pq-choice[data-pat="5"]  { --pc:var(--pink); }
+.pq-choice:hover { border-color:var(--pc, var(--border)); color:var(--pc, var(--ink)); }
+.pq-choice.correct { border-color:var(--mint)!important; background:#edfff2!important; color:#2d9e50!important; box-shadow:0 3px 0 #86c99a!important; animation:bounce-correct .4s ease; }
+.pq-choice.wrong   { border-color:var(--coral)!important; background:#fff0ef!important; color:var(--coral)!important; box-shadow:0 3px 0 #e5a0a0!important; animation:shake-wrong .4s ease; }
+
+/* explain */
+.pq-explain {
+  background:var(--white); border:2.5px solid var(--border);
+  border-radius:var(--radius-lg); padding:15px 17px;
+  box-shadow:var(--sh); display:none; flex-direction:column; gap:10px;
+}
+.pq-explain.show { display:flex; animation:slide-up .25s ease; }
+.pq-explain-ok { border-color:var(--mint)!important; }
+.pq-explain-ng { border-color:var(--coral)!important; }
+.pq-verdict { font-family:'Fredoka',sans-serif; font-size:.8rem; font-weight:700; }
+.pq-ans-chip {
+  display:inline-block; font-family:'Fredoka',sans-serif; font-size:1rem; font-weight:700;
+  padding:4px 16px; border-radius:20px; border:2.5px solid; margin-bottom:2px;
+}
+/* pattern breakdown display */
+.pq-breakdown {
+  background:var(--bg); border-radius:var(--radius-sm);
+  padding:10px 14px; border:1.5px dashed var(--border);
+  font-size:.82rem; line-height:2.2; font-weight:700; word-break:break-word;
+}
+.pq-explain-body {
+  font-size:.79rem; color:var(--ink); font-weight:700; line-height:1.85;
+  background:#fffae8; border:2px dashed var(--yellow); border-radius:var(--radius-sm); padding:9px 12px;
+}
+.pq-next-btn {
+  padding:13px; border:none; border-radius:var(--radius-md);
+  font-family:'M PLUS Rounded 1c',sans-serif; font-size:.9rem; font-weight:900;
+  background:linear-gradient(135deg,#ff9f43,var(--pink)); color:var(--white);
+  cursor:pointer; transition:all .2s; box-shadow:0 4px 0 #c06020;
+}
+.pq-next-btn:hover { transform:translateY(-2px); box-shadow:0 6px 0 #c06020; }
+
+/* result */
+.pq-result { display:flex; flex-direction:column; align-items:center; gap:14px; padding:10px 0; }
+.pq-result-emoji { font-size:3.5rem; animation:bounce-in .6s cubic-bezier(.34,1.56,.64,1); }
+.pq-result-title { font-family:'Fredoka',sans-serif; font-size:1.8rem; font-weight:700; text-align:center; }
+.pq-result-score { font-family:'Fredoka',sans-serif; font-size:clamp(3rem,10vw,4.5rem); font-weight:700; color:#ff9f43; text-shadow:3px 3px 0 rgba(255,159,67,.2); }
+.pq-result-stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; max-width:300px; }
+.pq-sbox { background:var(--white); border:2.5px solid var(--border); border-radius:var(--radius-md); padding:12px 8px; text-align:center; box-shadow:0 3px 0 var(--border); }
+.pq-slabel { font-size:.6rem; font-weight:900; color:var(--muted); letter-spacing:1px; text-transform:uppercase; margin-bottom:3px; }
+.pq-sval { font-family:'Fredoka',sans-serif; font-size:1.4rem; font-weight:700; }
+.pq-review-list { width:100%; display:flex; flex-direction:column; gap:8px; max-height:260px; overflow-y:auto; }
+.pq-review-item {
+  background:var(--white); border:2px solid var(--border); border-left:4px solid var(--coral);
+  border-radius:var(--radius-sm); padding:10px 13px; box-shadow:0 2px 0 var(--border);
+  font-size:.78rem; line-height:1.7;
+}
+.pq-ri-sent { font-weight:700; color:var(--ink); margin-bottom:3px; font-size:.82rem; }
+.pq-ri-wrong { color:var(--coral); text-decoration:line-through; }
+.pq-ri-ans { color:#2d9e50; font-weight:900; }
+.pq-restart-btn {
+  width:100%; max-width:280px; padding:14px; border:none; border-radius:var(--radius-md);
+  font-family:'M PLUS Rounded 1c',sans-serif; font-size:.92rem; font-weight:900;
+  background:linear-gradient(135deg,#ff9f43,var(--pink)); color:var(--white);
+  cursor:pointer; transition:all .2s; box-shadow:0 5px 0 #c06020;
+}
+.pq-restart-btn:hover { transform:translateY(-2px); box-shadow:0 7px 0 #c06020; }
+</style>
+
+<!-- ══════════════════════════════════
+     SENTENCE PATTERN PAGE HTML
+══════════════════════════════════ -->
+<div class="page" id="patternPage">
+  <div class="pp-header">
+    <div class="pp-title-row">
+      <div class="pp-title">🔢 文型クイズ</div>
+      <div class="pp-pool-badge" id="ppPoolBadge">0問</div>
+    </div>
+    <!-- level filter -->
+    <div class="pp-mode-row">
+      <button class="pm-btn active" id="pat-all"  onclick="setPLevel('all')">すべて</button>
+      <button class="pm-btn" id="pat-sv"   onclick="setPLevel('SV')">第1文型</button>
+      <button class="pm-btn" id="pat-svc"  onclick="setPLevel('SVC')">第2文型</button>
+      <button class="pm-btn" id="pat-svo"  onclick="setPLevel('SVO')">第3文型</button>
+      <button class="pm-btn" id="pat-svoo" onclick="setPLevel('SVOO')">第4文型</button>
+      <button class="pm-btn" id="pat-svoc" onclick="setPLevel('SVOC')">第5文型</button>
+    </div>
+    <div class="pp-count-row">
+      <button class="pc-btn active" id="pn10" onclick="setPCount(10)">10問</button>
+      <button class="pc-btn" id="pn20" onclick="setPCount(20)">20問</button>
+      <button class="pc-btn" id="pn30" onclick="setPCount(30)">30問</button>
+      <button class="pc-btn" id="pn50" onclick="setPCount(50)">50問</button>
+    </div>
+    <div class="pp-start-row">
+      <button class="pp-start-btn" onclick="startPattern()">▶ スタート！</button>
+    </div>
+  </div>
+
+  <div class="pp-body" id="ppBody">
+    <div style="text-align:center;color:var(--muted);font-size:.85rem;font-weight:700;padding:30px 0">
+      文型を選んで「スタート！」を押してね 🔢
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════
+// SENTENCE PATTERN DATA
+// pattern: 'SV'|'SVC'|'SVO'|'SVOO'|'SVOC'
+// s: 英文, jp: 日本語訳
+// parts: [{w:語句, role:'S'|'V'|'O'|'C'|'M', color:色}]
+// explain: 文型の解説
+// ════════════════════════════════════
+const PAT_COLOR = {
+  S:'#4ecdc4', V:'#ff6b9d', O:'#e6a800', C:'#a29bfe', M:'#bbb'
+};
+const PAT_INFO = {
+  SV:   { num:1, label:'第1文型', color:'#4ecdc4', desc:'S＋V。主語と動詞だけで成立。', bg:'#e8fafb' },
+  SVC:  { num:2, label:'第2文型', color:'#ff9f43', desc:'S＋V＋C。S＝C の関係。', bg:'#fff5e8' },
+  SVO:  { num:3, label:'第3文型', color:'#ff6b9d', desc:'S＋V＋O。S≠O の関係。', bg:'#fff0f6' },
+  SVOO: { num:4, label:'第4文型', color:'#a29bfe', desc:'S＋V＋O₁＋O₂。2つの目的語。', bg:'#f3f0ff' },
+  SVOC: { num:5, label:'第5文型', color:'#95e1a3', desc:'S＋V＋O＋C。O＝C の関係。', bg:'#edfff2' },
+};
+
+const PATTERN_Q = [
+
+  // ══ 第1文型 SV ══
+  { pattern:'SV', s:"She cried.", jp:"彼女は泣いた。",
+    parts:[{w:"She",role:"S"},{w:"cried",role:"V"},{w:".",role:"M"}],
+    explain:"【SV】主語（She）＋動詞（cried）だけで完結。cryは目的語も補語も必要としない自動詞。" },
+  { pattern:'SV', s:"He runs every morning.", jp:"彼は毎朝走ります。",
+    parts:[{w:"He",role:"S"},{w:"runs",role:"V"},{w:"every morning",role:"M"},{w:".",role:"M"}],
+    explain:"【SV】run は自動詞。every morning は修飾語（M）なので文型の数には含めない。" },
+  { pattern:'SV', s:"The baby slept soundly.", jp:"赤ちゃんはぐっすり眠りました。",
+    parts:[{w:"The baby",role:"S"},{w:"slept",role:"V"},{w:"soundly",role:"M"},{w:".",role:"M"}],
+    explain:"【SV】sleep は目的語を取らない自動詞。soundly（ぐっすり）は副詞でM。" },
+  { pattern:'SV', s:"The sun rises in the east.", jp:"太陽は東から昇ります。",
+    parts:[{w:"The sun",role:"S"},{w:"rises",role:"V"},{w:"in the east",role:"M"},{w:".",role:"M"}],
+    explain:"【SV】rise は自動詞。in the east は場所を表す修飾語（M）。" },
+  { pattern:'SV', s:"She smiled at me.", jp:"彼女は私に微笑みかけました。",
+    parts:[{w:"She",role:"S"},{w:"smiled",role:"V"},{w:"at me",role:"M"},{w:".",role:"M"}],
+    explain:"【SV】smile は自動詞。at me は前置詞句でM。smile at〜（〜に微笑む）は自動詞＋前置詞。" },
+  { pattern:'SV', s:"Birds sing in the morning.", jp:"鳥たちは朝に歌います。",
+    parts:[{w:"Birds",role:"S"},{w:"sing",role:"V"},{w:"in the morning",role:"M"},{w:".",role:"M"}],
+    explain:"【SV】sing はここでは自動詞（目的語なし）。in the morning は時を表すM。" },
+  { pattern:'SV', s:"He arrived at the station.", jp:"彼は駅に到着しました。",
+    parts:[{w:"He",role:"S"},{w:"arrived",role:"V"},{w:"at the station",role:"M"},{w:".",role:"M"}],
+    explain:"【SV】arrive は自動詞。at the station は場所のM。arrive at〜（〜に到着する）は自動詞＋前置詞。" },
+  { pattern:'SV', s:"The dog barked loudly.", jp:"犬は大きな声で吠えました。",
+    parts:[{w:"The dog",role:"S"},{w:"barked",role:"V"},{w:"loudly",role:"M"},{w:".",role:"M"}],
+    explain:"【SV】bark は自動詞。loudly（大きな声で）は副詞でM。" },
+  { pattern:'SV', s:"She works at a hospital.", jp:"彼女は病院で働いています。",
+    parts:[{w:"She",role:"S"},{w:"works",role:"V"},{w:"at a hospital",role:"M"},{w:".",role:"M"}],
+    explain:"【SV】work は自動詞。at a hospital は場所のM。" },
+  { pattern:'SV', s:"The audience laughed.", jp:"観客は笑いました。",
+    parts:[{w:"The audience",role:"S"},{w:"laughed",role:"V"},{w:".",role:"M"}],
+    explain:"【SV】laugh は自動詞。主語＋動詞だけで意味が成立する最もシンプルな文型。" },
+
+  // ══ 第2文型 SVC ══
+  { pattern:'SVC', s:"She is a teacher.", jp:"彼女は先生です。",
+    parts:[{w:"She",role:"S"},{w:"is",role:"V"},{w:"a teacher",role:"C"},{w:".",role:"M"}],
+    explain:"【SVC】S（She）＝C（a teacher）の関係が成立。isはbe動詞でイコール（＝）を表す。" },
+  { pattern:'SVC', s:"He looks happy.", jp:"彼は幸せそうに見えます。",
+    parts:[{w:"He",role:"S"},{w:"looks",role:"V"},{w:"happy",role:"C"},{w:".",role:"M"}],
+    explain:"【SVC】S（He）＝C（happy）。look（〜に見える）は知覚動詞でbe動詞の仲間。" },
+  { pattern:'SVC', s:"The sky became dark.", jp:"空が暗くなりました。",
+    parts:[{w:"The sky",role:"S"},{w:"became",role:"V"},{w:"dark",role:"C"},{w:".",role:"M"}],
+    explain:"【SVC】S（The sky）＝C（dark）。become（〜になる）は変化を表す連結動詞。" },
+  { pattern:'SVC', s:"The soup smells delicious.", jp:"スープはおいしそうなにおいがします。",
+    parts:[{w:"The soup",role:"S"},{w:"smells",role:"V"},{w:"delicious",role:"C"},{w:".",role:"M"}],
+    explain:"【SVC】S（The soup）＝C（delicious）。smell（〜のにおいがする）は感覚を表す連結動詞。" },
+  { pattern:'SVC', s:"She seems tired today.", jp:"彼女は今日疲れているようです。",
+    parts:[{w:"She",role:"S"},{w:"seems",role:"V"},{w:"tired",role:"C"},{w:"today",role:"M"},{w:".",role:"M"}],
+    explain:"【SVC】S（She）＝C（tired）。seem（〜のように見える）は連結動詞。today はM。" },
+  { pattern:'SVC', s:"He remained calm.", jp:"彼は冷静でいました。",
+    parts:[{w:"He",role:"S"},{w:"remained",role:"V"},{w:"calm",role:"C"},{w:".",role:"M"}],
+    explain:"【SVC】S（He）＝C（calm）。remain（〜のままでいる）は状態の継続を表す連結動詞。" },
+  { pattern:'SVC', s:"This tastes salty.", jp:"これは塩辛い味がします。",
+    parts:[{w:"This",role:"S"},{w:"tastes",role:"V"},{w:"salty",role:"C"},{w:".",role:"M"}],
+    explain:"【SVC】S（This）＝C（salty）。taste（〜の味がする）は感覚動詞で連結動詞。" },
+  { pattern:'SVC', s:"The cake looks beautiful.", jp:"そのケーキは美しく見えます。",
+    parts:[{w:"The cake",role:"S"},{w:"looks",role:"V"},{w:"beautiful",role:"C"},{w:".",role:"M"}],
+    explain:"【SVC】S（The cake）＝C（beautiful）。連結動詞（look）の後は形容詞のC。" },
+  { pattern:'SVC', s:"She turned pale.", jp:"彼女は青ざめました。",
+    parts:[{w:"She",role:"S"},{w:"turned",role:"V"},{w:"pale",role:"C"},{w:".",role:"M"}],
+    explain:"【SVC】S（She）＝C（pale）。turn（〜になる）は変化を表す連結動詞。" },
+  { pattern:'SVC', s:"He grew stronger.", jp:"彼はより強くなりました。",
+    parts:[{w:"He",role:"S"},{w:"grew",role:"V"},{w:"stronger",role:"C"},{w:".",role:"M"}],
+    explain:"【SVC】S（He）＝C（stronger）。grow（〜になる）は成長・変化を表す連結動詞。" },
+  { pattern:'SVC', s:"She is a famous singer.", jp:"彼女は有名な歌手です。",
+    parts:[{w:"She",role:"S"},{w:"is",role:"V"},{w:"a famous singer",role:"C"},{w:".",role:"M"}],
+    explain:"【SVC】S（She）＝C（a famous singer）。be動詞＋名詞の補語。形容詞だけでなく名詞もCになれる。" },
+
+  // ══ 第3文型 SVO ══
+  { pattern:'SVO', s:"She studies English.", jp:"彼女は英語を勉強します。",
+    parts:[{w:"She",role:"S"},{w:"studies",role:"V"},{w:"English",role:"O"},{w:".",role:"M"}],
+    explain:"【SVO】study は他動詞でO（English）が必要。S≠O（She≠English）なのでO（目的語）。" },
+  { pattern:'SVO', s:"He reads a book.", jp:"彼は本を読みます。",
+    parts:[{w:"He",role:"S"},{w:"reads",role:"V"},{w:"a book",role:"O"},{w:".",role:"M"}],
+    explain:"【SVO】read は他動詞。a book が動作の対象（O）。" },
+  { pattern:'SVO', s:"She loves playing soccer.", jp:"彼女はサッカーをするのが大好きです。",
+    parts:[{w:"She",role:"S"},{w:"loves",role:"V"},{w:"playing soccer",role:"O"},{w:".",role:"M"}],
+    explain:"【SVO】動名詞（playing soccer）が目的語（O）になっている第3文型。" },
+  { pattern:'SVO', s:"They discuss the problem.", jp:"彼らは問題を議論します。",
+    parts:[{w:"They",role:"S"},{w:"discuss",role:"V"},{w:"the problem",role:"O"},{w:".",role:"M"}],
+    explain:"【SVO】discuss は他動詞。×discuss about ではなく discuss〜（前置詞不要）。" },
+  { pattern:'SVO', s:"He enjoys listening to music.", jp:"彼は音楽を聴くのを楽しみます。",
+    parts:[{w:"He",role:"S"},{w:"enjoys",role:"V"},{w:"listening to music",role:"O"},{w:".",role:"M"}],
+    explain:"【SVO】enjoy の後は動名詞（-ing）。listening to musicがまとまって目的語（O）。" },
+  { pattern:'SVO', s:"She bought a new dress.", jp:"彼女は新しいドレスを買いました。",
+    parts:[{w:"She",role:"S"},{w:"bought",role:"V"},{w:"a new dress",role:"O"},{w:".",role:"M"}],
+    explain:"【SVO】buy は他動詞。a new dress が目的語（O）。" },
+  { pattern:'SVO', s:"He wants to become a doctor.", jp:"彼は医者になりたいと思っています。",
+    parts:[{w:"He",role:"S"},{w:"wants",role:"V"},{w:"to become a doctor",role:"O"},{w:".",role:"M"}],
+    explain:"【SVO】to不定詞（to become a doctor）がまとまって目的語（O）。want to do（〜したい）。" },
+  { pattern:'SVO', s:"She finished her homework.", jp:"彼女は宿題を終えました。",
+    parts:[{w:"She",role:"S"},{w:"finished",role:"V"},{w:"her homework",role:"O"},{w:".",role:"M"}],
+    explain:"【SVO】finish は他動詞。her homework が目的語（O）。finish -ing（〜し終える）も重要。" },
+  { pattern:'SVO', s:"They enjoyed the concert.", jp:"彼らはコンサートを楽しみました。",
+    parts:[{w:"They",role:"S"},{w:"enjoyed",role:"V"},{w:"the concert",role:"O"},{w:".",role:"M"}],
+    explain:"【SVO】enjoy は他動詞。the concert が目的語（O）。" },
+  { pattern:'SVO', s:"He solved the problem.", jp:"彼は問題を解決しました。",
+    parts:[{w:"He",role:"S"},{w:"solved",role:"V"},{w:"the problem",role:"O"},{w:".",role:"M"}],
+    explain:"【SVO】solve は他動詞。the problem が目的語（O）。" },
+  { pattern:'SVO', s:"She avoids eating junk food.", jp:"彼女はジャンクフードを食べることを避けます。",
+    parts:[{w:"She",role:"S"},{w:"avoids",role:"V"},{w:"eating junk food",role:"O"},{w:".",role:"M"}],
+    explain:"【SVO】avoid の後は動名詞（-ing）。eating junk food がまとまってO。" },
+
+  // ══ 第4文型 SVOO ══
+  { pattern:'SVOO', s:"She gave him a flower.", jp:"彼女は彼に花をあげました。",
+    parts:[{w:"She",role:"S"},{w:"gave",role:"V"},{w:"him",role:"O"},{w:"a flower",role:"O"},{w:".",role:"M"}],
+    explain:"【SVOO】give O₁ O₂（O₁にO₂を与える）。him＝間接目的語（〜に）、a flower＝直接目的語（〜を）。" },
+  { pattern:'SVOO', s:"He told me a secret.", jp:"彼は私に秘密を話してくれました。",
+    parts:[{w:"He",role:"S"},{w:"told",role:"V"},{w:"me",role:"O"},{w:"a secret",role:"O"},{w:".",role:"M"}],
+    explain:"【SVOO】tell O₁ O₂（O₁にO₂を話す）。me＝間接O、a secret＝直接O。" },
+  { pattern:'SVOO', s:"She bought him a gift.", jp:"彼女は彼にプレゼントを買いました。",
+    parts:[{w:"She",role:"S"},{w:"bought",role:"V"},{w:"him",role:"O"},{w:"a gift",role:"O"},{w:".",role:"M"}],
+    explain:"【SVOO】buy O₁ O₂（O₁にO₂を買う）。him＝間接O、a gift＝直接O。" },
+  { pattern:'SVOO', s:"He showed us his photos.", jp:"彼は私たちに写真を見せました。",
+    parts:[{w:"He",role:"S"},{w:"showed",role:"V"},{w:"us",role:"O"},{w:"his photos",role:"O"},{w:".",role:"M"}],
+    explain:"【SVOO】show O₁ O₂（O₁にO₂を見せる）。us＝間接O、his photos＝直接O。" },
+  { pattern:'SVOO', s:"She sent me a message.", jp:"彼女は私にメッセージを送りました。",
+    parts:[{w:"She",role:"S"},{w:"sent",role:"V"},{w:"me",role:"O"},{w:"a message",role:"O"},{w:".",role:"M"}],
+    explain:"【SVOO】send O₁ O₂（O₁にO₂を送る）。me＝間接O、a message＝直接O。" },
+  { pattern:'SVOO', s:"He lent her his bicycle.", jp:"彼は彼女に自転車を貸しました。",
+    parts:[{w:"He",role:"S"},{w:"lent",role:"V"},{w:"her",role:"O"},{w:"his bicycle",role:"O"},{w:".",role:"M"}],
+    explain:"【SVOO】lend O₁ O₂（O₁にO₂を貸す）。her＝間接O、his bicycle＝直接O。" },
+  { pattern:'SVOO', s:"She taught us English.", jp:"彼女は私たちに英語を教えました。",
+    parts:[{w:"She",role:"S"},{w:"taught",role:"V"},{w:"us",role:"O"},{w:"English",role:"O"},{w:".",role:"M"}],
+    explain:"【SVOO】teach O₁ O₂（O₁にO₂を教える）。us＝間接O、English＝直接O。" },
+  { pattern:'SVOO', s:"He cooked her a meal.", jp:"彼は彼女に食事を作りました。",
+    parts:[{w:"He",role:"S"},{w:"cooked",role:"V"},{w:"her",role:"O"},{w:"a meal",role:"O"},{w:".",role:"M"}],
+    explain:"【SVOO】cook O₁ O₂（O₁にO₂を作る）。her＝間接O、a meal＝直接O。" },
+  { pattern:'SVOO', s:"She read him a story.", jp:"彼女は彼に物語を読んであげました。",
+    parts:[{w:"She",role:"S"},{w:"read",role:"V"},{w:"him",role:"O"},{w:"a story",role:"O"},{w:".",role:"M"}],
+    explain:"【SVOO】read O₁ O₂（O₁にO₂を読む）。him＝間接O、a story＝直接O。" },
+  { pattern:'SVOO', s:"He wrote her a long letter.", jp:"彼は彼女に長い手紙を書きました。",
+    parts:[{w:"He",role:"S"},{w:"wrote",role:"V"},{w:"her",role:"O"},{w:"a long letter",role:"O"},{w:".",role:"M"}],
+    explain:"【SVOO】write O₁ O₂（O₁にO₂を書く）。her＝間接O、a long letter＝直接O。" },
+  { pattern:'SVOO', s:"She asked me a question.", jp:"彼女は私に質問しました。",
+    parts:[{w:"She",role:"S"},{w:"asked",role:"V"},{w:"me",role:"O"},{w:"a question",role:"O"},{w:".",role:"M"}],
+    explain:"【SVOO】ask O₁ O₂（O₁にO₂を尋ねる）。me＝間接O、a question＝直接O。" },
+
+  // ══ 第5文型 SVOC ══
+  { pattern:'SVOC', s:"She made him happy.", jp:"彼女は彼を幸せにしました。",
+    parts:[{w:"She",role:"S"},{w:"made",role:"V"},{w:"him",role:"O"},{w:"happy",role:"C"},{w:".",role:"M"}],
+    explain:"【SVOC】make O C（OをCにする）。O（him）＝C（happy）が成立。使役の意味を持つ第5文型動詞。" },
+  { pattern:'SVOC', s:"They named the dog Hachi.", jp:"彼らは犬をハチと名付けました。",
+    parts:[{w:"They",role:"S"},{w:"named",role:"V"},{w:"the dog",role:"O"},{w:"Hachi",role:"C"},{w:".",role:"M"}],
+    explain:"【SVOC】name O C（OをCと名付ける）。O（the dog）＝C（Hachi）が成立。" },
+  { pattern:'SVOC', s:"She kept the room clean.", jp:"彼女は部屋をきれいに保ちました。",
+    parts:[{w:"She",role:"S"},{w:"kept",role:"V"},{w:"the room",role:"O"},{w:"clean",role:"C"},{w:".",role:"M"}],
+    explain:"【SVOC】keep O C（OをCの状態に保つ）。O（the room）＝C（clean）が成立。" },
+  { pattern:'SVOC', s:"I found the test difficult.", jp:"私はテストが難しいと感じました。",
+    parts:[{w:"I",role:"S"},{w:"found",role:"V"},{w:"the test",role:"O"},{w:"difficult",role:"C"},{w:".",role:"M"}],
+    explain:"【SVOC】find O C（OをCだと分かる・感じる）。O（the test）＝C（difficult）が成立。" },
+  { pattern:'SVOC', s:"She called him a genius.", jp:"彼女は彼を天才と呼びました。",
+    parts:[{w:"She",role:"S"},{w:"called",role:"V"},{w:"him",role:"O"},{w:"a genius",role:"C"},{w:".",role:"M"}],
+    explain:"【SVOC】call O C（OをCと呼ぶ）。O（him）＝C（a genius）が成立。" },
+  { pattern:'SVOC', s:"He painted the wall white.", jp:"彼は壁を白く塗りました。",
+    parts:[{w:"He",role:"S"},{w:"painted",role:"V"},{w:"the wall",role:"O"},{w:"white",role:"C"},{w:".",role:"M"}],
+    explain:"【SVOC】paint O C（OをCに塗る）。O（the wall）＝C（white）が成立。" },
+  { pattern:'SVOC', s:"The news made us sad.", jp:"そのニュースは私たちを悲しくさせました。",
+    parts:[{w:"The news",role:"S"},{w:"made",role:"V"},{w:"us",role:"O"},{w:"sad",role:"C"},{w:".",role:"M"}],
+    explain:"【SVOC】make O C（OをCにする）。O（us）＝C（sad）が成立。makeは第5文型の代表的動詞。" },
+  { pattern:'SVOC', s:"She left the door open.", jp:"彼女はドアを開けたままにしました。",
+    parts:[{w:"She",role:"S"},{w:"left",role:"V"},{w:"the door",role:"O"},{w:"open",role:"C"},{w:".",role:"M"}],
+    explain:"【SVOC】leave O C（OをCの状態にしておく）。O（the door）＝C（open）が成立。" },
+  { pattern:'SVOC', s:"I saw her run across the street.", jp:"私は彼女が通りを走り渡るのを見ました。",
+    parts:[{w:"I",role:"S"},{w:"saw",role:"V"},{w:"her",role:"O"},{w:"run",role:"C"},{w:"across the street",role:"M"},{w:".",role:"M"}],
+    explain:"【SVOC】知覚動詞（see）＋O＋原形C。O（her）がrunするのを見た。run はCに当たる原形動詞。" },
+  { pattern:'SVOC', s:"They elected him president.", jp:"彼らは彼を大統領に選びました。",
+    parts:[{w:"They",role:"S"},{w:"elected",role:"V"},{w:"him",role:"O"},{w:"president",role:"C"},{w:".",role:"M"}],
+    explain:"【SVOC】elect O C（OをCに選ぶ）。O（him）＝C（president）が成立。" },
+  { pattern:'SVOC', s:"She made the children laugh.", jp:"彼女は子供たちを笑わせました。",
+    parts:[{w:"She",role:"S"},{w:"made",role:"V"},{w:"the children",role:"O"},{w:"laugh",role:"C"},{w:".",role:"M"}],
+    explain:"【SVOC】make O 原形（Oに〜させる）。the children がlaughするというC。使役動詞make＋原形。" },
+  { pattern:'SVOC', s:"He got his car repaired.", jp:"彼は車を修理してもらいました。",
+    parts:[{w:"He",role:"S"},{w:"got",role:"V"},{w:"his car",role:"O"},{w:"repaired",role:"C"},{w:".",role:"M"}],
+    explain:"【SVOC】get O PP（Oを〜してもらう・される）。his car＝repaired（修理された）が成立。受動のC。" },
+];
+
+// ════════════════════════════════════
+// PATTERN STATE
+// ════════════════════════════════════
+let pLevel  = 'all';
+let pCount  = 10;
+let pQuestions = [];
+let pIdx    = 0;
+let pOk     = 0;
+let pNg     = 0;
+let pMisses = [];
+let pAnswered = false;
+
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('ppPoolBadge').textContent = PATTERN_Q.length + '問';
+});
+
+function setPLevel(lv) {
+  pLevel = lv;
+  document.querySelectorAll('.pm-btn').forEach(b => b.classList.remove('active'));
+  const ids = { all:'pat-all', SV:'pat-sv', SVC:'pat-svc', SVO:'pat-svo', SVOO:'pat-svoo', SVOC:'pat-svoc' };
+  document.getElementById(ids[lv])?.classList.add('active');
+  const pool = lv === 'all' ? PATTERN_Q : PATTERN_Q.filter(q => q.pattern === lv);
+  document.getElementById('ppPoolBadge').textContent = pool.length + '問';
+}
+
+function setPCount(n) {
+  pCount = n;
+  ['10','20','30','50'].forEach(x => document.getElementById('pn'+x).classList.toggle('active', x==n));
+}
+
+function startPattern() {
+  const pool = pLevel === 'all' ? [...PATTERN_Q] : PATTERN_Q.filter(q => q.pattern === pLevel);
+  if (!pool.length) return;
+  pQuestions = shuffle(pool).slice(0, Math.min(pCount, pool.length));
+  pIdx = 0; pOk = 0; pNg = 0; pMisses = []; pAnswered = false;
+  renderPatternQ();
+}
+
+function renderPatternQ() {
+  const body = document.getElementById('ppBody');
+  if (pIdx >= pQuestions.length) { renderPatternResult(); return; }
+
+  const q   = pQuestions[pIdx];
+  const pct = Math.round((pIdx / pQuestions.length) * 100);
+
+  // build legend row
+  const legendHTML = Object.entries(PAT_INFO).map(([k,v]) =>
+    `<span class="pp-lchip" style="color:${v.color};border-color:${v.color};background:${v.bg}">第${v.num}文型 ${k}</span>`
+  ).join('');
+
+  // 4 wrong patterns
+  const allPats = ['SV','SVC','SVO','SVOO','SVOC'];
+  const wrongs  = allPats.filter(p => p !== q.pattern);
+  const choices = shuffle([q.pattern, ...wrongs.slice(0, 3)]);
+
+  body.innerHTML = `
+    <div class="pq-prog-row">
+      <span class="pq-prog-label">Q${pIdx+1} / ${pQuestions.length}</span>
+      <div class="pq-prog-bar"><div class="pq-prog-fill" style="width:${pct}%"></div></div>
+      <span class="pq-prog-label" style="color:var(--mint)">✅${pOk}</span>
+    </div>
+
+    <div class="pp-legend">${legendHTML}</div>
+
+    <div class="pq-card">
+      <div class="pq-label">この文は何文型？</div>
+      <div class="pq-sent">${q.s}</div>
+      <div class="pq-jp">${q.jp}</div>
+    </div>
+
+    <div class="pq-choices">
+      ${choices.map(c => {
+        const info = PAT_INFO[c];
+        return `<button class="pq-choice" data-pat="${c.length}" onclick="answerPattern(this,'${c}')"
+          style="border-color:${info.color}33;color:${info.color}">
+          <div style="font-size:.7rem;margin-bottom:2px">第${info.num}文型</div>
+          <div style="font-size:.95rem;font-weight:900">${c}</div>
+        </button>`;
+      }).join('')}
+    </div>
+
+    <div class="pq-explain" id="pqExplain"></div>
+  `;
+}
+
+function answerPattern(btn, selected) {
+  if (pAnswered) return;
+  pAnswered = true;
+  const q  = pQuestions[pIdx];
+  const ok = selected === q.pattern;
+  const info   = PAT_INFO[q.pattern];
+  const selInfo= PAT_INFO[selected];
+
+  document.querySelectorAll('.pq-choice').forEach(b => {
+    b.disabled = true;
+    const bPat = b.textContent.match(/[A-Z]+/)?.[0];
+    if (bPat === q.pattern) { b.classList.add('correct'); b.style.background = info.bg; b.style.borderColor = info.color; }
+    else if (b === btn && !ok) b.classList.add('wrong');
+  });
+
+  if (ok) pOk++;
+  else { pNg++; pMisses.push({ q, selected }); }
+
+  // build breakdown
+  const breakdown = q.parts
+    .filter(p => p.role !== 'M' || p.w !== '.')
+    .map(p => {
+      if (p.role === 'M') return `<span style="color:#bbb">${p.w}[M]</span>`;
+      const c = PAT_COLOR[p.role] || '#bbb';
+      return `<span class="w" style="background:${c}18;color:${c};border:2px solid ${c};border-radius:7px;padding:1px 8px;font-family:'Fredoka',sans-serif;font-weight:700">${p.w}<sub style="font-size:.6em">[${p.role}]</sub></span>`;
+    }).join(' ');
+
+  const isLast = pIdx === pQuestions.length - 1;
+  const ex = document.getElementById('pqExplain');
+  ex.className = 'pq-explain show ' + (ok ? 'pq-explain-ok' : 'pq-explain-ng');
+  ex.innerHTML = `
+    <div class="pq-verdict">${ok ? '✅ 正解！' : '❌ 不正解'}</div>
+    <div>
+      <span class="pq-ans-chip" style="background:${info.bg};border-color:${info.color};color:${info.color}">
+        第${info.num}文型 ${q.pattern}
+      </span>
+      <span style="font-size:.78rem;color:var(--muted);font-weight:700;margin-left:8px">${info.desc}</span>
+    </div>
+    <div class="pq-breakdown">${breakdown}</div>
+    <div class="pq-explain-body">💡 ${q.explain}</div>
+    <button class="pq-next-btn" onclick="nextPattern()">${isLast ? '📊 結果を見る' : '次へ →'}</button>
+  `;
+  setTimeout(() => ex.scrollIntoView({ behavior:'smooth', block:'nearest' }), 80);
+}
+
+function nextPattern() {
+  pIdx++;
+  pAnswered = false;
+  renderPatternQ();
+}
+
+function renderPatternResult() {
+  const total = pQuestions.length;
+  const pct   = Math.round(pOk / total * 100);
+  const score = pOk * 100 - pNg * 10;
+  const data  = pct===100?{e:'🏆',t:'PERFECT!!'}:pct>=80?{e:'🎉',t:'EXCELLENT!'}:pct>=60?{e:'😊',t:'GOOD JOB!'}:{e:'😅',t:'もう一回！'};
+
+  const missHTML = pMisses.length === 0
+    ? '<div style="text-align:center;color:#2d9e50;font-weight:900;font-size:.88rem;padding:10px">全問正解！🎉</div>'
+    : pMisses.map(({q, selected}) => {
+        const info    = PAT_INFO[q.pattern];
+        const selInfo = PAT_INFO[selected];
+        return `<div class="pq-review-item">
+          <div class="pq-ri-sent">${q.s}</div>
+          <div>
+            <span class="pq-ri-wrong">✗ 第${selInfo.num}文型 ${selected}</span>
+            　→　<span class="pq-ri-ans">✓ 第${info.num}文型 ${q.pattern}</span>
+          </div>
+        </div>`;
+      }).join('');
+
+  document.getElementById('ppBody').innerHTML = `
+    <div class="pq-result">
+      <div class="pq-result-emoji">${data.e}</div>
+      <div class="pq-result-title">${data.t}</div>
+      <div class="pq-result-score">${pOk}<span style="font-size:1.5rem;color:var(--muted)"> / ${total}</span></div>
+      <div class="pq-result-stats">
+        <div class="pq-sbox"><div class="pq-slabel">正解 ✅</div><div class="pq-sval" style="color:#ff9f43">${pOk}</div></div>
+        <div class="pq-sbox"><div class="pq-slabel">ミス ❌</div><div class="pq-sval" style="color:var(--pink)">${pNg}</div></div>
+        <div class="pq-sbox"><div class="pq-slabel">正答率</div><div class="pq-sval" style="color:var(--sky)">${pct}%</div></div>
+        <div class="pq-sbox"><div class="pq-slabel">スコア</div><div class="pq-sval" style="color:var(--purple)">${Math.max(0,score)}</div></div>
+      </div>
+      <div style="font-size:.72rem;font-weight:900;color:var(--muted);text-align:center;width:100%;max-width:480px">間違えた問題 📝</div>
+      <div class="pq-review-list">${missHTML}</div>
+      <button class="pq-restart-btn" onclick="startPattern()">🔄 もう一度！</button>
+      <button onclick="resetPattern()" style="background:var(--white);border:2px solid var(--border);border-radius:12px;color:var(--muted);font-family:'M PLUS Rounded 1c',sans-serif;font-size:.8rem;font-weight:700;padding:10px 20px;cursor:pointer;max-width:280px;width:100%;box-shadow:0 3px 0 var(--border)">← 設定に戻る</button>
+    </div>
+  `;
+  if (pct >= 80) confetti();
+}
+
+function resetPattern() {
+  document.getElementById('ppBody').innerHTML = `
+    <div style="text-align:center;color:var(--muted);font-size:.85rem;font-weight:700;padding:30px 0">
+      文型を選んで「スタート！」を押してね 🔢
+    </div>`;
 }
 </script>
 </body>
