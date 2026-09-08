@@ -2187,6 +2187,10 @@ body::before {
     <div class="bnav-pip" style="background:#ff9f43"></div>
     <span class="bnav-icon">🔢</span>文型
   </button>
+  <button class="bnav-btn" id="bnav-trans" onclick="switchPage('transPage')" style="--tab-color:#4ecdc4">
+    <div class="bnav-pip" style="background:#4ecdc4"></div>
+    <span class="bnav-icon">🌐</span>翻訳
+  </button>
   <button class="bnav-btn" id="bnav-guide" onclick="switchPage('guidePage')">
     <div class="bnav-pip"></div>
     <span class="bnav-icon">📖</span>解説
@@ -4206,6 +4210,178 @@ const GRAMMAR_Q = [
   {level:'jhs', type:'blank', q:"I met a girl ___ father is a famous actor.", choices:["whose","who","which","that"], ans:"whose",
    explain:"【所有格の関係代名詞】「〜の」という所有の意味 → whose。a girl whose father is...（父親が〜の少女）。"},
 
+  // ── 疑問詞 ──
+  {level:'jhs', type:'blank', q:"___ is your favorite subject?", choices:["What","Which","Who","How"], ans:"What",
+   explain:"【whatの疑問文】「何が好きな教科？」→ What。Whichは選択肢がある場合（WhichよりWhatの方が広い）。"},
+  {level:'jhs', type:'blank', q:"___ long does it take to get there?", choices:["How","What","Which","Where"], ans:"How",
+   explain:"【How long〜?】「どのくらい時間がかかりますか？」。How long〜はtimeとよくセットになる。"},
+  {level:'jhs', type:'blank', q:"___ did you go last summer?", choices:["Where","What","Who","When"], ans:"Where",
+   explain:"【whereの疑問文】「どこへ行った？」→ Where。go（行く）の目的地を聞くのでWhere。"},
+  {level:'jhs', type:'blank', q:"___ is she so tired?", choices:["Why","What","How","Where"], ans:"Why",
+   explain:"【whyの疑問文】「なぜ彼女はそんなに疲れているの？」→ Why。理由を聞く疑問詞。"},
+  {level:'jhs', type:'blank', q:"___ many students are there in your class?", choices:["How","What","Which","Who"], ans:"How",
+   explain:"【How many〜?】「何人の生徒がいますか？」。How many + 複数名詞の形が重要。"},
+
+  // ── There is / are 構文 ──
+  {level:'jhs', type:'blank', q:"There ___ a book on the desk.", choices:["is","are","am","be"], ans:"is",
+   explain:"【There is/are〜】後ろの名詞が単数（a book）なのでis。There is〜（〜がある）の基本構文。"},
+  {level:'jhs', type:'blank', q:"There ___ many students in the library.", choices:["are","is","am","were"], ans:"are",
+   explain:"【There is/are〜】後ろの名詞が複数（many students）なのでare。"},
+  {level:'jhs', type:'blank', q:"Were there ___ messages for me?", choices:["any","some","a","an"], ans:"any",
+   explain:"【疑問文・否定文のany】疑問文・否定文ではsomeではなくanyを使う。Were there any〜?（〜はありましたか？）。"},
+
+  // ── 代名詞・所有格 ──
+  {level:'jhs', type:'blank', q:"This is not my bag. It must be ___.", choices:["hers","her","she","herself"], ans:"hers",
+   explain:"【所有代名詞】「彼女のもの」= hers（所有代名詞）。her bag ではなく bag を省略してhers。×herは所有格で名詞の前に使う。"},
+  {level:'jhs', type:'blank', q:"He hurt ___ while playing basketball.", choices:["himself","him","his","he"], ans:"himself",
+   explain:"【再帰代名詞】「自分自身を傷つけた」→ 再帰代名詞himself。主語（He）と目的語が同じ人のときに使う。"},
+  {level:'jhs', type:'blank', q:"Please help ___. We need everyone's support.", choices:["yourself","you","yours","your"], ans:"yourself",
+   explain:"【再帰代名詞】「自分自身を助けてください」→ yourself。help yourself（ご自由にどうぞ）も重要表現。"},
+
+  // ── 接続詞 応用 ──
+  {level:'jhs', type:'blank', q:"___ she is young, she is very responsible.", choices:["Although","Because","If","When"], ans:"Although",
+   explain:"【逆接の接続詞】「若いけれど責任感がある」→ Although（〜にもかかわらず）。becauseは理由（〜なので）、意味が正反対。"},
+  {level:'jhs', type:'blank', q:"Call me ___ you arrive at the station.", choices:["when","while","because","but"], ans:"when",
+   explain:"【時を表す接続詞】「駅に着いたら電話して」→ when（〜したとき）。未来のことでも節内は現在形を使う。"},
+  {level:'jhs', type:'blank', q:"He studied hard ___ he wanted to pass the exam.", choices:["because","although","if","while"], ans:"because",
+   explain:"【理由の接続詞】「試験に合格したかったので一生懸命勉強した」→ because（〜なので）。理由を表す。"},
+  {level:'jhs', type:'blank', q:"I was cooking ___ she was setting the table.", choices:["while","when","because","if"], ans:"while",
+   explain:"【while】「〜している間」という同時進行を表す接続詞。while S was -ing（〜している間に）。"},
+  {level:'jhs', type:'blank', q:"Take an umbrella ___ it rains.", choices:["in case","because","although","while"], ans:"in case",
+   explain:"【in case〜】「〜に備えて」という意味の接続詞。in case it rains（雨が降るといけないので）。"},
+
+  // ── 比較 応用 ──
+  {level:'jhs', type:'blank', q:"He is ___ the fastest runner in the school.", choices:["by far","very","too","so"], ans:"by far",
+   explain:"【最上級の強調】by far（断然・はるかに）は最上級を強調する。by far the fastestで「断然一番速い」。"},
+  {level:'jhs', type:'blank', q:"She is ___ as talented as her sister.", choices:["twice","double","two times","two"], ans:"twice",
+   explain:"【倍数表現】twice as〜as...（…の2倍〜）。twice as talented as her sister（姉の2倍才能がある）。"},
+  {level:'jhs', type:'blank', q:"This problem is ___ more difficult than I thought.", choices:["much","very","too","so"], ans:"much",
+   explain:"【比較級の強調】much / far / even / stillが比較級を強調する。×very more は不可。muchを使う。"},
+  {level:'jhs', type:'blank', q:"Japan is ___ than any other country in Asia in terms of population.", choices:["more populous","most populous","the most populous","populousest"], ans:"more populous",
+   explain:"【比較級＋than any other】「他のどの〜よりも」は比較級＋than any other＋単数名詞。最上級の書き換え。"},
+
+  // ── 不定詞 応用 ──
+  {level:'jhs', type:'blank', q:"She was happy ___ hear the good news.", choices:["to","of","for","at"], ans:"to",
+   explain:"【感情＋to不定詞】形容詞（happy）の後のto不定詞は感情の原因を表す副詞的用法。「〜して嬉しい」。"},
+  {level:'jhs', type:'blank', q:"He worked hard ___ order to pass the exam.", choices:["in","at","on","for"], ans:"in",
+   explain:"【in order to〜】「〜するために」はin order to do。前置詞inが必要。to doだけでも目的は表せるが試験では重要。"},
+  {level:'jhs', type:'blank', q:"This book is easy ___ understand.", choices:["to","of","for","at"], ans:"to",
+   explain:"【be easy to do】「〜しやすい」はbe easy/difficult/hard to do。itが形式主語でなく真主語がthis bookのとき。"},
+  {level:'jhs', type:'blank', q:"She told him ___ wait outside.", choices:["to","of","for","not"], ans:"to",
+   explain:"【tell O to do】「Oに〜するように言う」はtell O to do。Oの後にto不定詞が続く重要構文。"},
+  {level:'jhs', type:'blank', q:"He seems ___ know the answer.", choices:["to","of","for","at"], ans:"to",
+   explain:"【seem to do】「〜するようだ」はseem to do。seemの後にto不定詞が続く。"},
+
+  // ── 動名詞 応用 ──
+  {level:'jhs', type:'blank', q:"Thank you for ___ me.", choices:["helping","help","helped","to help"], ans:"helping",
+   explain:"【前置詞＋動名詞】前置詞（for）の後は動名詞（-ing）。thank you for -ing（〜してくれてありがとう）。"},
+  {level:'jhs', type:'blank', q:"She is not good at ___ in front of people.", choices:["speaking","speak","to speak","spoke"], ans:"speaking",
+   explain:"【be good at -ing】be good at〜（〜が得意）のatは前置詞なので後ろは動名詞（-ing）。"},
+  {level:'jhs', type:'blank', q:"How about ___ a break?", choices:["taking","take","to take","took"], ans:"taking",
+   explain:"【How about -ing?】「〜するのはどうですか？」はHow about -ing?。aboutは前置詞なので動名詞が続く。"},
+  {level:'jhs', type:'blank', q:"___ is fun for her.", choices:["Cooking","Cook","To cooking","Cooked"], ans:"Cooking",
+   explain:"【動名詞が主語】動名詞（Cooking）が主語になれる。「料理することは彼女にとって楽しい」。to cookも可だが動名詞の方が自然。"},
+
+  // ── 現在完了 応用 ──
+  {level:'jhs', type:'blank', q:"She ___ just finished her homework.", choices:["has","have","had","is"], ans:"has",
+   explain:"【現在完了・完了】just（ちょうど）は現在完了のサイン。主語がShe→has。just finished（ちょうど終えた）。"},
+  {level:'jhs', type:'blank', q:"I ___ never eaten Thai food before.", choices:["have","has","had","am"], ans:"have",
+   explain:"【現在完了・経験】never（一度も〜ない）は経験の現在完了のサイン。主語がI→have。"},
+  {level:'jhs', type:'blank', q:"How long ___ she been sick?", choices:["has","have","is","was"], ans:"has",
+   explain:"【How long have S PP?】どのくらい〜しているか？主語がShe→has。現在完了継続の疑問文。"},
+  {level:'jhs', type:'blank', q:"He has gone ___ France.", choices:["to","in","for","at"], ans:"to",
+   explain:"【have gone to〜】「〜に行ってしまった（今はここにいない）」はhave gone to〜。have been to〜（行ったことがある）と区別。"},
+  {level:'jhs', type:'blank', q:"She ___ already seen that movie twice.", choices:["has","have","had","is"], ans:"has",
+   explain:"【already】alreadyは現在完了のサイン（すでに〜した）。主語がShe→has。"},
+
+  // ── 受動態 応用 ──
+  {level:'jhs', type:'blank', q:"This temple ___ built 500 years ago.", choices:["was","is","has been","were"], ans:"was",
+   explain:"【過去受動態】500 years ago（500年前）は過去のサイン → was built。build→built→built（不規則変化）。"},
+  {level:'jhs', type:'blank', q:"He ___ known as a kind doctor.", choices:["is","was","has","does"], ans:"is",
+   explain:"【be known as〜】「〜として知られている」はbe known as〜。現在の状態なのでis。"},
+  {level:'jhs', type:'blank', q:"English ___ spoken all over the world.", choices:["is","are","was","be"], ans:"is",
+   explain:"【現在受動態】「英語は〜話されている」現在の事実 → is spoken。Englishは単数扱い。"},
+  {level:'jhs', type:'blank', q:"The letter was written ___ Japanese.", choices:["in","by","with","at"], ans:"in",
+   explain:"【言語の前置詞】「日本語で書かれた」→ written in Japanese。言語はinを使う。"},
+  {level:'jhs', type:'blank', q:"She ___ taught English by a native speaker.", choices:["was","is","has","were"], ans:"was",
+   explain:"【過去受動態・teach】「ネイティブに英語を教えてもらった（過去）」→ was taught。"},
+
+  // ── 前置詞コロケーション ──
+  {level:'jhs', type:'blank', q:"She is afraid ___ dogs.", choices:["of","at","in","for"], ans:"of",
+   explain:"【be afraid of〜】「〜を恐れている・怖い」はbe afraid of〜。ofが必須の重要フレーズ。"},
+  {level:'jhs', type:'blank', q:"He is famous ___ his paintings.", choices:["for","of","at","in"], ans:"for",
+   explain:"【be famous for〜】「〜で有名な」はbe famous for〜。理由・原因を表すfor。"},
+  {level:'jhs', type:'blank', q:"I am looking forward ___ the trip.", choices:["to","for","at","of"], ans:"to",
+   explain:"【look forward to〜】「〜を楽しみにしている」のtoは前置詞。後ろは名詞または動名詞（-ing）。"},
+  {level:'jhs', type:'blank', q:"She is different ___ her sister in many ways.", choices:["from","of","with","at"], ans:"from",
+   explain:"【be different from〜】「〜と異なる」はbe different from〜。×different with / to は不可（英米で異なる場合もある）。"},
+  {level:'jhs', type:'blank', q:"He arrived ___ the airport an hour late.", choices:["at","in","on","to"], ans:"at",
+   explain:"【到着の前置詞】特定の場所（建物・地点）に到着 → arrive at〜。arrive in〜は都市・国（arrive in Tokyo）。"},
+  {level:'jhs', type:'blank', q:"She is interested ___ learning foreign languages.", choices:["in","at","for","of"], ans:"in",
+   explain:"【be interested in〜】「〜に興味がある」はbe interested in〜。inの後に名詞や動名詞が続く。"},
+
+  // ── 付加疑問文 ──
+  {level:'jhs', type:'blank', q:"She is a doctor, ___ she?", choices:["isn't","is","doesn't","wasn't"], ans:"isn't",
+   explain:"【付加疑問文】肯定文 → 否定の付加疑問。She is〜 → isn't she?。be動詞isに合わせてisn't。"},
+  {level:'jhs', type:'blank', q:"He doesn't like vegetables, ___ he?", choices:["does","doesn't","is","isn't"], ans:"does",
+   explain:"【付加疑問文】否定文 → 肯定の付加疑問。doesn't like → does he?。does notの肯定形はdoes。"},
+  {level:'jhs', type:'blank', q:"They played tennis yesterday, ___ they?", choices:["didn't","don't","weren't","hadn't"], ans:"didn't",
+   explain:"【付加疑問文】過去形の肯定文 → didn't they?。playedはdidを使うのでdidn'tで受ける。"},
+
+  // ── 感嘆文 ──
+  {level:'jhs', type:'blank', q:"___ beautiful flower this is!", choices:["What a","How","What","How a"], ans:"What a",
+   explain:"【感嘆文 What】What (a/an) + 形容詞 + 名詞 + S V！の形。flowerは可算単数なのでWhat a。"},
+  {level:'jhs', type:'blank', q:"___ fast she runs!", choices:["How","What","What a","How a"], ans:"How",
+   explain:"【感嘆文 How】How + 形容詞/副詞 + S V！の形。fastは副詞なのでHow fast〜！。"},
+
+  // ── 間接疑問文 ──
+  {level:'jhs', type:'blank', q:"Do you know ___ she lives?", choices:["where","where does","where is","where did"], ans:"where",
+   explain:"【間接疑問文】間接疑問文は疑問詞＋平叙文の語順（S+V）になる。×where does she livesは誤り。"},
+  {level:'jhs', type:'blank', q:"I don't know ___ he will come tomorrow.", choices:["if","that","what","which"], ans:"if",
+   explain:"【間接疑問文のif】「〜かどうか」という間接疑問にはif / whetherを使う。if he will come（彼が来るかどうか）。"},
+  {level:'jhs', type:'blank', q:"Can you tell me ___ the next train leaves?", choices:["when","when does","when is","when did"], ans:"when",
+   explain:"【間接疑問文】tell me when + S + V（平叙文の語順）。×when does the train leaveは直接疑問の語順で誤り。"},
+
+  // ── 命令文 ──
+  {level:'jhs', type:'blank', q:"___ be quiet in the library.", choices:["Please","Do please","You please","Be please"], ans:"Please",
+   explain:"【丁寧な命令文】Please + 動詞の原形で丁寧な命令・依頼。Pleaseは文頭または文末に置く。"},
+  {level:'jhs', type:'blank', q:"___ open the window. It's cold.", choices:["Don't","Not","No","Doesn't"], ans:"Don't",
+   explain:"【否定命令文】Don't + 動詞の原形で「〜しないでください」。×No openは不可。"},
+
+  // ── 前置詞 時間 ──
+  {level:'jhs', type:'blank', q:"She was born ___ April 5th.", choices:["on","in","at","for"], ans:"on",
+   explain:"【日付の前置詞】特定の日付にはon。on April 5th（4月5日に）。月にはin（in April）、時刻にはat（at noon）。"},
+  {level:'jhs', type:'blank', q:"He wakes up ___ six o'clock every morning.", choices:["at","in","on","for"], ans:"at",
+   explain:"【時刻の前置詞】時刻にはat。at six o'clock（6時に）。"},
+  {level:'jhs', type:'blank', q:"She has lived here ___ she was a child.", choices:["since","for","during","while"], ans:"since",
+   explain:"【since＋起点】since + 時点（she was a child）。for + 期間（two years）との使い分けが重要。"},
+  {level:'jhs', type:'blank', q:"They stayed in Kyoto ___ a week.", choices:["for","since","during","while"], ans:"for",
+   explain:"【for＋期間】for + 具体的な期間（a week）。since + 起点との使い分けに注意。"},
+  {level:'jhs', type:'blank', q:"I met him ___ my way to school.", choices:["on","in","at","for"], ans:"on",
+   explain:"【on one's way to〜】「〜へ行く途中で」はon one's way to〜。onを使う重要表現。"},
+
+  // ── SVOCパターン ──
+  {level:'jhs', type:'blank', q:"She found the book ___.", choices:["interesting","interestingly","interested","interest"], ans:"interesting",
+   explain:"【find O C】find O + 形容詞C（OをCだと思う・感じる）。第5文型のC（補語）は形容詞。×interestinglyは副詞で不可。"},
+  {level:'jhs', type:'blank', q:"The noise kept me ___ all night.", choices:["awake","wake","waking","to wake"], ans:"awake",
+   explain:"【keep O C】keep O + 形容詞C（OをCの状態に保つ）。awake（目が覚めている）は形容詞。kept me awake（私を眠れなくした）。"},
+  {level:'jhs', type:'blank', q:"His speech made the audience ___.", choices:["excited","excite","exciting","to excite"], ans:"excited",
+   explain:"【make O C】make O + 形容詞C（OをCにする）。audienceは興奮させられる側なのでexcited（受動的な感情）。"},
+
+  // ── 関係代名詞 目的格 ──
+  {level:'jhs', type:'blank', q:"The movie ___ I watched last night was great.", choices:["that","who","whom","whose"], ans:"that",
+   explain:"【目的格の関係代名詞】先行詞がthe movie（もの）で、後ろのwatchedの目的語 → that / which。省略も可能。"},
+  {level:'jhs', type:'blank', q:"Is there anything ___ I can do for you?", choices:["that","which","who","what"], ans:"that",
+   explain:"【anything that〜】先行詞がanything（不定）のとき関係代名詞はthatを使う（whichより自然）。"},
+
+  // ── 数量表現 ──
+  {level:'jhs', type:'blank', q:"She doesn't have ___ friends here.", choices:["many","much","a lot","any of"], ans:"many",
+   explain:"【many vs much】可算名詞（friends）にはmany、不可算名詞にはmuch。否定文でも可算名詞にはmany。"},
+  {level:'jhs', type:'blank', q:"He drinks ___ water every day.", choices:["a lot of","many","a number of","few"], ans:"a lot of",
+   explain:"【a lot of】a lot of（たくさんの）は可算・不可算の両方に使える。waterは不可算名詞なのでmany・a number ofは不可。"},
+  {level:'jhs', type:'blank', q:"There are ___ people in the park today.", choices:["few","little","a little","less"], ans:"few",
+   explain:"【few vs little】可算名詞（people）にはfew（ほとんどない）。不可算名詞にはlittle。a fewは「少しある」でfewは「ほとんどない」。"},
+
   // ════════════ 高校1年レベル 追加 ════════════
 
   // ── 仮定法 ──
@@ -4482,7 +4658,8 @@ function switchPage(id) {
   const map = {
     gamePage:'bnav-game', guidePage:'bnav-guide',
     practicePage:'bnav-practice', vocabPage:'bnav-vocab',
-    grammarPage:'bnav-grammar', patternPage:'bnav-pattern'
+    grammarPage:'bnav-grammar', patternPage:'bnav-pattern',
+    transPage:'bnav-trans'
   };
   document.getElementById(map[id])?.classList.add('active');
   window.scrollTo({ top:0, behavior:'smooth' });
@@ -5087,6 +5264,731 @@ function resetPattern() {
   document.getElementById('ppBody').innerHTML = `
     <div style="text-align:center;color:var(--muted);font-size:.85rem;font-weight:700;padding:30px 0">
       文型を選んで「スタート！」を押してね 🔢
+    </div>`;
+}
+</script>
+
+<!-- ══════════════════════════════════
+     TRANSLATION PAGE CSS
+══════════════════════════════════ -->
+<style>
+/* 7タブ対応：アイコンと文字を少し縮める */
+@media(max-width:430px){
+  .bnav-btn { font-size:.52rem; gap:2px; }
+  .bnav-icon { font-size:1.15rem; }
+}
+
+#transPage { background: var(--bg); }
+
+.tp-header {
+  background: var(--white); border-bottom: 2px solid var(--border);
+  padding: 14px 16px 12px; position: sticky; top: 0; z-index: 50;
+  box-shadow: 0 2px 12px rgba(100,80,160,.08);
+}
+.tp-title-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.tp-title {
+  font-family:'Fredoka',sans-serif; font-size:1.3rem; font-weight:700; color:var(--sky);
+}
+.tp-pool-badge {
+  font-family:'Fredoka',sans-serif; font-size:.75rem; font-weight:600;
+  background:#e8fafb; border:2px solid var(--sky); border-radius:20px;
+  padding:2px 10px; color:var(--sky); margin-left:auto;
+}
+.tp-mode-row { display:flex; gap:8px; margin-bottom:8px; }
+.tm-btn {
+  flex:1; font-family:'M PLUS Rounded 1c',sans-serif; font-size:.78rem; font-weight:900;
+  padding:9px; border-radius:var(--radius-sm); border:2.5px solid var(--border);
+  background:var(--bg); color:var(--muted); cursor:pointer; transition:all .18s;
+}
+.tm-btn.en.active  { border-color:var(--sky);  background:#e8fafb; color:var(--sky); }
+.tm-btn.jp.active  { border-color:var(--pink); background:#fff0f6; color:var(--pink); }
+.tm-btn.mix.active { border-color:var(--purple);background:#f3f0ff; color:var(--purple); }
+.tm-btn.mix3.active{ border-color:var(--orange);background:#fff5e8; color:var(--orange); }
+.tm-btn.jhs2.active{ border-color:var(--sky);  background:#e8fafb; color:var(--sky); }
+.tm-btn.exam.active{ border-color:var(--pink); background:#fff0f6; color:var(--pink); }
+.tp-lv-row { display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap; }
+.tl-btn {
+  flex:1; font-family:'M PLUS Rounded 1c',sans-serif; font-size:.74rem; font-weight:900;
+  padding:7px; border-radius:var(--radius-sm); border:2px solid var(--border);
+  background:var(--bg); color:var(--muted); cursor:pointer; transition:all .18s;
+}
+.tl-btn.active { border-color:var(--sky); background:#e8fafb; color:var(--sky); }
+.tp-count-row { display:flex; gap:6px; }
+.tc-btn {
+  flex:1; font-family:'Fredoka',sans-serif; font-size:.88rem; font-weight:600;
+  padding:7px; border-radius:var(--radius-sm); border:2px solid var(--border);
+  background:var(--bg); color:var(--muted); cursor:pointer; transition:all .18s;
+}
+.tc-btn.active { border-color:var(--sky); background:#e8fafb; color:var(--sky); }
+.tp-start-row { text-align:right; margin-top:8px; }
+.tp-start-btn {
+  background:linear-gradient(135deg,var(--sky),#2db8b0); border:none; border-radius:20px;
+  color:var(--white); font-family:'M PLUS Rounded 1c',sans-serif;
+  font-size:.82rem; font-weight:900; padding:7px 20px; cursor:pointer;
+  box-shadow:0 3px 0 #2a9990; transition:all .18s;
+}
+.tp-start-btn:hover { transform:translateY(-2px); box-shadow:0 5px 0 #2a9990; }
+
+/* body */
+.tp-body { padding:14px 14px 28px; max-width:700px; margin:0 auto; display:flex; flex-direction:column; gap:14px; }
+
+/* progress */
+.tq-prog-row { display:flex; align-items:center; gap:10px; }
+.tq-prog-label { font-size:.72rem; font-weight:900; color:var(--muted); white-space:nowrap; }
+.tq-prog-bar { flex:1; height:6px; background:var(--border); border-radius:4px; overflow:hidden; }
+.tq-prog-fill {
+  height:100%; background:linear-gradient(90deg,var(--sky),var(--pink));
+  transition:width .4s cubic-bezier(.34,1.56,.64,1); border-radius:4px;
+}
+
+/* question card */
+.tq-card {
+  background:var(--white); border:2.5px solid var(--border);
+  border-radius:var(--radius-lg); padding:20px 18px 16px;
+  box-shadow:var(--sh); position:relative; overflow:hidden; text-align:center;
+}
+.tq-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:4px;
+  background:linear-gradient(90deg,var(--sky),var(--pink),var(--yellow));
+}
+.tq-direction {
+  font-size:.62rem; font-weight:900; color:var(--muted);
+  letter-spacing:1.5px; text-transform:uppercase; margin-bottom:10px;
+}
+.tq-question {
+  font-family:'M PLUS Rounded 1c',sans-serif;
+  font-size:clamp(1rem,3.5vw,1.3rem); font-weight:700;
+  color:var(--ink); line-height:1.8; word-break:break-word;
+}
+.tq-level-badge {
+  display:inline-block; font-family:'Fredoka',sans-serif; font-size:.68rem; font-weight:600;
+  padding:2px 10px; border-radius:20px; border:1.5px solid var(--border);
+  color:var(--muted); background:var(--bg); margin-top:8px;
+}
+
+/* choices */
+.tq-choices { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+.tq-choice {
+  background:var(--white); border:2.5px solid var(--border);
+  border-radius:var(--radius-md); padding:13px 10px;
+  font-family:'M PLUS Rounded 1c',sans-serif; font-size:.83rem; font-weight:900;
+  color:var(--ink); cursor:pointer; transition:all .16s;
+  box-shadow:0 3px 0 var(--border); text-align:center; line-height:1.6; word-break:break-word;
+}
+.tq-choice:hover { transform:translateY(-2px); box-shadow:0 5px 0 var(--border); border-color:var(--sky); color:var(--sky); }
+.tq-choice:active { transform:translateY(1px); box-shadow:0 1px 0 var(--border); }
+.tq-choice.correct { border-color:var(--mint)!important; background:#edfff2!important; color:#2d9e50!important; box-shadow:0 3px 0 #86c99a!important; animation:bounce-correct .4s ease; }
+.tq-choice.wrong   { border-color:var(--coral)!important; background:#fff0ef!important; color:var(--coral)!important; box-shadow:0 3px 0 #e5a0a0!important; animation:shake-wrong .4s ease; }
+
+/* explain */
+.tq-explain {
+  background:var(--white); border:2.5px solid var(--border);
+  border-radius:var(--radius-lg); padding:15px 17px;
+  box-shadow:var(--sh); display:none; flex-direction:column; gap:10px;
+}
+.tq-explain.show { display:flex; animation:slide-up .25s ease; }
+.tq-explain-ok { border-color:var(--mint)!important; }
+.tq-explain-ng { border-color:var(--coral)!important; }
+.tq-verdict { font-family:'Fredoka',sans-serif; font-size:.78rem; font-weight:700; }
+.tq-ans-box {
+  background:var(--bg); border-radius:var(--radius-sm); padding:10px 14px;
+  border:2px dashed var(--border); font-size:.84rem; font-weight:700;
+  line-height:1.8; word-break:break-word;
+}
+.tq-ans-label { font-size:.62rem; font-weight:900; color:var(--muted); letter-spacing:1px; margin-bottom:4px; }
+.tq-explain-body {
+  font-size:.79rem; color:var(--ink); font-weight:700; line-height:1.85;
+  background:#fffae8; border:2px dashed var(--yellow); border-radius:var(--radius-sm); padding:9px 12px;
+}
+.tq-next-btn {
+  padding:13px; border:none; border-radius:var(--radius-md);
+  font-family:'M PLUS Rounded 1c',sans-serif; font-size:.9rem; font-weight:900;
+  background:linear-gradient(135deg,var(--sky),#2db8b0); color:var(--white);
+  cursor:pointer; transition:all .2s; box-shadow:0 4px 0 #2a9990;
+}
+.tq-next-btn:hover { transform:translateY(-2px); box-shadow:0 6px 0 #2a9990; }
+
+/* result */
+.tq-result { display:flex; flex-direction:column; align-items:center; gap:14px; padding:10px 0; }
+.tq-result-emoji { font-size:3.5rem; animation:bounce-in .6s cubic-bezier(.34,1.56,.64,1); }
+.tq-result-title { font-family:'Fredoka',sans-serif; font-size:1.8rem; font-weight:700; text-align:center; }
+.tq-result-score { font-family:'Fredoka',sans-serif; font-size:clamp(3rem,10vw,4.5rem); font-weight:700; color:var(--sky); text-shadow:3px 3px 0 rgba(78,205,196,.2); }
+.tq-result-stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; max-width:300px; }
+.tq-sbox { background:var(--white); border:2.5px solid var(--border); border-radius:var(--radius-md); padding:12px 8px; text-align:center; box-shadow:0 3px 0 var(--border); }
+.tq-slabel { font-size:.6rem; font-weight:900; color:var(--muted); letter-spacing:1px; text-transform:uppercase; margin-bottom:3px; }
+.tq-sval { font-family:'Fredoka',sans-serif; font-size:1.4rem; font-weight:700; }
+.tq-review-list { width:100%; display:flex; flex-direction:column; gap:8px; max-height:280px; overflow-y:auto; }
+.tq-review-item {
+  background:var(--white); border:2px solid var(--border); border-left:4px solid var(--coral);
+  border-radius:var(--radius-sm); padding:10px 13px; box-shadow:0 2px 0 var(--border);
+  font-size:.78rem; line-height:1.8; word-break:break-word;
+}
+.tq-ri-q  { font-weight:700; color:var(--sky); margin-bottom:3px; }
+.tq-ri-wrong { color:var(--coral); text-decoration:line-through; font-size:.75rem; }
+.tq-ri-ans { color:#2d9e50; font-weight:900; }
+.tq-restart-btn {
+  width:100%; max-width:280px; padding:14px; border:none; border-radius:var(--radius-md);
+  font-family:'M PLUS Rounded 1c',sans-serif; font-size:.92rem; font-weight:900;
+  background:linear-gradient(135deg,var(--sky),var(--pink)); color:var(--white);
+  cursor:pointer; transition:all .2s; box-shadow:0 5px 0 #2a9990;
+}
+.tq-restart-btn:hover { transform:translateY(-2px); box-shadow:0 7px 0 #2a9990; }
+</style>
+
+<!-- ══════════════════════════════════
+     TRANSLATION PAGE HTML
+══════════════════════════════════ -->
+<div class="page" id="transPage">
+  <div class="tp-header">
+    <div class="tp-title-row">
+      <div class="tp-title">🌐 翻訳クイズ</div>
+      <div class="tp-pool-badge" id="tpPoolBadge">0問</div>
+    </div>
+    <div class="tp-mode-row">
+      <button class="tm-btn en active" id="tdir-en" onclick="setTDir('en')">🇬🇧 英語→日本語</button>
+      <button class="tm-btn jp"        id="tdir-jp" onclick="setTDir('jp')">🇯🇵 日本語→英語</button>
+      <button class="tm-btn mix3"      id="tdir-mix" onclick="setTDir('mix')">⚡ ミックス</button>
+    </div>
+    <div class="tp-mode-row" style="margin-bottom:0">
+      <button class="tm-btn jhs2 active" id="tlv-basic" onclick="setTLv('basic')" style="border-color:var(--sky)">🏫 中学〜高1</button>
+      <button class="tm-btn exam"        id="tlv-exam"  onclick="setTLv('exam')"  style="">🎓 受験レベル</button>
+      <button class="tm-btn mix3"        id="tlv-all"   onclick="setTLv('all')"   style="">⚡ すべて</button>
+    </div>
+    <div class="tp-count-row">
+      <button class="tc-btn active" id="tn10" onclick="setTCount(10)">10問</button>
+      <button class="tc-btn" id="tn20" onclick="setTCount(20)">20問</button>
+      <button class="tc-btn" id="tn30" onclick="setTCount(30)">30問</button>
+      <button class="tc-btn" id="tn50" onclick="setTCount(50)">50問</button>
+    </div>
+    <div class="tp-start-row">
+      <button class="tp-start-btn" onclick="startTrans()">▶ スタート！</button>
+    </div>
+  </div>
+  <div class="tp-body" id="tpBody">
+    <div style="text-align:center;color:var(--muted);font-size:.85rem;font-weight:700;padding:30px 0">
+      モードとレベルを選んで「スタート！」を押してね 🌐
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════
+// TRANSLATION DATA
+// level: 'jhs' | 'shs'
+// en: 英文, jp: 正しい日本語訳
+// en_choices: 英訳の選択肢4つ（jp→en問題用）
+// jp_choices: 和訳の選択肢4つ（en→jp問題用）
+// point: 文法ポイント解説
+// ════════════════════════════════════
+const TRANS_Q = [
+
+  // ════════ 中学〜高1レベル (level:'basic') ════════
+
+  { level:'basic', en:"She studies English every day.",
+    jp:"彼女は毎日英語を勉強します。",
+    choices_jp:["彼女は英語が毎日好きです。","彼女は毎日英語を勉強します。","彼女は英語をたまに勉強します。","彼女は毎日英語を話します。"],
+    choices_en:["She studies English every day.","She is studying English every day.","She study English every day.","She studied English every day."],
+    ans_jp:"彼女は毎日英語を勉強します。", ans_en:"She studies English every day.",
+    explain:"studyの三単現はstudies。every day（毎日）は習慣の現在形と相性がよい。" },
+
+  { level:'basic', en:"He has lived in Tokyo for five years.",
+    jp:"彼は5年間東京に住んでいます。",
+    choices_jp:["彼は5年前に東京に住んでいました。","彼は5年間東京に住んでいます。","彼は東京に5回行ったことがあります。","彼は5年後に東京に住む予定です。"],
+    choices_en:["He has lived in Tokyo for five years.","He lived in Tokyo five years ago.","He is living in Tokyo since five years.","He lives in Tokyo for five years."],
+    ans_jp:"彼は5年間東京に住んでいます。", ans_en:"He has lived in Tokyo for five years.",
+    explain:"現在完了の継続用法。for＋期間（five years）がポイント。今も住んでいる状態が続いている。" },
+
+  { level:'basic', en:"The book was written by a famous author.",
+    jp:"その本は有名な作家によって書かれました。",
+    choices_jp:["その本は有名な作家が書いています。","その本は有名な作家によって書かれました。","その本は有名な作家のために書かれました。","その本は有名な作家に贈られました。"],
+    choices_en:["The book was written by a famous author.","A famous author has written the book.","The book wrote by a famous author.","A famous author was written the book."],
+    ans_jp:"その本は有名な作家によって書かれました。", ans_en:"The book was written by a famous author.",
+    explain:"受動態：be動詞＋過去分詞（written）。動作主はby〜で示す。" },
+
+  { level:'basic', en:"She made him a cup of tea.",
+    jp:"彼女は彼のためにお茶を一杯入れました。",
+    choices_jp:["彼女は彼にお茶を一杯作ってもらいました。","彼女は彼のためにお茶を一杯入れました。","彼女は彼のお茶を一杯飲みました。","彼女は彼とお茶を一杯飲みました。"],
+    choices_en:["She made him a cup of tea.","She made a cup of tea for himself.","She made he a cup of tea.","She made a cup of tea him."],
+    ans_jp:"彼女は彼のためにお茶を一杯入れました。", ans_en:"She made him a cup of tea.",
+    explain:"第4文型 make O₁ O₂（O₁のためにO₂を作る）。him（間接O）＋a cup of tea（直接O）。" },
+
+  { level:'basic', en:"If I were you, I would study harder.",
+    jp:"もし私があなたなら、もっと一生懸命勉強するのに。",
+    choices_jp:["もし私があなたなら、もっと一生懸命勉強するのに。","もし私があなただったら、一生懸命勉強しました。","私はあなたよりも一生懸命勉強します。","あなたがいなければ、私は勉強しません。"],
+    choices_en:["If I were you, I would study harder.","If I was you, I will study harder.","If I am you, I would study harder.","If I were you, I studied harder."],
+    ans_jp:"もし私があなたなら、もっと一生懸命勉強するのに。", ans_en:"If I were you, I would study harder.",
+    explain:"仮定法過去：If S were〜, S would do〜。現実と反する仮定。be動詞はwere。" },
+
+  { level:'basic', en:"She had her hair cut yesterday.",
+    jp:"彼女は昨日髪を切ってもらいました。",
+    choices_jp:["彼女は昨日自分で髪を切りました。","彼女は昨日髪を切ってもらいました。","彼女は昨日髪を切るのを忘れました。","彼女は昨日長い髪を持っていました。"],
+    choices_en:["She had her hair cut yesterday.","She cut her hair yesterday.","She had cut her hair yesterday.","She got her hair cutting yesterday."],
+    ans_jp:"彼女は昨日髪を切ってもらいました。", ans_en:"She had her hair cut yesterday.",
+    explain:"使役 have O PP：Oを〜してもらう（受動）。her hairは切られる側なのでcut（PP）。" },
+
+  { level:'basic', en:"You must not eat in the library.",
+    jp:"図書館で食べてはいけません。",
+    choices_jp:["図書館で食べなくてもよいです。","図書館で食べてはいけません。","図書館ではぜひ食べてください。","図書館で食べることができます。"],
+    choices_en:["You must not eat in the library.","You do not have to eat in the library.","You cannot eat in the library.","You should not eat in the library."],
+    ans_jp:"図書館で食べてはいけません。", ans_en:"You must not eat in the library.",
+    explain:"must not＝禁止（してはいけない）。do not have to（しなくていい）と意味が全然違う！" },
+
+  { level:'basic', en:"She does not have to come tomorrow.",
+    jp:"彼女は明日来なくてもよいです。",
+    choices_jp:["彼女は明日来てはいけません。","彼女は明日来なくてもよいです。","彼女は明日きっと来ません。","彼女は明日来られません。"],
+    choices_en:["She does not have to come tomorrow.","She must not come tomorrow.","She cannot come tomorrow.","She should not come tomorrow."],
+    ans_jp:"彼女は明日来なくてもよいです。", ans_en:"She does not have to come tomorrow.",
+    explain:"do not have to＝不要（しなくていい）。主語がSheなのでdoes not have to。must notと区別！" },
+
+  { level:'basic', en:"By the time she arrived, he had already left.",
+    jp:"彼女が到着したとき、彼はすでに去っていました。",
+    choices_jp:["彼女が到着すると、彼はちょうど去るところでした。","彼女が到着したとき、彼はすでに去っていました。","彼女が到着した後、彼はすぐに去りました。","彼女が到着する前に、彼は去ることにしました。"],
+    choices_en:["By the time she arrived, he had already left.","When she arrived, he already left.","By the time she arrived, he has already left.","She arrived after he had already been leaving."],
+    ans_jp:"彼女が到着したとき、彼はすでに去っていました。", ans_en:"By the time she arrived, he had already left.",
+    explain:"過去完了：had＋PP。到着（過去）よりさらに前に去った→過去完了 had left。" },
+
+  { level:'basic', en:"Despite the heavy rain, they played soccer.",
+    jp:"大雨にもかかわらず、彼らはサッカーをしました。",
+    choices_jp:["大雨だったので、彼らはサッカーをしました。","大雨にもかかわらず、彼らはサッカーをしました。","大雨のせいで、彼らはサッカーができませんでした。","大雨の中、彼らはサッカーの練習をやめました。"],
+    choices_en:["Despite the heavy rain, they played soccer.","Although the heavy rain, they played soccer.","Despite of the heavy rain, they played soccer.","Because of the heavy rain, they played soccer."],
+    ans_jp:"大雨にもかかわらず、彼らはサッカーをしました。", ans_en:"Despite the heavy rain, they played soccer.",
+    explain:"despite（〜にもかかわらず）は前置詞なので後ろに名詞。×despite of は誤り。althoughは接続詞でS+V。" },
+
+  { level:'basic', en:"She left early so that she could catch the last train.",
+    jp:"彼女は終電に乗れるように早めに出発しました。",
+    choices_jp:["彼女は終電に乗るために早めに出発しました。","彼女は終電に乗れるように早めに出発しました。","終電があったので、彼女は早く出発できました。","彼女は早く出発したので終電に乗れました。"],
+    choices_en:["She left early so that she could catch the last train.","She left early so as she could catch the last train.","She left early in order she could catch the last train.","She left early because to catch the last train."],
+    ans_jp:"彼女は終電に乗れるように早めに出発しました。", ans_en:"She left early so that she could catch the last train.",
+    explain:"so that S could do（〜できるように）は目的を表す重要構文。" },
+
+  { level:'basic', en:"She is used to getting up early.",
+    jp:"彼女は早起きすることに慣れています。",
+    choices_jp:["彼女はかつて早起きしていました。","彼女は早起きすることに慣れています。","彼女は早起きするために使われます。","彼女は早起きを楽しんでいます。"],
+    choices_en:["She is used to getting up early.","She used to get up early.","She is used to get up early.","She used to getting up early."],
+    ans_jp:"彼女は早起きすることに慣れています。", ans_en:"She is used to getting up early.",
+    explain:"be used to -ing（〜することに慣れている）のtoは前置詞。used to do（かつて〜した）と区別！" },
+
+  { level:'basic', en:"He stopped to look at the map.",
+    jp:"彼は地図を見るために立ち止まりました。",
+    choices_jp:["彼は地図を見るのをやめました。","彼は地図を見るために立ち止まりました。","彼は地図を見ながら止まっていました。","彼は地図を見てから立ち去りました。"],
+    choices_en:["He stopped to look at the map.","He stopped looking at the map.","He stopped for looking at the map.","He stopped look at the map."],
+    ans_jp:"彼は地図を見るために立ち止まりました。", ans_en:"He stopped to look at the map.",
+    explain:"stop to do（〜するために立ち止まる）vs stop -ing（〜するのをやめる）。意味が正反対なので注意！" },
+
+  { level:'basic', en:"She remembered to lock the door.",
+    jp:"彼女はドアに鍵をかけることを覚えていて（忘れずに）鍵をかけました。",
+    choices_jp:["彼女はドアに鍵をかけたことを思い出しました。","彼女はドアに鍵をかけることを覚えていて（忘れずに）鍵をかけました。","彼女はドアに鍵をかけることを忘れました。","彼女はドアに鍵をかけながら思い出しました。"],
+    choices_en:["She remembered to lock the door.","She remembered locking the door.","She remembered lock the door.","She remembered for locking the door."],
+    ans_jp:"彼女はドアに鍵をかけることを覚えていて（忘れずに）鍵をかけました。", ans_en:"She remembered to lock the door.",
+    explain:"remember to do（これからすることを覚えている）vs remember -ing（過去にしたことを覚えている）。" },
+
+  { level:'basic', en:"It took me two hours to finish the report.",
+    jp:"レポートを終えるのに2時間かかりました。",
+    choices_jp:["私はレポートを終えるのに2時間費やしました。","レポートを終えるのに2時間かかりました。","私は2時間でレポートを終えようとしました。","2時間後にレポートを終えることができました。"],
+    choices_en:["It took me two hours to finish the report.","I spent two hours to finish the report.","It took two hours for me finishing the report.","I took two hours to finish the report."],
+    ans_jp:"レポートを終えるのに2時間かかりました。", ans_en:"It took me two hours to finish the report.",
+    explain:"It takes O（時間）to do（〜するのにO時間かかる）。主語はItが必須。×I tookは不可。" },
+
+  { level:'basic', en:"She is looking forward to hearing from you.",
+    jp:"彼女はあなたからの連絡を楽しみにしています。",
+    choices_jp:["彼女はあなたから聞いた話を楽しんでいます。","彼女はあなたからの連絡を楽しみにしています。","彼女はあなたへ連絡しようとしています。","彼女はあなたと話すのが大好きです。"],
+    choices_en:["She is looking forward to hearing from you.","She is looking forward to hear from you.","She looks forward hearing from you.","She is looking forward for hearing from you."],
+    ans_jp:"彼女はあなたからの連絡を楽しみにしています。", ans_en:"She is looking forward to hearing from you.",
+    explain:"look forward to -ing（〜するのを楽しみにしている）。このtoは前置詞なので後ろは動名詞（hearing）。" },
+
+  { level:'basic', en:"He is no longer a student here.",
+    jp:"彼はもうここの学生ではありません。",
+    choices_jp:["彼はここの学生ではありませんでした。","彼はもうここの学生ではありません。","彼はここの学生になるつもりはありません。","彼はここの学生でなくなるかもしれません。"],
+    choices_en:["He is no longer a student here.","He is not any more a student here.","He is not longer a student here.","He no longer is a student here."],
+    ans_jp:"彼はもうここの学生ではありません。", ans_en:"He is no longer a student here.",
+    explain:"no longer（もはや〜ない）。not〜any longerも同義。no longerの語順に注意。" },
+
+  { level:'basic', en:"She takes after her mother in many ways.",
+    jp:"彼女は多くの点で母親に似ています。",
+    choices_jp:["彼女は多くの場面で母親の後を継いでいます。","彼女は多くの点で母親に似ています。","彼女は母親のように何でもよくできます。","彼女は母親を多くの点で尊敬しています。"],
+    choices_en:["She takes after her mother in many ways.","She looks like her mother in many ways.","She takes her mother after in many ways.","She follows after her mother in many ways."],
+    ans_jp:"彼女は多くの点で母親に似ています。", ans_en:"She takes after her mother in many ways.",
+    explain:"take after〜（〜に似ている）は重要句動詞。look like〜 も「似ている」だが、take afterは性格・外見の両方に使う。" },
+
+  { level:'basic', en:"She could not help laughing at his joke.",
+    jp:"彼女は彼の冗談を聞いて笑わずにはいられませんでした。",
+    choices_jp:["彼女は彼の冗談に笑おうとしませんでした。","彼女は彼の冗談を聞いて笑わずにはいられませんでした。","彼女は笑いをこらえながら彼の冗談を聞きました。","彼女は彼の冗談が面白くないと思っていました。"],
+    choices_en:["She could not help laughing at his joke.","She could not help but laugh at his joke.","She could not help to laugh at his joke.","She could not avoid laughing at his joke."],
+    ans_jp:"彼女は彼の冗談を聞いて笑わずにはいられませんでした。", ans_en:"She could not help laughing at his joke.",
+    explain:"cannot help -ing（〜せずにはいられない）。cannot help but doも同義（doは原形）。" },
+
+  { level:'basic', en:"The rumor turned out to be false.",
+    jp:"そのうわさは嘘であることが判明しました。",
+    choices_jp:["そのうわさは嘘を引き起こしました。","そのうわさは嘘であることが判明しました。","そのうわさは本当だと判明しました。","そのうわさはやがて消えていきました。"],
+    choices_en:["The rumor turned out to be false.","The rumor turned to be false.","The rumor turned out false.","The rumor turned out being false."],
+    ans_jp:"そのうわさは嘘であることが判明しました。", ans_en:"The rumor turned out to be false.",
+    explain:"turn out to be〜（〜であることが判明する）は重要表現。" },
+
+  { level:'basic', en:"She kept me waiting for over an hour.",
+    jp:"彼女は私を1時間以上待たせ続けました。",
+    choices_jp:["彼女は1時間以上私と一緒に待っていました。","彼女は私を1時間以上待たせ続けました。","彼女は1時間以上私のために待ちました。","彼女は私に1時間以上待つよう頼みました。"],
+    choices_en:["She kept me waiting for over an hour.","She kept me to wait for over an hour.","She kept me waited for over an hour.","She kept me wait for over an hour."],
+    ans_jp:"彼女は私を1時間以上待たせ続けました。", ans_en:"She kept me waiting for over an hour.",
+    explain:"keep O -ing（OをずっとAさせておく）。keepのCには現在分詞（-ing）が来る。" },
+
+  // ════════ 受験レベル (level:'exam') ════════
+
+  { level:'exam', en:"Not only did she win the championship, but she also broke the world record.",
+    jp:"彼女は選手権で優勝しただけでなく、世界記録も更新しました。",
+    choices_jp:["彼女は選手権での優勝を目指して世界記録を更新しようとしました。","彼女は選手権で優勝しただけでなく、世界記録も更新しました。","彼女は選手権で優勝したのに、世界記録は更新できませんでした。","選手権で優勝したとき、彼女は世界記録を更新していました。"],
+    choices_en:["Not only did she win the championship, but she also broke the world record.","Not only she won the championship, but also she broke the world record.","She not only won the championship but also broke the world record.","Both A and C are correct."],
+    ans_jp:"彼女は選手権で優勝しただけでなく、世界記録も更新しました。",
+    ans_en:"Not only did she win the championship, but she also broke the world record.",
+    explain:"Not only〜but also...（〜だけでなく…も）。Not onlyが文頭→倒置（did she win）。AもCも意味は同じだが問題文はAの倒置形。" },
+
+  { level:'exam', en:"It goes without saying that health is more important than wealth.",
+    jp:"健康が富よりも大切なことは言うまでもありません。",
+    choices_jp:["健康が富より大切だとよく言われています。","健康が富よりも大切なことは言うまでもありません。","健康について語らずに富を語ることはできません。","健康が富より大切なのは言い過ぎではありません。"],
+    choices_en:["It goes without saying that health is more important than wealth.","It does not need to say that health is more important than wealth.","Health is more important than wealth without saying.","Needless to say, health is more important than wealth."],
+    ans_jp:"健康が富よりも大切なことは言うまでもありません。",
+    ans_en:"It goes without saying that health is more important than wealth.",
+    explain:"It goes without saying that〜（〜は言うまでもない）。Needless to say, S V も同義の重要表現。" },
+
+  { level:'exam', en:"No sooner had she stepped out of the house than it began to rain heavily.",
+    jp:"彼女が家を出るやいなや、激しい雨が降り始めました。",
+    choices_jp:["彼女が家を出た後すぐに、激しい雨が降り始めました。","彼女が家を出るやいなや、激しい雨が降り始めました。","彼女が家を出たので、激しい雨が降り始めました。","彼女が家を出るまで、激しい雨が降り続けました。"],
+    choices_en:["No sooner had she stepped out of the house than it began to rain heavily.","No sooner she stepped out of the house than it began to rain heavily.","Hardly had she stepped out of the house when it began to rain heavily.","Both A and C are correct."],
+    ans_jp:"彼女が家を出るやいなや、激しい雨が降り始めました。",
+    ans_en:"No sooner had she stepped out of the house than it began to rain heavily.",
+    explain:"No sooner had S PP than S did（〜するやいなや）。倒置が起こりhad S PPの語順。Hardly had S PP when S didも同義。" },
+
+  { level:'exam', en:"The more exposure children have to books, the more curious they become about the world.",
+    jp:"子供たちが本に触れれば触れるほど、世界に対してより好奇心旺盛になります。",
+    choices_jp:["子供たちは本に多く触れることで、世界について多くを学びます。","子供たちが本に触れれば触れるほど、世界に対してより好奇心旺盛になります。","子供たちは本に触れると、世界についてもっと知りたがります。","本に触れる子供ほど、世界に対して好奇心がなくなります。"],
+    choices_en:["The more exposure children have to books, the more curious they become about the world.","The more children are exposed to books, the more curious they become about the world.","Both A and B are correct.","More exposure children have to books, more curious they become."],
+    ans_jp:"子供たちが本に触れれば触れるほど、世界に対してより好奇心旺盛になります。",
+    ans_en:"The more exposure children have to books, the more curious they become about the world.",
+    explain:"The 比較級〜, the 比較級...（〜すればするほど…）。名詞を使う場合はThe more 名詞 S Vの語順になる。" },
+
+  { level:'exam', en:"She is said to have been one of the most influential scientists of the twentieth century.",
+    jp:"彼女は20世紀で最も影響力のある科学者の一人だったと言われています。",
+    choices_jp:["彼女は20世紀で最も影響力のある科学者の一人だと言われています。","彼女は20世紀で最も影響力のある科学者の一人だったと言われています。","彼女は20世紀の影響力のある科学者の一人になろうとしていると言われています。","彼女は20世紀の科学者の中で最も影響力があると言われていました。"],
+    choices_en:["She is said to have been one of the most influential scientists of the twentieth century.","She is said to be one of the most influential scientists of the twentieth century.","People say she was one of the most influential scientists of the twentieth century.","Both A and C are correct in meaning."],
+    ans_jp:"彼女は20世紀で最も影響力のある科学者の一人だったと言われています。",
+    ans_en:"She is said to have been one of the most influential scientists of the twentieth century.",
+    explain:"S is said to have PP（かつて〜だったと言われている）。to haveで主節より前の時制を表す完了不定詞。" },
+
+  { level:'exam', en:"Had it not been for your timely advice, I would have made a serious mistake.",
+    jp:"あなたの適切なアドバイスがなければ、私は深刻な間違いを犯していたでしょう。",
+    choices_jp:["あなたの適切なアドバイスがあったので、私は深刻な間違いを避けられました。","あなたの適切なアドバイスがなければ、私は深刻な間違いを犯していたでしょう。","あなたのアドバイスが間違っていたため、私は深刻な問題を起こしました。","あなたのアドバイスがなくても、私は深刻な間違いを避けられました。"],
+    choices_en:["Had it not been for your timely advice, I would have made a serious mistake.","If it had not been for your timely advice, I would have made a serious mistake.","Both A and B are correct.","Without your timely advice, I would have made a serious mistake."],
+    ans_jp:"あなたの適切なアドバイスがなければ、私は深刻な間違いを犯していたでしょう。",
+    ans_en:"Had it not been for your timely advice, I would have made a serious mistake.",
+    explain:"仮定法過去完了の倒置形。Had it not been for〜 = If it had not been for〜 = Without〜（〜がなければ）。すべて同義。" },
+
+  { level:'exam', en:"It is not until we lose something that we realize its true value.",
+    jp:"私たちは何かを失って初めて、その真の価値に気づきます。",
+    choices_jp:["私たちが何かを失うと、その真の価値がわかります。","私たちは何かを失って初めて、その真の価値に気づきます。","私たちは何かの真の価値を理解するまで、それを失いません。","私たちは何かを失うことで、その価値を学びます。"],
+    choices_en:["It is not until we lose something that we realize its true value.","We do not realize the true value of something until we lose it.","Both A and B are correct.","Not until we lose something we realize its true value."],
+    ans_jp:"私たちは何かを失って初めて、その真の価値に気づきます。",
+    ans_en:"It is not until we lose something that we realize its true value.",
+    explain:"It is not until〜 that...（〜して初めて…する）は強調構文。not until〜 を強調構文に変換した形。AもBも正解だがAが設問の形。" },
+
+  { level:'exam', en:"The hypothesis remains to be tested by further research.",
+    jp:"その仮説はさらなる研究によって検証される必要があります。",
+    choices_jp:["その仮説はさらなる研究によって検証されるままになっています。","その仮説はさらなる研究によって検証される必要があります。","その仮説はさらなる研究によって既に検証されました。","その仮説はさらなる研究なしに検証される予定です。"],
+    choices_en:["The hypothesis remains to be tested by further research.","The hypothesis remains testing by further research.","The hypothesis is remained to be tested by further research.","The hypothesis still needs to be tested by further research."],
+    ans_jp:"その仮説はさらなる研究によって検証される必要があります。",
+    ans_en:"The hypothesis remains to be tested by further research.",
+    explain:"remain to be done（まだ〜されていない・〜される必要がある）は重要表現。学術論文でよく使われる。" },
+
+  { level:'exam', en:"She was at a loss for words when she heard the unexpected news.",
+    jp:"彼女は予想外のニュースを聞いて、言葉を失いました。",
+    choices_jp:["彼女は予想外のニュースを聞いて言葉を探しました。","彼女は予想外のニュースを聞いて、言葉を失いました。","彼女は予想外のニュースを聞いて、言葉が出てきました。","彼女は予想外のニュースを聞いて、言葉が多すぎて困りました。"],
+    choices_en:["She was at a loss for words when she heard the unexpected news.","She was lost for words when she heard the unexpected news.","Both A and B are correct.","She lost words when she heard the unexpected news."],
+    ans_jp:"彼女は予想外のニュースを聞いて、言葉を失いました。",
+    ans_en:"She was at a loss for words when she heard the unexpected news.",
+    explain:"be at a loss for words（言葉を失う・言葉に詰まる）は重要慣用表現。be lost for wordsも同義。" },
+
+  { level:'exam', en:"The findings of the study call into question the conventional wisdom about diet.",
+    jp:"その研究の結果は、食事に関する従来の通念に疑問を投げかけています。",
+    choices_jp:["その研究の結果は、食事に関する従来の通念を支持しています。","その研究の結果は、食事に関する従来の通念に疑問を投げかけています。","その研究の結果は、食事に関する通念を呼び起こしています。","その研究の結果は、食事の問題を解決しようとしています。"],
+    choices_en:["The findings of the study call into question the conventional wisdom about diet.","The findings of the study question the conventional wisdom about diet.","The findings of the study bring into question the conventional wisdom about diet.","Both A and C are correct."],
+    ans_jp:"その研究の結果は、食事に関する従来の通念に疑問を投げかけています。",
+    ans_en:"The findings of the study call into question the conventional wisdom about diet.",
+    explain:"call into question〜（〜に疑問を呈する）は重要句動詞。bring〜into questionも同義。conventional wisdom（従来の通念）も重要語彙。" },
+
+  { level:'exam', en:"Only by working together can we hope to solve the complex problems facing humanity.",
+    jp:"共に取り組むことによってのみ、人類が直面している複雑な問題を解決できると期待できます。",
+    choices_jp:["共に取り組むことなく、人類の問題を解決しようとしています。","共に取り組むことによってのみ、人類が直面している複雑な問題を解決できると期待できます。","人類の問題を解決するためには、共に取り組む必要はありません。","人類が直面する問題は、共に取り組むことで悪化します。"],
+    choices_en:["Only by working together can we hope to solve the complex problems facing humanity.","Only by working together we can hope to solve the complex problems facing humanity.","We can only hope to solve the complex problems facing humanity by working together.","Both A and C are correct in meaning."],
+    ans_jp:"共に取り組むことによってのみ、人類が直面している複雑な問題を解決できると期待できます。",
+    ans_en:"Only by working together can we hope to solve the complex problems facing humanity.",
+    explain:"Only by〜が文頭→倒置（can we hope）。副詞句が文頭で倒置が起こる重要パターン。AとCは意味は同じだがAが倒置形。" },
+
+  { level:'exam', en:"She attributed her success to the unwavering support she received from her family.",
+    jp:"彼女は自分の成功を、家族から受けた揺るぎない支援のおかげだと考えました。",
+    choices_jp:["彼女は成功したので、家族に揺るぎない支援を与えました。","彼女は自分の成功を、家族から受けた揺るぎない支援のおかげだと考えました。","彼女は家族の揺るぎない支援によって成功することができませんでした。","彼女は家族の支援が揺るぎないため、成功を確信していました。"],
+    choices_en:["She attributed her success to the unwavering support she received from her family.","She owed her success to the unwavering support she received from her family.","Both A and B are correct.","She gave her success to the support of her family."],
+    ans_jp:"彼女は自分の成功を、家族から受けた揺るぎない支援のおかげだと考えました。",
+    ans_en:"She attributed her success to the unwavering support she received from her family.",
+    explain:"attribute A to B（AをBのせいにする・AはBのおかげだと考える）。owe A to Bも同義。unwavering（揺るぎない）も重要語彙。" },
+
+  { level:'exam', en:"The extent to which technology has transformed our daily lives is difficult to overstate.",
+    jp:"技術が私たちの日常生活を変えた程度は、誇張しすぎることが難しいほどです。",
+    choices_jp:["技術が私たちの日常生活を変えた程度は、誇張しすぎることが難しいほどです。","技術は私たちの日常生活をある程度変えましたが、誇張されています。","日常生活における技術の変化は、誇張することで説明できます。","技術は日常生活を変えすぎており、それを語ることが難しいです。"],
+    choices_en:["The extent to which technology has transformed our daily lives is difficult to overstate.","It is difficult to overstate the extent to which technology has transformed our daily lives.","Both A and B are correct.","Technology has transformed our lives to an extent that is difficult to overstate."],
+    ans_jp:"技術が私たちの日常生活を変えた程度は、誇張しすぎることが難しいほどです。",
+    ans_en:"The extent to which technology has transformed our daily lives is difficult to overstate.",
+    explain:"the extent to which〜（〜の程度）は関係副詞的表現。overstate（誇張する）。It is difficult to overstate〜（〜はいくら強調してもしすぎることはない）は重要表現。" },
+
+  { level:'exam', en:"Were she to accept the position, the company would gain an invaluable asset.",
+    jp:"もし彼女がその職を受け入れるなら、会社は貴重な人材を得るでしょう。",
+    choices_jp:["もし彼女がその職を受け入れるなら、会社は貴重な人材を得るでしょう。","彼女がその職を受け入れたので、会社は貴重な人材を得ました。","彼女がその職を断ったため、会社は貴重な人材を失いました。","彼女がその職を受け入れても、会社には影響がないでしょう。"],
+    choices_en:["Were she to accept the position, the company would gain an invaluable asset.","If she were to accept the position, the company would gain an invaluable asset.","Both A and B are correct.","Should she accept the position, the company would gain an invaluable asset."],
+    ans_jp:"もし彼女がその職を受け入れるなら、会社は貴重な人材を得るでしょう。",
+    ans_en:"Were she to accept the position, the company would gain an invaluable asset.",
+    explain:"仮定法の倒置形。Were S to do = If S were to do（もし〜するとしたら）。Should S do（万一〜するなら）は確率が少し高い仮定。invaluable（非常に価値のある）はinvalidではない。" },
+
+  { level:'exam', en:"The policy is intended to bring about a fundamental change in the way people commute.",
+    jp:"その政策は、人々の通勤方法に根本的な変化をもたらすことを意図しています。",
+    choices_jp:["その政策は、人々の通勤方法を根本的に変えることに失敗しました。","その政策は、人々の通勤方法に根本的な変化をもたらすことを意図しています。","その政策によって、人々の通勤方法は既に根本的に変わりました。","その政策は、人々が通勤することを禁じることを意図しています。"],
+    choices_en:["The policy is intended to bring about a fundamental change in the way people commute.","The policy intends to bring about a fundamental change in the way people commute.","The policy is aimed at bringing about a fundamental change in the way people commute.","Both A and C are correct."],
+    ans_jp:"その政策は、人々の通勤方法に根本的な変化をもたらすことを意図しています。",
+    ans_en:"The policy is intended to bring about a fundamental change in the way people commute.",
+    explain:"be intended to do（〜することを意図している）。bring about〜（〜をもたらす）。the way S V（SがVする方法）も重要表現。" },
+
+  { level:'exam', en:"It was not until she reached her forties that she truly found her calling.",
+    jp:"彼女が40代になって初めて、自分の天職を本当に見つけました。",
+    choices_jp:["彼女は40代になると、すぐに天職を見つけました。","彼女が40代になって初めて、自分の天職を本当に見つけました。","彼女は40代になっても、天職をまだ見つけていませんでした。","彼女は40代のうちに、天職を見つけようとしていました。"],
+    choices_en:["It was not until she reached her forties that she truly found her calling.","She did not find her calling until she reached her forties.","Both A and B are correct.","Not until she reached her forties she truly found her calling."],
+    ans_jp:"彼女が40代になって初めて、自分の天職を本当に見つけました。",
+    ans_en:"It was not until she reached her forties that she truly found her calling.",
+    explain:"It is not until〜 that...（〜して初めて…する）強調構文。AとBは同義。Dは否定語が文頭にきても倒置がないので誤り。" },
+
+  { level:'exam', en:"Much as I admire his dedication, I cannot agree with his methods.",
+    jp:"彼の献身を大いに称えはしますが、彼の方法には同意できません。",
+    choices_jp:["彼の献身を称えているので、彼の方法に同意します。","彼の献身を大いに称えはしますが、彼の方法には同意できません。","彼の献身があまりにもひどく、彼の方法にも同意できません。","彼の方法には同意できませんが、献身を称えることもできません。"],
+    choices_en:["Much as I admire his dedication, I cannot agree with his methods.","Although I admire his dedication very much, I cannot agree with his methods.","Both A and B are correct.","As much as I admire his dedication, I cannot agree with his methods."],
+    ans_jp:"彼の献身を大いに称えはしますが、彼の方法には同意できません。",
+    ans_en:"Much as I admire his dedication, I cannot agree with his methods.",
+    explain:"Much as S V（〜ではあるが・〜を認めても）は譲歩を表す倒置構文。Although S very much Vと同義。dedication（献身）も重要語彙。" },
+
+  { level:'exam', en:"The discovery has far-reaching implications for our understanding of human evolution.",
+    jp:"その発見は、人類の進化に関する私たちの理解に広範な影響を持っています。",
+    choices_jp:["その発見は、人類の進化に関する理解をすでに変えました。","その発見は、人類の進化に関する私たちの理解に広範な影響を持っています。","その発見は、人類の進化についての理解に限られた影響しか持っていません。","その発見は、人類の進化に関する誤解を引き起こしています。"],
+    choices_en:["The discovery has far-reaching implications for our understanding of human evolution.","The discovery has wide-ranging implications for our understanding of human evolution.","Both A and B are correct.","The discovery implies far-reaching things for human evolution."],
+    ans_jp:"その発見は、人類の進化に関する私たちの理解に広範な影響を持っています。",
+    ans_en:"The discovery has far-reaching implications for our understanding of human evolution.",
+    explain:"far-reaching（広範な・影響力の大きい）、have implications for〜（〜に影響を及ぼす）は学術・論文語彙として最重要。wide-ranging も同義。" },
+
+  { level:'exam', en:"She made it a point to review her notes every evening without fail.",
+    jp:"彼女は毎晩必ずノートを復習することを習慣にしていました。",
+    choices_jp:["彼女は毎晩ノートを復習することの重要性を指摘しました。","彼女は毎晩必ずノートを復習することを習慣にしていました。","彼女は毎晩ノートを復習することは意味がないと思っていました。","彼女は毎晩ノートを復習する時間がないと気づきました。"],
+    choices_en:["She made it a point to review her notes every evening without fail.","She made a point of reviewing her notes every evening without fail.","Both A and B are correct.","She made it her point to review her notes every evening without fail."],
+    ans_jp:"彼女は毎晩必ずノートを復習することを習慣にしていました。",
+    ans_en:"She made it a point to review her notes every evening without fail.",
+    explain:"make it a point to do（〜することを習慣にする）= make a point of -ing（〜することを心がける）。without fail（必ず・欠かさず）も重要表現。" },
+
+  { level:'exam', en:"The committee has yet to reach a consensus on the proposed amendments.",
+    jp:"委員会は、提案された修正案についてまだ合意に達していません。",
+    choices_jp:["委員会は、提案された修正案についての合意をちょうど達成しました。","委員会は、提案された修正案についてまだ合意に達していません。","委員会は、提案された修正案についての合意を放棄しました。","委員会は、提案された修正案を合意なしに実施しました。"],
+    choices_en:["The committee has yet to reach a consensus on the proposed amendments.","The committee has not yet reached a consensus on the proposed amendments.","Both A and B are correct.","The committee still does not reach a consensus on the proposed amendments."],
+    ans_jp:"委員会は、提案された修正案についてまだ合意に達していません。",
+    ans_en:"The committee has yet to reach a consensus on the proposed amendments.",
+    explain:"have yet to do（まだ〜していない）は現在完了＋to不定詞の重要表現。have not yet PP と同義。consensus（合意）、amendment（修正案）も重要語彙。" },
+
+  { level:'exam', en:"To a greater extent than previously thought, early childhood experiences shape adult personality.",
+    jp:"以前考えられていたよりもずっと大きな程度で、幼児期の経験が大人の性格を形成します。",
+    choices_jp:["幼児期の経験よりも大人の性格の方が重要だということが、以前から考えられていました。","以前考えられていたよりもずっと大きな程度で、幼児期の経験が大人の性格を形成します。","以前考えられていた程度に、幼児期の経験が大人の性格に影響します。","幼児期の経験が以前よりも大人の性格に悪影響を与えています。"],
+    choices_en:["To a greater extent than previously thought, early childhood experiences shape adult personality.","Early childhood experiences shape adult personality to a greater extent than previously thought.","Both A and B are correct.","To greater extent than previously thought, early childhood experiences shape adult personality."],
+    ans_jp:"以前考えられていたよりもずっと大きな程度で、幼児期の経験が大人の性格を形成します。",
+    ans_en:"To a greater extent than previously thought, early childhood experiences shape adult personality.",
+    explain:"To a greater extent than previously thought（以前考えられていたよりも大きな程度で）は論文でよく使う表現。Dはaが欠けているので誤り。" },
+];
+
+// ════════════════════════════════════
+// TRANS STATE
+// ════════════════════════════════════
+let tDir    = 'en';
+let tLevel  = 'basic';
+let tCount  = 10;
+let tQuestions = [];
+let tIdx    = 0;
+let tOk     = 0;
+let tNg     = 0;
+let tMisses = [];
+let tAnswered = false;
+
+window.addEventListener('DOMContentLoaded', () => {
+  updateTBadge();
+});
+
+function updateTBadge() {
+  const pool = tLevel === 'all' ? TRANS_Q : TRANS_Q.filter(q => q.level === tLevel);
+  document.getElementById('tpPoolBadge').textContent = pool.length + '問';
+}
+
+function setTDir(d) {
+  tDir = d;
+  document.querySelectorAll('.tm-btn').forEach(b => b.classList.remove('active'));
+  const ids = { en:'tdir-en', jp:'tdir-jp', mix:'tdir-mix' };
+  document.getElementById(ids[d])?.classList.add('active');
+}
+
+function setTLv(lv) {
+  tLevel = lv;
+  ['basic','exam','all'].forEach(x => {
+    document.getElementById('tlv-' + x)?.classList.toggle('active', x === lv);
+  });
+  updateTBadge();
+}
+
+function setTCount(n) {
+  tCount = n;
+  ['10','20','30','50'].forEach(x => document.getElementById('tn'+x).classList.toggle('active', x==n));
+}
+
+function startTrans() {
+  const pool = tLevel === 'all'
+    ? shuffle([...TRANS_Q])
+    : shuffle(TRANS_Q.filter(q => q.level === tLevel));
+  if (!pool.length) return;
+  const picked = pool.slice(0, Math.min(tCount, pool.length));
+  tQuestions = picked.map(q => {
+    let dir = tDir;
+    if (tDir === 'mix') dir = Math.random() < .5 ? 'en' : 'jp';
+    return { ...q, dir };
+  });
+  tIdx = 0; tOk = 0; tNg = 0; tMisses = []; tAnswered = false;
+  renderTransQ();
+}
+
+function renderTransQ() {
+  const body = document.getElementById('tpBody');
+  if (tIdx >= tQuestions.length) { renderTransResult(); return; }
+
+  const q   = tQuestions[tIdx];
+  const pct = Math.round((tIdx / tQuestions.length) * 100);
+  const isEN = q.dir === 'en';   // true = 英文→日本語訳を選ぶ
+
+  const questionText = isEN ? q.en : q.jp;
+  const correctAns   = isEN ? q.ans_jp : q.ans_en;
+  const choices      = shuffle([...(isEN ? q.choices_jp : q.choices_en)]);
+
+  const dirLabel = isEN ? '🇯🇵 英文の日本語訳を選ぼう' : '🇬🇧 日本語文の英語訳を選ぼう';
+  const dirColor = isEN ? 'var(--sky)' : 'var(--pink)';
+  const modeCls  = isEN ? 'en' : 'jp';
+
+  const choicesHTML = choices.map((c, i) => `
+    <button class="tq-choice" data-idx="${i}" onclick="pickTrans(this)">${c}</button>
+  `).join('');
+
+  // store current correct answer globally for access in answerTrans
+  window._tCorrect = correctAns;
+  window._tChoices = choices;
+
+  body.innerHTML = `
+    <div class="tq-prog-row">
+      <span class="tq-prog-label">Q${tIdx+1} / ${tQuestions.length}</span>
+      <div class="tq-prog-bar"><div class="tq-prog-fill" style="width:${pct}%"></div></div>
+      <span class="tq-prog-label" style="color:var(--mint)">✅${tOk}</span>
+    </div>
+
+    <div class="tq-card">
+      <span class="tq-mode-badge ${modeCls}">${dirLabel}</span>
+      <div class="tq-question ${isEN ? 'en-text' : 'jp-text'}">${questionText}</div>
+    </div>
+
+    <div class="tq-choices">${choicesHTML}</div>
+
+    <div class="tq-explain" id="tqExplain"></div>
+  `;
+}
+
+function pickTrans(btn) {
+  const idx      = parseInt(btn.dataset.idx);
+  const selected = window._tChoices[idx];
+  const correct  = window._tCorrect;
+  answerTrans(btn, selected, correct);
+}
+
+function answerTrans(btn, selected, correct) {
+  if (tAnswered) return;
+  tAnswered = true;
+  const q  = tQuestions[tIdx];
+  const ok = selected === correct;
+
+  document.querySelectorAll('.tq-choice').forEach(b => {
+    b.disabled = true;
+    if (b.textContent.trim() === correct) b.classList.add('correct');
+    else if (b === btn && !ok) b.classList.add('wrong');
+  });
+
+  if (ok) tOk++;
+  else { tNg++; tMisses.push({ q, selected, correct }); }
+
+  const isEN   = q.dir === 'en';
+  const isLast = tIdx === tQuestions.length - 1;
+  const ex = document.getElementById('tqExplain');
+  ex.className = 'tq-explain show ' + (ok ? 'tq-explain-ok' : 'tq-explain-ng');
+  ex.innerHTML = `
+    <div class="tq-verdict">${ok ? '✅ 正解！' : '❌ 不正解'}</div>
+    <div class="tq-ans-box">
+      <div style="font-size:.65rem;font-weight:900;color:var(--muted);margin-bottom:4px;letter-spacing:1px">正解</div>
+      ${correct}
+    </div>
+    <div class="tq-ans-box" style="background:#e8fafb;border-color:var(--sky)">
+      <div style="font-size:.65rem;font-weight:900;color:var(--sky);margin-bottom:4px;letter-spacing:1px">対訳</div>
+      ${isEN ? q.jp : q.en}
+    </div>
+    <div class="tq-explain-body">💡 ${q.explain}</div>
+    <button class="tq-next-btn" onclick="nextTrans()">${isLast ? '📊 結果を見る' : '次へ →'}</button>
+  `;
+  setTimeout(() => ex.scrollIntoView({ behavior:'smooth', block:'nearest' }), 80);
+}
+
+function nextTrans() {
+  tIdx++;
+  tAnswered = false;
+  renderTransQ();
+}
+
+function renderTransResult() {
+  const total = tQuestions.length;
+  const pct   = Math.round(tOk / total * 100);
+  const score = tOk * 100 - tNg * 10;
+  const data  = pct===100?{e:'🏆',t:'PERFECT!!'}:pct>=80?{e:'🎉',t:'EXCELLENT!'}:pct>=60?{e:'😊',t:'GOOD JOB!'}:{e:'😅',t:'もう一回！'};
+
+  const missHTML = tMisses.length === 0
+    ? '<div style="text-align:center;color:#2d9e50;font-weight:900;font-size:.88rem;padding:10px">全問正解！🎉</div>'
+    : tMisses.map(({q, correct}) => {
+        const isEN = q.dir === 'en';
+        return `<div class="tq-review-item">
+          <div class="tq-ri-q">${isEN ? q.en : q.jp}</div>
+          <div class="tq-ri-ans">✓ ${correct.slice(0,50)}${correct.length>50?'…':''}</div>
+        </div>`;
+      }).join('');
+
+  document.getElementById('tpBody').innerHTML = `
+    <div class="tq-result">
+      <div class="tq-result-emoji">${data.e}</div>
+      <div class="tq-result-title">${data.t}</div>
+      <div class="tq-result-score">${tOk}<span style="font-size:1.5rem;color:var(--muted)"> / ${total}</span></div>
+      <div class="tq-result-stats">
+        <div class="tq-sbox"><div class="tq-slabel">正解 ✅</div><div class="tq-sval" style="color:var(--sky)">${tOk}</div></div>
+        <div class="tq-sbox"><div class="tq-slabel">ミス ❌</div><div class="tq-sval" style="color:var(--pink)">${tNg}</div></div>
+        <div class="tq-sbox"><div class="tq-slabel">正答率</div><div class="tq-sval" style="color:#ff9f43">${pct}%</div></div>
+        <div class="tq-sbox"><div class="tq-slabel">スコア</div><div class="tq-sval" style="color:var(--purple)">${Math.max(0,score)}</div></div>
+      </div>
+      <div style="font-size:.72rem;font-weight:900;color:var(--muted);text-align:center;width:100%;max-width:480px">間違えた問題 📝</div>
+      <div class="tq-review-list">${missHTML}</div>
+      <button class="tq-restart-btn" onclick="startTrans()">🔄 もう一度！</button>
+      <button onclick="resetTrans()" style="background:var(--white);border:2px solid var(--border);border-radius:12px;color:var(--muted);font-family:'M PLUS Rounded 1c',sans-serif;font-size:.8rem;font-weight:700;padding:10px 20px;cursor:pointer;max-width:280px;width:100%;box-shadow:0 3px 0 var(--border)">← 設定に戻る</button>
+    </div>
+  `;
+  if (pct >= 80) confetti();
+}
+
+function resetTrans() {
+  document.getElementById('tpBody').innerHTML = `
+    <div style="text-align:center;color:var(--muted);font-size:.85rem;font-weight:700;padding:30px 0">
+      モードと問題数を選んで「スタート！」を押してね 🌐
     </div>`;
 }
 </script>
