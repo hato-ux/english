@@ -2381,35 +2381,62 @@ body::before {
   <!-- sticky header -->
   <div class="vp-header">
     <div class="vp-title-row">
-      <div class="vp-title">📝 単語テスト</div>
+      <div class="vp-title">📝 単語</div>
       <div style="font-size:.65rem;font-weight:700;color:var(--muted)">TARGET 1200レベル</div>
-      <div class="vp-count-badge" id="vpCountBadge">200語</div>
+      <div class="vp-count-badge" id="vpCountBadge">322語</div>
     </div>
-    <!-- pos filter -->
-    <div class="vp-filters" id="vpFilters">
-      <button class="vf-btn active" onclick="setVFilter('all')">すべて</button>
-      <button class="vf-btn" onclick="setVFilter('名詞')">🟦 名詞</button>
-      <button class="vf-btn" onclick="setVFilter('動詞')">🟩 動詞</button>
-      <button class="vf-btn" onclick="setVFilter('形容詞')">🟨 形容詞</button>
-      <button class="vf-btn" onclick="setVFilter('副詞')">🟪 副詞</button>
-      <button class="vf-btn" onclick="setVFilter('前置詞')">🟧 前置詞</button>
-      <button class="vf-btn" onclick="setVFilter('接続詞')">🟥 接続詞</button>
+    <!-- quiz / dict toggle -->
+    <div style="display:flex;gap:6px;margin-bottom:8px">
+      <button class="vm-btn active" id="vmode-quiz" onclick="setVocabMode('quiz')" style="border-color:var(--orange);background:#fff5e8;color:var(--orange)">🎮 クイズ</button>
+      <button class="vm-btn" id="vmode-dict" onclick="setVocabMode('dict')">📚 辞書</button>
     </div>
-    <!-- direction + count -->
-    <div class="vp-mode-row">
-      <button class="vm-btn active" id="vdir-en" onclick="setVDir('en')">英語 → 日本語</button>
-      <button class="vm-btn" id="vdir-jp" onclick="setVDir('jp')">日本語 → 英語</button>
+
+    <!-- QUIZ controls (shown in quiz mode) -->
+    <div id="vQuizControls">
+      <div class="vp-filters" id="vpFilters">
+        <button class="vf-btn active" onclick="setVFilter('all')">すべて</button>
+        <button class="vf-btn" onclick="setVFilter('名詞')">🟦 名詞</button>
+        <button class="vf-btn" onclick="setVFilter('動詞')">🟩 動詞</button>
+        <button class="vf-btn" onclick="setVFilter('形容詞')">🟨 形容詞</button>
+        <button class="vf-btn" onclick="setVFilter('副詞')">🟪 副詞</button>
+        <button class="vf-btn" onclick="setVFilter('前置詞')">🟧 前置詞</button>
+        <button class="vf-btn" onclick="setVFilter('接続詞')">🟥 接続詞</button>
+      </div>
+      <div class="vp-mode-row">
+        <button class="vm-btn active" id="vdir-en" onclick="setVDir('en')">英語 → 日本語</button>
+        <button class="vm-btn" id="vdir-jp" onclick="setVDir('jp')">日本語 → 英語</button>
+      </div>
+      <div class="vp-mode-row">
+        <button class="vm-btn" id="vn10" onclick="setVCount(10)">10問</button>
+        <button class="vm-btn" id="vn20" onclick="setVCount(20)">20問</button>
+        <button class="vm-btn active" id="vn30" onclick="setVCount(30)">30問</button>
+        <button class="vm-btn" id="vn50" onclick="setVCount(50)">50問</button>
+      </div>
+      <div style="margin-top:8px;text-align:right">
+        <button onclick="startVocab()" style="background:linear-gradient(135deg,var(--orange),var(--pink));border:none;border-radius:20px;color:var(--white);font-family:'M PLUS Rounded 1c',sans-serif;font-size:.82rem;font-weight:900;padding:7px 20px;cursor:pointer;box-shadow:0 3px 0 #c06020">
+          ▶ スタート！
+        </button>
+      </div>
     </div>
-    <div class="vp-mode-row">
-      <button class="vm-btn" id="vn10" onclick="setVCount(10)">10問</button>
-      <button class="vm-btn" id="vn20" onclick="setVCount(20)">20問</button>
-      <button class="vm-btn active" id="vn30" onclick="setVCount(30)">30問</button>
-      <button class="vm-btn" id="vn50" onclick="setVCount(50)">50問</button>
-    </div>
-    <div style="margin-top:8px;text-align:right">
-      <button onclick="startVocab()" style="background:linear-gradient(135deg,var(--orange),var(--pink));border:none;border-radius:20px;color:var(--white);font-family:'M PLUS Rounded 1c',sans-serif;font-size:.82rem;font-weight:900;padding:7px 20px;cursor:pointer;box-shadow:0 3px 0 #c06020">
-        ▶ スタート！
-      </button>
+
+    <!-- DICT controls (shown in dict mode) -->
+    <div id="vDictControls" style="display:none">
+      <div style="position:relative;margin-bottom:6px">
+        <input type="text" id="dictSearch" placeholder="🔍 単語を検索…" oninput="renderDict()"
+          style="width:100%;padding:8px 12px 8px 36px;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:'M PLUS Rounded 1c',sans-serif;font-size:.85rem;font-weight:700;background:var(--bg);color:var(--ink);outline:none;box-sizing:border-box">
+        <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.9rem">🔍</span>
+      </div>
+      <div class="vp-filters" style="flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none">
+        <button class="vf-btn active" onclick="setDictPos('all')" id="dp-all">すべて</button>
+        <button class="vf-btn" onclick="setDictPos('名詞')"   id="dp-名詞">🟦 名詞</button>
+        <button class="vf-btn" onclick="setDictPos('動詞')"   id="dp-動詞">🟩 動詞</button>
+        <button class="vf-btn" onclick="setDictPos('形容詞')" id="dp-形容詞">🟨 形容詞</button>
+        <button class="vf-btn" onclick="setDictPos('副詞')"   id="dp-副詞">🟪 副詞</button>
+        <button class="vf-btn" onclick="setDictPos('前置詞')" id="dp-前置詞">🟧 前置詞</button>
+        <button class="vf-btn" onclick="setDictPos('接続詞')" id="dp-接続詞">🟥 接続詞</button>
+      </div>
+      <!-- alphabet index -->
+      <div id="dictAlpha" style="display:flex;flex-wrap:wrap;gap:3px;margin-top:6px"></div>
     </div>
   </div>
 
@@ -2418,6 +2445,9 @@ body::before {
       設定を選んで「スタート！」を押してね 🎉
     </div>
   </div>
+
+  <!-- DICT body (separate from quiz body) -->
+  <div id="dictBody" style="display:none;padding:8px 14px 80px;max-width:700px;margin:0 auto"></div>
 </div>
 
 <script>
@@ -3321,7 +3351,6 @@ const VOCAB = [
   {en:"allow",      jp:"許可する・可能にする", pos:"動詞", ex:"My parents allow me to stay up late.", exj:"両親は私が夜更かしするのを許可しています。", memo:"allow O to do（Oが〜するのを許す）の形が重要。"},
   {en:"apply",      jp:"申し込む・適用する", pos:"動詞", ex:"She applied for a scholarship.", exj:"彼女は奨学金に申し込みました。", memo:"apply for〜（〜に申し込む）、apply to〜（〜に適用する）を区別しよう。"},
   {en:"avoid",      jp:"避ける",         pos:"動詞", ex:"He avoids eating junk food.", exj:"彼はジャンクフードを食べることを避けます。", memo:"avoid -ing（〜することを避ける）で動名詞が続く。"},
-  {en:"cause",      jp:"引き起こす",      pos:"動詞", ex:"Pollution causes many diseases.", exj:"汚染は多くの病気を引き起こします。", memo:"cause O to do（Oが〜するのを引き起こす）の形も重要。"},
   {en:"communicate",jp:"伝える・意思疎通する", pos:"動詞", ex:"It is important to communicate clearly.", exj:"明確に伝えることが重要です。", memo:"communication（コミュニケーション）の動詞形。"},
   {en:"compare",    jp:"比較する",        pos:"動詞", ex:"Compare the two products carefully.", exj:"2つの製品を注意深く比較しなさい。", memo:"compare A with B（AとBを比較する）、compared to〜（〜と比べると）。"},
   {en:"concern",    jp:"〜に関係する・心配させる", pos:"動詞", ex:"This problem concerns everyone.", exj:"この問題は皆に関係します。", memo:"be concerned about〜（〜を心配する）の形も超頻出。"},
@@ -3339,17 +3368,14 @@ const VOCAB = [
   {en:"establish",  jp:"設立する・確立する", pos:"動詞", ex:"The company was established in 1990.", exj:"その会社は1990年に設立されました。", memo:"establishment（設立・組織）。well-established（確立した）も覚えよう。"},
   {en:"exist",      jp:"存在する",        pos:"動詞", ex:"Do aliens exist?", exj:"エイリアンは存在するのでしょうか？", memo:"existence（存在）の動詞形。existing（既存の）も重要。"},
   {en:"expand",     jp:"拡大する・広げる", pos:"動詞", ex:"The company plans to expand overseas.", exj:"その会社は海外に拡大する計画があります。", memo:"expansion（拡大）の動詞形。"},
-  {en:"experience", jp:"経験する",        pos:"動詞", ex:"She experienced many difficulties.", exj:"彼女は多くの困難を経験しました。", memo:"名詞「経験」にもなる多義語。"},
   {en:"explore",    jp:"探索する・探求する", pos:"動詞", ex:"Scientists explore new possibilities.", exj:"科学者たちは新しい可能性を探求します。", memo:"exploration（探索）。explorer（探検家）も重要。"},
   {en:"express",    jp:"表現する・表す",  pos:"動詞", ex:"She expressed her feelings through art.", exj:"彼女は芸術を通じて気持ちを表現しました。", memo:"expression（表現）の動詞形。express oneself（自己表現する）も重要。"},
   {en:"fail",       jp:"失敗する",        pos:"動詞", ex:"He failed to meet the deadline.", exj:"彼は締め切りに間に合いませんでした。", memo:"fail to do（〜することに失敗する）の形が重要。failure（失敗）も覚えよう。"},
-  {en:"focus",      jp:"集中する・焦点を当てる", pos:"動詞", ex:"Focus on your strengths.", exj:"自分の強みに集中しなさい。", memo:"focus on〜（〜に集中する）が最重要形。"},
   {en:"gain",       jp:"得る・増やす",    pos:"動詞", ex:"She gained a lot of experience.", exj:"彼女は多くの経験を得ました。", memo:"gain weight（体重が増える）、gain knowledge（知識を得る）は頻出。"},
   {en:"identify",   jp:"特定する・識別する", pos:"動詞", ex:"Can you identify the problem?", exj:"問題を特定できますか？", memo:"identity（アイデンティティ）の動詞形。identification（識別）も重要。"},
   {en:"improve",    jp:"改善する・上達する", pos:"動詞", ex:"She improved her English by watching movies.", exj:"彼女は映画を見ることで英語を上達させました。", memo:"improvement（改善・上達）の動詞形。"},
   {en:"increase",   jp:"増加する・増やす", pos:"動詞", ex:"The population has increased rapidly.", exj:"人口が急速に増加しています。", memo:"decrease（減少する）の反意語。名詞「増加」にもなる。"},
   {en:"indicate",   jp:"示す・指摘する",  pos:"動詞", ex:"Research indicates that exercise is beneficial.", exj:"研究は運動が有益であることを示しています。", memo:"indication（兆候）、indicator（指標）も同語根。"},
-  {en:"influence",  jp:"影響を与える",    pos:"動詞", ex:"Music influenced her career choice.", exj:"音楽は彼女のキャリア選択に影響を与えました。", memo:"名詞「影響」にもなる多義語。"},
   {en:"involve",    jp:"〜を含む・関与する", pos:"動詞", ex:"This project involves many people.", exj:"このプロジェクトは多くの人を含みます。", memo:"be involved in〜（〜に関与している）の形も超頻出。"},
   {en:"maintain",   jp:"維持する・主張する", pos:"動詞", ex:"She maintains a healthy lifestyle.", exj:"彼女は健康的な生活スタイルを維持しています。", memo:"maintenance（維持・整備）の動詞形。"},
   {en:"manage",     jp:"管理する・なんとかする", pos:"動詞", ex:"She managed to finish on time.", exj:"彼女は時間内になんとか終わらせました。", memo:"manage to do（なんとか〜する）のフレーズが重要。"},
@@ -3487,7 +3513,6 @@ const VOCAB = [
   {en:"violence",   jp:"暴力",             pos:"名詞", ex:"Violence is never the answer.", exj:"暴力は決して答えではありません。", memo:"violent（暴力的な）の名詞形。domestic violence（家庭内暴力）も重要。"},
   // ── 動詞 追加 ──
   {en:"accept",     jp:"受け入れる",       pos:"動詞", ex:"She accepted the job offer.", exj:"彼女は仕事の申し出を受け入れました。", memo:"acceptance（受け入れ）の動詞形。accept vs receive：acceptは意思を持って受け入れる。"},
-  {en:"access",     jp:"アクセスする",     pos:"動詞", ex:"You can access the file online.", exj:"オンラインでそのファイルにアクセスできます。", memo:"名詞「アクセス」にもなる多義語。"},
   {en:"adapt",      jp:"適応する・改作する", pos:"動詞", ex:"She adapted quickly to the new environment.", exj:"彼女はすぐに新しい環境に適応しました。", memo:"adapt to〜（〜に適応する）。adaptation（適応）も覚えよう。"},
   {en:"adopt",      jp:"採用する・養子にする", pos:"動詞", ex:"The school adopted a new teaching method.", exj:"学校は新しい教授法を採用しました。", memo:"adapt（適応する）と混同しない。adoption（採用・養子縁組）も重要。"},
   {en:"analyze",    jp:"分析する",         pos:"動詞", ex:"Scientists analyzed the data carefully.", exj:"科学者たちはデータを注意深く分析しました。", memo:"analysis（分析）の動詞形。analytical（分析的な）も覚えよう。"},
@@ -3523,7 +3548,6 @@ const VOCAB = [
   // ── 形容詞 追加 ──
   {en:"ambitious",  jp:"野心的な",         pos:"形容詞", ex:"She is an ambitious young leader.", exj:"彼女は野心的な若いリーダーです。", memo:"ambition（野心）の形容詞形。"},
   {en:"anxious",    jp:"心配している・熱望している", pos:"形容詞", ex:"She is anxious about the exam.", exj:"彼女は試験について心配しています。", memo:"be anxious about〜（〜を心配する）。anxiety（不安）も覚えよう。"},
-  {en:"appropriate",jp:"適切な",           pos:"形容詞", ex:"Please choose appropriate words.", exj:"適切な言葉を選んでください。", memo:"appropriate for〜（〜に適した）。inappropriate（不適切）が反意語。"},
   {en:"brief",      jp:"短い・簡潔な",     pos:"形容詞", ex:"Please give me a brief explanation.", exj:"簡潔な説明をしてください。", memo:"briefly（簡潔に）・in brief（要するに）も重要。名詞「要約」にもなる。"},
   {en:"crucial",    jp:"非常に重要な",     pos:"形容詞", ex:"It is crucial to act quickly.", exj:"素早く行動することが非常に重要です。", memo:"critical / vital / essential も類義語。crucial to〜（〜にとって非常に重要）。"},
   {en:"diverse",    jp:"多様な",           pos:"形容詞", ex:"Our team has diverse backgrounds.", exj:"私たちのチームは多様な背景を持っています。", memo:"diversity（多様性）の形容詞形。"},
@@ -3596,6 +3620,335 @@ const VOCAB = [
   {en:"whereas",    jp:"〜である一方",     pos:"接続詞", ex:"She likes tea, whereas he prefers coffee.", exj:"彼女はお茶が好きである一方、彼はコーヒーを好む。", memo:"対比を表す接続詞。while も同義で使えるが、whereasの方が書き言葉的。"},
   {en:"whether",    jp:"〜かどうか",       pos:"接続詞", ex:"I don't know whether she will come.", exj:"彼女が来るかどうかわかりません。", memo:"if と区別：whetherは選択肢がある場合。whether A or B（AかBか）の形も重要。"},
   {en:"while",      jp:"〜している間・〜である一方", pos:"接続詞", ex:"She listened to music while studying.", exj:"彼女は勉強しながら音楽を聴いていました。", memo:"2つの意味を持つ接続詞。「同時」と「対比」のどちらかを文脈で判断しよう。"},
+
+  // ── アプリ問題頻出語（名詞）──
+  {en:"answer",     jp:"答え・返答",       pos:"名詞", ex:"Nobody in the class could answer the question.", exj:"クラスの誰も質問に答えられませんでした。", memo:"動詞「答える」にもなる。answer to〜（〜への答え）も重要。"},
+  {en:"audience",   jp:"観客・聴衆",       pos:"名詞", ex:"The music made the audience excited.", exj:"音楽が観客を興奮させました。", memo:"単数扱いが原則。theater audience（劇場の観客）、target audience（対象者）。"},
+  {en:"breakfast",  jp:"朝食",             pos:"名詞", ex:"She skips breakfast every morning.", exj:"彼女は毎朝朝食を抜きます。", memo:"have breakfast（朝食を食べる）。×eat a breakfastは不可（冠詞なし）。"},
+  {en:"bridge",     jp:"橋",               pos:"名詞", ex:"They built a bridge over the river.", exj:"彼らは川に橋を架けました。", memo:"bridge the gap（格差を埋める）という比喩的表現も重要。"},
+  {en:"cake",       jp:"ケーキ",           pos:"名詞", ex:"She baked a cake for his birthday.", exj:"彼女は彼の誕生日のためにケーキを焼きました。", memo:"piece of cake（朝飯前）はイディオム。"},
+  {en:"class",      jp:"クラス・授業",      pos:"名詞", ex:"She is the tallest student in the class.", exj:"彼女はクラスで一番背が高い生徒です。", memo:"class（クラス・授業・階級）と多義語。take a class（授業を受ける）も重要。"},
+  {en:"concert",    jp:"コンサート",        pos:"名詞", ex:"The concert will start at seven.", exj:"コンサートは7時に始まります。", memo:"go to a concert（コンサートに行く）。live concert（生演奏のコンサート）。"},
+  {en:"courage",    jp:"勇気",             pos:"名詞", ex:"She showed great courage in the storm.", exj:"彼女は嵐の中で大きな勇気を見せました。", memo:"take courage（勇気を出す）。courageous（勇敢な）も覚えよう。"},
+  {en:"decision",   jp:"決断・決定",        pos:"名詞", ex:"He made a big decision to study abroad.", exj:"彼は留学するという大きな決断をしました。", memo:"make a decision（決断する）。decision-making（意思決定）も重要。"},
+  {en:"desk",       jp:"机",               pos:"名詞", ex:"There is a book on the desk.", exj:"机の上に本があります。", memo:"at one's desk（机に向かって）。desktop（デスクトップ）も同語根。"},
+  {en:"dinner",     jp:"夕食・夕食会",      pos:"名詞", ex:"He cooked her a delicious dinner.", exj:"彼は彼女においしい夕食を作りました。", memo:"have dinner（夕食をとる）。dinner party（夕食会）。"},
+  {en:"doctor",     jp:"医者・博士",        pos:"名詞", ex:"She wants to become a doctor.", exj:"彼女は医者になりたいと思っています。", memo:"go to the doctor（医者に行く）。doctor（博士号）の意味でも使う。"},
+  {en:"door",       jp:"ドア・扉",          pos:"名詞", ex:"She remembered to lock the door.", exj:"彼女はドアに鍵をかけることを覚えていました。", memo:"answer the door（ドアに出る）。door-to-door（戸別訪問の）も重要。"},
+  {en:"dress",      jp:"ドレス・服装",      pos:"名詞", ex:"She bought a beautiful dress for the party.", exj:"彼女はパーティーのために美しいドレスを買いました。", memo:"動詞「着替える」にもなる。dress up（正装する・仮装する）も重要。"},
+  {en:"exam",       jp:"試験・検査",        pos:"名詞", ex:"She studied hard to pass the exam.", exj:"彼女は試験に合格するために一生懸命勉強しました。", memo:"take an exam（試験を受ける）。final exam（期末試験）。"},
+  {en:"flower",     jp:"花",               pos:"名詞", ex:"She gave him a flower.", exj:"彼女は彼に花をあげました。", memo:"flower shop（花屋）。in flower（花が咲いている）。"},
+  {en:"food",       jp:"食べ物・食料",      pos:"名詞", ex:"She avoids eating junk food.", exj:"彼女はジャンクフードを食べることを避けます。", memo:"不可算名詞。food for thought（考える材料）というイディオムも重要。"},
+  {en:"friend",     jp:"友達・友人",        pos:"名詞", ex:"He wrote her a long letter as a friend.", exj:"彼は友人として彼女に長い手紙を書きました。", memo:"make friends with〜（〜と友達になる）。best friend（親友）。"},
+  {en:"gift",       jp:"贈り物・才能",      pos:"名詞", ex:"She bought him a gift for his birthday.", exj:"彼女は彼の誕生日のためにプレゼントを買いました。", memo:"「才能」の意味もある。gifted（才能ある）も重要。"},
+  {en:"girl",       jp:"女の子・少女",      pos:"名詞", ex:"I met a girl whose father is a famous actor.", exj:"私は父親が有名な俳優の女の子に会いました。", memo:"girlfriend（彼女・女友達）。girl's school（女子校）。"},
+  {en:"health",     jp:"健康",             pos:"名詞", ex:"It goes without saying that health is important.", exj:"健康が大切なことは言うまでもありません。", memo:"health care（医療・健康管理）。in good health（健康な状態で）。"},
+  {en:"homework",   jp:"宿題",             pos:"名詞", ex:"She has just finished her homework.", exj:"彼女はちょうど宿題を終えたところです。", memo:"不可算名詞。×a homework ○a piece of homework。do one's homework（宿題をする・事前調査をする）。"},
+  {en:"hospital",   jp:"病院",             pos:"名詞", ex:"She works at a hospital.", exj:"彼女は病院で働いています。", memo:"go to hospital（英）/ go to the hospital（米）と異なる。in hospital（入院中）。"},
+  {en:"house",      jp:"家・住宅",          pos:"名詞", ex:"I still remember the house where I grew up.", exj:"私は自分が育った家をまだ覚えています。", memo:"home（家庭・居場所）との違いに注意。house＝建物、home＝心のよりどころ。"},
+  {en:"hour",       jp:"時間（1時間）",     pos:"名詞", ex:"She kept me waiting for over an hour.", exj:"彼女は私を1時間以上待たせ続けました。", memo:"for hours（何時間も）。rush hour（ラッシュアワー）。"},
+  {en:"letter",     jp:"手紙・文字",        pos:"名詞", ex:"He wrote her a long letter.", exj:"彼は彼女に長い手紙を書きました。", memo:"write a letter（手紙を書く）。capital letter（大文字）。"},
+  {en:"library",    jp:"図書館",           pos:"名詞", ex:"You must not eat in the library.", exj:"図書館で食べてはいけません。", memo:"go to the library（図書館に行く）。digital library（電子図書館）。"},
+  {en:"meal",       jp:"食事",             pos:"名詞", ex:"He cooked her a meal.", exj:"彼は彼女に食事を作りました。", memo:"have a meal（食事をする）。meal prep（食事の事前準備）も現代的語彙。"},
+  {en:"mistake",    jp:"間違い・ミス",      pos:"名詞", ex:"He made it clear that he had no intention of giving up despite his mistake.", exj:"彼はミスにもかかわらず諦める意思がないことを明確にしました。", memo:"make a mistake（ミスをする）。×do a mistakeは不可。"},
+  {en:"month",      jp:"月・1か月",         pos:"名詞", ex:"She visits her grandparents once a month.", exj:"彼女は月に一度祖父母を訪ねます。", memo:"month by month（月を追って）。monthly（毎月の）も重要。"},
+  {en:"morning",    jp:"朝・午前",          pos:"名詞", ex:"He runs every morning.", exj:"彼は毎朝走ります。", memo:"in the morning（朝に）。Good morning!（おはようございます）。"},
+  {en:"mountain",   jp:"山",               pos:"名詞", ex:"Mt. Fuji is higher than any other mountain in Japan.", exj:"富士山は日本の他のどの山よりも高いです。", memo:"mountain climbing（登山）。mountainous（山の多い）も覚えよう。"},
+  {en:"music",      jp:"音楽",             pos:"名詞", ex:"She enjoys listening to music.", exj:"彼女は音楽を聴くのを楽しみます。", memo:"不可算名詞。music teacher（音楽の先生）。背景音楽はbackground music。"},
+  {en:"news",       jp:"ニュース・知らせ",  pos:"名詞", ex:"The news made her very happy.", exj:"そのニュースは彼女をとても幸せにしました。", memo:"単数扱い（×newsesは不可）。good news / bad news。"},
+  {en:"night",      jp:"夜・夜間",          pos:"名詞", ex:"I read a book last night.", exj:"昨夜本を読みました。", memo:"at night（夜に）。last night（昨夜）。overnight（一晩中・急に）。"},
+  {en:"noise",      jp:"騒音・音",          pos:"名詞", ex:"The noise kept me awake all night.", exj:"その騒音のせいで一晩中眠れませんでした。", memo:"make noise（騒音を立てる）。noisy（うるさい）。sound（音全般）との違いに注意。"},
+  {en:"park",       jp:"公園・駐車場",      pos:"名詞", ex:"Birds sing in the park every morning.", exj:"鳥たちは毎朝公園で歌います。", memo:"動詞「駐車する」にもなる。national park（国立公園）。parking（駐車）。"},
+  {en:"party",      jp:"パーティー・政党",  pos:"名詞", ex:"She wore a bright red jacket to the party.", exj:"彼女はパーティーに明るい赤のジャケットを着ていきました。", memo:"political party（政党）の意味でも重要。throw a party（パーティーを開く）。"},
+  {en:"problem",    jp:"問題・課題",        pos:"名詞", ex:"She couldn't solve the problem.", exj:"彼女はその問題を解けませんでした。", memo:"solve a problem（問題を解く）。No problem!（問題ない！）も重要。"},
+  {en:"project",    jp:"プロジェクト・計画", pos:"名詞", ex:"She will have finished the project by Friday.", exj:"彼女は金曜日までにプロジェクトを終わらせているでしょう。", memo:"work on a project（プロジェクトに取り組む）。project（計画する）の動詞用法も重要。"},
+  {en:"question",   jp:"質問・問題",        pos:"名詞", ex:"Nobody could answer the question.", exj:"誰も質問に答えられませんでした。", memo:"ask a question（質問する）。question mark（疑問符）。"},
+  {en:"reason",     jp:"理由・根拠",        pos:"名詞", ex:"Tell me the reason why she refused.", exj:"彼女が断った理由を教えてください。", memo:"for this reason（この理由で）。reason with〜（〜を説得する）の動詞用法も重要。"},
+  {en:"record",     jp:"記録・レコード",    pos:"名詞", ex:"Not only did she win, but she also broke the record.", exj:"彼女は優勝しただけでなく、記録も更新しました。", memo:"break a record（記録を更新する）。on record（記録上で）。"},
+  {en:"report",     jp:"レポート・報告書",  pos:"名詞", ex:"He must finish the report by Friday.", exj:"彼は金曜日までにレポートを終わらせなければなりません。", memo:"write a report（レポートを書く）。report to〜（〜に報告する）の動詞用法も重要。"},
+  {en:"river",      jp:"川・河川",          pos:"名詞", ex:"He walked along the river every evening.", exj:"彼は毎晩川沿いを歩きました。", memo:"down the river（川の下流に）。across the river（川を渡って）。"},
+  {en:"room",       jp:"部屋・余地",        pos:"名詞", ex:"She painted the wall of her room white.", exj:"彼女は部屋の壁を白く塗りました。", memo:"「余地・空間」の意味も重要。make room for〜（〜のために場所を作る）。"},
+  {en:"school",     jp:"学校",             pos:"名詞", ex:"She is absent from school because of a cold.", exj:"彼女は風邪で学校を欠席しています。", memo:"at school（学校で）。go to school（通学する）。school年（学校の1年）。"},
+  {en:"singer",     jp:"歌手",             pos:"名詞", ex:"She is said to be the best singer in Japan.", exj:"彼女は日本で最高の歌手だと言われています。", memo:"sing（歌う）の名詞形。professional singer（プロ歌手）。"},
+  {en:"sister",     jp:"姉・妹",           pos:"名詞", ex:"She is not as tall as her sister.", exj:"彼女は姉ほど背が高くありません。", memo:"elder sister（姉）/ younger sister（妹）。sisterhood（姉妹関係）。"},
+  {en:"soccer",     jp:"サッカー",          pos:"名詞", ex:"He plays soccer every weekend.", exj:"彼は毎週末サッカーをします。", memo:"英国ではfootball。play soccer（サッカーをする）。soccer player（サッカー選手）。"},
+  {en:"soup",       jp:"スープ",           pos:"名詞", ex:"The soup smells delicious.", exj:"スープがおいしそうなにおいがします。", memo:"不可算名詞。a bowl of soup（スープ一杯）。soup kitchen（炊き出し所）。"},
+  {en:"station",    jp:"駅・局",           pos:"名詞", ex:"He arrived at the station an hour late.", exj:"彼は1時間遅れて駅に着きました。", memo:"train station（電車の駅）。gas station（ガソリンスタンド）。police station（警察署）。"},
+  {en:"student",    jp:"学生・生徒",        pos:"名詞", ex:"She is the most talented student in the class.", exj:"彼女はクラスで最も才能のある生徒です。", memo:"college student（大学生）。exchange student（交換留学生）。"},
+  {en:"summer",     jp:"夏",               pos:"名詞", ex:"Where did you go last summer?", exj:"昨年の夏どこへ行きましたか？", memo:"in summer（夏に）。summer vacation（夏休み）。"},
+  {en:"table",      jp:"テーブル・表",      pos:"名詞", ex:"The children ate everything on the table.", exj:"子供たちはテーブルの上のものを全部食べました。", memo:"set the table（食卓の準備をする）。「表」の意味でも重要（table of contents＝目次）。"},
+  {en:"teacher",    jp:"先生・教師",        pos:"名詞", ex:"She is a kind and patient teacher.", exj:"彼女は優しく忍耐強い先生です。", memo:"homeroom teacher（担任）。teach（教える）の名詞形。"},
+  {en:"team",       jp:"チーム・班",        pos:"名詞", ex:"She performed well in the competition as a team.", exj:"彼女はチームとして大会でよく機能しました。", memo:"team up（チームを組む）。teamwork（チームワーク）。"},
+  {en:"test",       jp:"テスト・試験",      pos:"名詞", ex:"I found the test difficult.", exj:"私はテストが難しいと感じました。", memo:"take a test（テストを受ける）。examより口語的。put〜to the test（〜を試す）。"},
+  {en:"train",      jp:"電車・訓練",        pos:"名詞", ex:"He commutes to work by train.", exj:"彼は電車で通勤しています。", memo:"by train（電車で）。動詞「訓練する」にもなる。train for〜（〜のために訓練する）。"},
+  {en:"trip",       jp:"旅行・小旅行",      pos:"名詞", ex:"They had a wonderful trip to Europe.", exj:"彼らはヨーロッパへの素晴らしい旅行を楽しみました。", memo:"take a trip（旅をする）。business trip（出張）。field trip（遠足）。"},
+  {en:"umbrella",   jp:"傘",               pos:"名詞", ex:"Take an umbrella in case it rains.", exj:"雨が降るといけないので傘を持っていきなさい。", memo:"put up an umbrella（傘をさす）。under an umbrella（傘の下で）。"},
+  {en:"wallet",     jp:"財布",             pos:"名詞", ex:"He lost his wallet on the way home.", exj:"彼は家に帰る途中で財布を失くしました。", memo:"lose one's wallet（財布をなくす）。digital wallet（電子財布）も現代的語彙。"},
+  {en:"water",      jp:"水",               pos:"名詞", ex:"She drinks a lot of water every day.", exj:"彼女は毎日たくさんの水を飲みます。", memo:"不可算名詞。water the plants（植物に水をやる）の動詞用法も重要。"},
+  {en:"weather",    jp:"天気・気候",        pos:"名詞", ex:"The weather turned cold overnight.", exj:"天気は一夜にして寒くなりました。", memo:"weather forecast（天気予報）。under the weather（体調が悪い）はイディオム。"},
+  {en:"week",       jp:"週・1週間",         pos:"名詞", ex:"He stayed in Kyoto for a week.", exj:"彼は1週間京都に滞在しました。", memo:"last week（先週）。weekday（平日）。once a week（週に1回）。"},
+  {en:"window",     jp:"窓",               pos:"名詞", ex:"She opened the window to let in fresh air.", exj:"彼女は新鮮な空気を入れるために窓を開けました。", memo:"shop window（ショーウィンドー）。window of opportunity（好機）はイディオム。"},
+  {en:"world",      jp:"世界・世間",        pos:"名詞", ex:"English is spoken all over the world.", exj:"英語は世界中で話されています。", memo:"world record（世界記録）。world-class（世界水準の）。"},
+
+  // ── アプリ問題頻出語（動詞）──
+  {en:"apologize",  jp:"謝る・お詫びする", pos:"動詞", ex:"He apologized sincerely for his mistake.", exj:"彼は自分のミスについて心から謝りました。", memo:"apologize to O for〜（〜についてOに謝る）。apology（謝罪）も覚えよう。"},
+  {en:"arrive",     jp:"到着する",         pos:"動詞", ex:"She arrived at the airport on time.", exj:"彼女は時間どおりに空港に着きました。", memo:"arrive at〜（特定の場所）/ arrive in〜（都市・国）。arrival（到着）も重要。"},
+  {en:"bark",       jp:"（犬が）吠える",   pos:"動詞", ex:"The dog barked at the stranger.", exj:"犬は見知らぬ人に吠えました。", memo:"名詞「吠え声・樹皮」にもなる。barking up the wrong tree（見当違いのことをする）はイディオム。"},
+  {en:"become",     jp:"〜になる",         pos:"動詞", ex:"She wants to become a doctor.", exj:"彼女は医者になりたいと思っています。", memo:"become＋名詞/形容詞（〜になる）。what has become of〜（〜はどうなったか）も重要。"},
+  {en:"break",      jp:"壊す・破る・休憩", pos:"動詞", ex:"She not only won but also broke the record.", exj:"彼女は優勝しただけでなく記録も更新しました。", memo:"break-broke-broken（不規則変化）。take a break（休憩する）。break down（故障する）。"},
+  {en:"bring",      jp:"持ってくる・もたらす", pos:"動詞", ex:"The policy is intended to bring about fundamental change.", exj:"その政策は根本的な変化をもたらすことを意図しています。", memo:"bring-brought-brought（不規則変化）。bring up（育てる・話題を出す）も重要。"},
+  {en:"build",      jp:"建てる・築く",     pos:"動詞", ex:"This temple was built 500 years ago.", exj:"この寺は500年前に建てられました。", memo:"build-built-built（不規則変化）。build up（蓄積する）。build on〜（〜を土台にする）。"},
+  {en:"call",       jp:"電話する・呼ぶ",   pos:"動詞", ex:"They called him a genius.", exj:"彼らは彼を天才と呼びました。", memo:"call O C（OをCと呼ぶ）は第5文型。call on〜（訪問する・指名する）。"},
+  {en:"catch",      jp:"捕まえる・乗る",   pos:"動詞", ex:"She left early so that she could catch the last train.", exj:"彼女は終電に乗れるように早めに出発しました。", memo:"catch-caught-caught（不規則変化）。catch a cold（風邪をひく）。catch up（追いつく）。"},
+  {en:"change",     jp:"変わる・変える・お釣り", pos:"動詞", ex:"Technology has changed people's lives.", exj:"テクノロジーは人々の生活を変えました。", memo:"change into〜（〜に変わる）。social change（社会変化）。名詞「お釣り」にもなる。"},
+  {en:"choose",     jp:"選ぶ・選択する",   pos:"動詞", ex:"She was chosen as class president.", exj:"彼女はクラス委員長に選ばれました。", memo:"choose-chose-chosen（不規則変化）。choose to do（〜することを選ぶ）。"},
+  {en:"cook",       jp:"料理する",         pos:"動詞", ex:"He cooked her a delicious meal.", exj:"彼は彼女においしい食事を作りました。", memo:"名詞「料理人」にもなる。cook up（でっち上げる）。overcook（料理しすぎる）。"},
+  {en:"cry",        jp:"泣く・叫ぶ",       pos:"動詞", ex:"It is no use crying over spilt milk.", exj:"こぼれたミルクを嘆いても無駄です。", memo:"cry-cried（規則変化）。cry out（叫ぶ）。名詞「泣き声」にもなる。"},
+  {en:"decide",     jp:"決める・決断する", pos:"動詞", ex:"She decided to study abroad.", exj:"彼女は留学することを決めました。", memo:"decide to do（〜することを決める）。decision（決断）。make a decision と同義。"},
+  {en:"deny",       jp:"否定する・拒否する", pos:"動詞", ex:"She denied making the mistake.", exj:"彼女は間違いを犯したことを否定しました。", memo:"deny -ing（〜したことを否定する）。deny O（Oを拒否する）。denial（否定）も重要。"},
+  {en:"enjoy",      jp:"楽しむ",           pos:"動詞", ex:"She enjoys listening to music.", exj:"彼女は音楽を聴くのを楽しみます。", memo:"enjoy -ing（〜するのを楽しむ）。×enjoy to do は不可。"},
+  {en:"finish",     jp:"終える・終わる",   pos:"動詞", ex:"She has just finished her homework.", exj:"彼女はちょうど宿題を終えたところです。", memo:"finish -ing（〜し終える）。finish up（仕上げる）。"},
+  {en:"grow",       jp:"成長する・育てる", pos:"動詞", ex:"He grew stronger with each passing year.", exj:"彼は年を重ねるごとに強くなりました。", memo:"grow-grew-grown（不規則変化）。grow up（成長する・育つ）。"},
+  {en:"hurt",       jp:"傷つける・痛む",   pos:"動詞", ex:"He hurt himself while playing basketball.", exj:"彼はバスケットボールをしている間に自分を傷つけました。", memo:"hurt-hurt-hurt（不規則変化）。It hurts.（痛い）。名詞「けが・傷」にもなる。"},
+  {en:"keep",       jp:"保つ・続ける",     pos:"動詞", ex:"She kept the room clean.", exj:"彼女は部屋をきれいに保ちました。", memo:"keep-kept-kept（不規則変化）。keep O C（OをCに保つ）。keep -ing（〜し続ける）。"},
+  {en:"lend",       jp:"貸す",             pos:"動詞", ex:"He lent her his bicycle.", exj:"彼は彼女に自転車を貸しました。", memo:"lend-lent-lent（不規則変化）。borrow（借りる）の反意語。lend O to〜でも可。"},
+  {en:"look",       jp:"見る・〜に見える", pos:"動詞", ex:"The cake looks beautiful.", exj:"そのケーキは美しく見えます。", memo:"look at〜（〜を見る）。look for〜（〜を探す）。look like〜（〜に似ている）。"},
+  {en:"open",       jp:"開ける・開く",     pos:"動詞", ex:"She opened the window to let in fresh air.", exj:"彼女は新鮮な空気を入れるために窓を開けました。", memo:"形容詞「開いている」にもなる。open up（開放する・機会を広げる）。"},
+  {en:"paint",      jp:"塗る・描く",       pos:"動詞", ex:"He painted the wall white.", exj:"彼は壁を白く塗りました。", memo:"paint O C（OをCに塗る）は第5文型。名詞「絵の具・ペンキ」にもなる。"},
+  {en:"pass",       jp:"合格する・過ぎる・渡す", pos:"動詞", ex:"She studied hard to pass the exam.", exj:"彼女は試験に合格するために一生懸命勉強しました。", memo:"pass an exam（試験に合格する）。pass O to〜（〜にOを渡す）。pass by（通り過ぎる）。"},
+  {en:"practice",   jp:"練習する・実践する", pos:"動詞", ex:"The more you practice, the better you become.", exj:"練習すればするほど、上手くなります。", memo:"practice -ing（〜を練習する）。名詞「練習・慣行」にもなる。"},
+  {en:"promise",    jp:"約束する",         pos:"動詞", ex:"He promised to come on time.", exj:"彼は時間どおりに来ると約束しました。", memo:"promise to do（〜することを約束する）。keep a promise（約束を守る）。"},
+  {en:"remember",   jp:"覚えている・思い出す", pos:"動詞", ex:"She remembered to lock the door.", exj:"彼女はドアに鍵をかけることを覚えていました。", memo:"remember to do（これからすることを覚えている）/ remember -ing（過去にしたことを覚えている）。"},
+  {en:"rise",       jp:"上がる・昇る",     pos:"動詞", ex:"The sun rises in the east.", exj:"太陽は東から昇ります。", memo:"rise-rose-risen（不規則変化）。rise to〜（〜に昇格する）。名詞「上昇」にもなる。"},
+  {en:"run",        jp:"走る・経営する",   pos:"動詞", ex:"He runs every morning to stay healthy.", exj:"彼は健康のために毎朝走ります。", memo:"run-ran-run（不規則変化）。in the long run（長い目で見れば）はイディオム。"},
+  {en:"seem",       jp:"〜のようだ",       pos:"動詞", ex:"She seems tired today.", exj:"彼女は今日疲れているようです。", memo:"seem to do / seem like〜。It seems that S V（〜のようだ）も頻出。"},
+  {en:"show",       jp:"見せる・示す",     pos:"動詞", ex:"He showed us his photos.", exj:"彼は私たちに写真を見せました。", memo:"show-showed-shown（不規則変化）。show O to〜（〜にOを見せる）＝ show O O。"},
+  {en:"smile",      jp:"微笑む",           pos:"動詞", ex:"She smiled at me warmly.", exj:"彼女は私に温かく微笑みかけました。", memo:"smile at〜（〜に微笑む）。名詞「微笑み」にもなる。keep smiling（笑顔でいる）。"},
+  {en:"start",      jp:"始まる・始める",   pos:"動詞", ex:"The concert will start at seven.", exj:"コンサートは7時に始まります。", memo:"start to do / start -ing（〜し始める）。start over（最初からやり直す）。"},
+  {en:"succeed",    jp:"成功する",         pos:"動詞", ex:"She succeeded in passing the exam.", exj:"彼女は試験に合格することに成功しました。", memo:"succeed in -ing（〜することに成功する）。success（成功）。successful（成功した）。"},
+  {en:"taste",      jp:"〜な味がする・味わう", pos:"動詞", ex:"The soup tastes delicious.", exj:"スープはおいしい味がします。", memo:"感覚動詞（SVC構文）。taste O（OをSVOで食べてみる）にもなる。名詞「味・好み」にもなる。"},
+  {en:"tell",       jp:"言う・伝える・教える", pos:"動詞", ex:"Tell me the reason why she refused.", exj:"彼女が断った理由を教えてください。", memo:"tell-told-told（不規則変化）。tell O to do（Oに〜するよう言う）。tell A from B（AとBを区別する）。"},
+  {en:"turn",       jp:"回る・〜になる",   pos:"動詞", ex:"The weather turned cold overnight.", exj:"天気は一夜にして寒くなりました。", memo:"turn＋形容詞（〜になる）はSVC構文。turn out to be〜（〜であることが判明する）。"},
+  {en:"visit",      jp:"訪れる・訪問する", pos:"動詞", ex:"She visits her grandparents once a month.", exj:"彼女は月に一度祖父母を訪ねます。", memo:"visit O（前置詞不要）。名詞「訪問」にもなる。pay a visit to〜（〜を訪問する）。"},
+  {en:"wait",       jp:"待つ",             pos:"動詞", ex:"She kept me waiting for over an hour.", exj:"彼女は私を1時間以上待たせ続けました。", memo:"wait for〜（〜を待つ）。wait on〜（〜に給仕する）。can't wait（待ちきれない）。"},
+  {en:"wake",       jp:"目を覚ます・起こす", pos:"動詞", ex:"She wakes up at six every morning.", exj:"彼女は毎朝6時に目を覚まします。", memo:"wake-woke-woken（不規則変化）。wake up（目を覚ます）。wake O up（Oを起こす）。"},
+  {en:"wear",       jp:"着ている・身につけている", pos:"動詞", ex:"She wore a bright red jacket to the party.", exj:"彼女はパーティーに明るい赤のジャケットを着ていきました。", memo:"wear-wore-worn（不規則変化）。put on（着る動作）との違いに注意。"},
+  {en:"wish",       jp:"望む・願う",       pos:"動詞", ex:"I wish I were taller.", exj:"もっと背が高ければいいのに。", memo:"wish to do（〜したい）。I wish S 過去形（〜であればいいのに）は仮定法。"},
+  {en:"write",      jp:"書く",             pos:"動詞", ex:"He wrote her a long letter.", exj:"彼は彼女に長い手紙を書きました。", memo:"write-wrote-written（不規則変化）。write O to〜（〜にOを書く）。"},
+
+  // ── アプリ問題頻出語（形容詞）──
+  {en:"absent",     jp:"欠席している・不在の", pos:"形容詞", ex:"She was absent from school because of a cold.", exj:"彼女は風邪で学校を欠席していました。", memo:"be absent from〜（〜を欠席する）。absence（欠席）。present（出席している）の反意語。"},
+  {en:"awake",      jp:"目が覚めている",   pos:"形容詞", ex:"The noise kept me awake all night.", exj:"その騒音のせいで一晩中眠れませんでした。", memo:"stay awake（起きていいる）。wide awake（完全に目が覚めた）。asleep（眠っている）の反意語。"},
+  {en:"bright",     jp:"明るい・輝かしい", pos:"形容詞", ex:"She wore a bright red jacket.", exj:"彼女は明るい赤のジャケットを着ていました。", memo:"副詞「明るく」にもなる。bright future（明るい未来）。brighten（明るくする）。"},
+  {en:"busy",       jp:"忙しい・賑やかな", pos:"形容詞", ex:"She told me she was busy.", exj:"彼女は忙しいと言いました。", memo:"be busy -ing（〜するのに忙しい）。busy street（賑やかな通り）。"},
+  {en:"calm",       jp:"落ち着いた・穏やかな", pos:"形容詞", ex:"She remained calm in the emergency.", exj:"彼女は緊急事態でも落ち着いていました。", memo:"stay calm（冷静でいる）。動詞「落ち着かせる」にもなる。calm down（落ち着く）。"},
+  {en:"clean",      jp:"きれいな・清潔な", pos:"形容詞", ex:"She kept the room clean.", exj:"彼女は部屋をきれいに保ちました。", memo:"動詞「きれいにする」にもなる。clean up（片づける）。cleanse（浄化する）も同語根。"},
+  {en:"cold",       jp:"寒い・冷たい",     pos:"形容詞", ex:"The weather turned cold overnight.", exj:"天気は一夜にして寒くなりました。", memo:"名詞「風邪・寒さ」にもなる。catch a cold（風邪をひく）。cold-blooded（冷血な）。"},
+  {en:"dark",       jp:"暗い・黒っぽい",   pos:"形容詞", ex:"The sky became dark before the storm.", exj:"嵐の前に空が暗くなりました。", memo:"名詞「暗闇」にもなる。in the dark（暗闇の中で・知らずに）。darken（暗くなる）。"},
+  {en:"delicious",  jp:"おいしい",         pos:"形容詞", ex:"The soup smells delicious.", exj:"スープがおいしそうなにおいがします。", memo:"tasty / yummy も類義語。感覚動詞（smell/taste/look）の補語になることが多い。"},
+  {en:"different",  jp:"異なる・違う",     pos:"形容詞", ex:"She is different from her sister in many ways.", exj:"彼女は多くの点で姉と異なります。", memo:"be different from〜（〜と異なる）。difference（違い）。differently（異なって）。"},
+  {en:"difficult",  jp:"難しい・困難な",   pos:"形容詞", ex:"The test was more difficult than I thought.", exj:"テストは思ったより難しかったです。", memo:"difficulty（困難）の形容詞形。It is difficult to do〜（〜するのは難しい）は頻出構文。"},
+  {en:"exhausted",  jp:"疲れ果てた",       pos:"形容詞", ex:"The exhausted runner fell asleep immediately.", exj:"疲れ果てたランナーはすぐに眠ってしまいました。", memo:"exhaust（使い果たす）の過去分詞。exhausting（疲れさせる）との違いに注意。"},
+  {en:"famous",     jp:"有名な",           pos:"形容詞", ex:"He is famous for his paintings.", exj:"彼は絵画で有名です。", memo:"be famous for〜（〜で有名）。fame（名声）の形容詞形。"},
+  {en:"fast",       jp:"速い・速く",       pos:"形容詞", ex:"She is one of the fastest runners in the school.", exj:"彼女は学校で最も速いランナーの一人です。", memo:"副詞「速く」にもなる（fastly は不可）。fast food（ファストフード）。"},
+  {en:"fresh",      jp:"新鮮な・新しい",   pos:"形容詞", ex:"She opened the window to let in fresh air.", exj:"彼女は新鮮な空気を入れるために窓を開けました。", memo:"fresh start（新たな出発）。freshly（新たに）。freshman（新入生）も同語根。"},
+  {en:"happy",      jp:"幸せな・うれしい", pos:"形容詞", ex:"His words made her very happy.", exj:"彼の言葉は彼女をとても幸せにしました。", memo:"be happy to do（喜んで〜する）。happiness（幸福）。happily（幸せに）。"},
+  {en:"hard",       jp:"難しい・一生懸命に", pos:"形容詞", ex:"She worked hard to pass the exam.", exj:"彼女は試験に合格するために一生懸命勉強しました。", memo:"副詞「一生懸命に」にもなる（×hardly は「ほとんど〜ない」の意味）。"},
+  {en:"heavy",      jp:"重い・激しい",     pos:"形容詞", ex:"Despite the heavy rain, they played soccer.", exj:"大雨にもかかわらず彼らはサッカーをしました。", memo:"heavy rain（大雨）。heavy traffic（交通渋滞）。heavyweight（ヘビー級）。"},
+  {en:"important",  jp:"重要な・大切な",   pos:"形容詞", ex:"It goes without saying that health is important.", exj:"健康が大切なことは言うまでもありません。", memo:"importance（重要性）の形容詞形。It is important to do（〜することが重要）は頻出構文。"},
+  {en:"interested", jp:"興味を持っている", pos:"形容詞", ex:"She is interested in learning foreign languages.", exj:"彼女は外国語の学習に興味があります。", memo:"be interested in〜（〜に興味がある）。interesting（興味深い）との違いに注意。"},
+  {en:"kind",       jp:"親切な・種類",     pos:"形容詞", ex:"It was kind of you to help me.", exj:"助けてくれてご親切にどうも。", memo:"be kind to〜（〜に親切にする）。名詞「種類」にもなる。kindness（親切）。"},
+  {en:"popular",    jp:"人気のある・一般的な", pos:"形容詞", ex:"She was popular among her classmates.", exj:"彼女はクラスメートの中で人気がありました。", memo:"popularity（人気）の形容詞形。unpopular（不人気な）が反意語。"},
+  {en:"quiet",      jp:"静かな・おとなしい", pos:"形容詞", ex:"Please be quiet in the library.", exj:"図書館では静かにしてください。", memo:"keep quiet（静かにする）。quietly（静かに）。peaceful（平和な）も類義語。"},
+  {en:"salty",      jp:"塩辛い・しょっぱい", pos:"形容詞", ex:"This soup tastes a little salty.", exj:"このスープは少し塩辛い味がします。", memo:"salt（塩）の形容詞形。salty language（口の悪い言葉）というスラング的用法も。"},
+  {en:"sick",       jp:"病気の・吐き気がする", pos:"形容詞", ex:"How long has she been sick?", exj:"彼女はどのくらい病気ですか？", memo:"call in sick（病欠の電話をする）。feel sick（気分が悪い）。ill と同義語。"},
+  {en:"small",      jp:"小さい・少ない",   pos:"形容詞", ex:"Seen from a distance, the mountain looks small.", exj:"遠くから見ると、山は小さく見えます。", memo:"small talk（雑談）。small-minded（狭量な）。"},
+  {en:"strong",     jp:"強い・丈夫な",     pos:"形容詞", ex:"Exercise makes him stronger.", exj:"運動が彼をより強くします。", memo:"strength（強さ）の形容詞形。strong point（強み）。go strong（元気にやっている）。"},
+  {en:"surprised",  jp:"驚いている",       pos:"形容詞", ex:"She was surprised at the news.", exj:"彼女はそのニュースに驚きました。", memo:"be surprised at〜（〜に驚く）。surprising（驚かせる）との違いに注意。"},
+  {en:"talented",   jp:"才能のある",       pos:"形容詞", ex:"She is by far the most talented student in the class.", exj:"彼女はクラスで断然最も才能のある生徒です。", memo:"talent（才能）の形容詞形。gifted も類義語。talented musician（才能ある音楽家）。"},
+  {en:"tired",      jp:"疲れた・飽き飽きした", pos:"形容詞", ex:"She seems tired today.", exj:"彼女は今日疲れているようです。", memo:"be tired of〜（〜に飽き飽きする）。tiring（疲れさせる）との違いに注意。"},
+  {en:"true",       jp:"本当の・真実の",   pos:"形容詞", ex:"The rumor turned out to be false, not true.", exj:"そのうわさは本当ではなく嘘であることが判明しました。", memo:"come true（実現する）。true to〜（〜に忠実な）。truth（真実）の形容詞形。"},
+  {en:"white",      jp:"白い・白",         pos:"形容詞", ex:"He painted the wall white.", exj:"彼は壁を白く塗りました。", memo:"名詞「白・白人」にもなる。white-collar（ホワイトカラーの）。"},
+
+  // ── アプリ問題頻出語（副詞）──
+  {en:"already",    jp:"すでに・もう",     pos:"副詞", ex:"He had already left when she arrived.", exj:"彼女が到着したとき、彼はすでに去っていました。", memo:"現在完了（完了）や過去完了とよく使う。yet（疑問・否定）との使い分けに注意。"},
+  {en:"early",      jp:"早く・早期に",     pos:"副詞", ex:"She woke up early to catch the train.", exj:"彼女は電車に乗るために早起きしました。", memo:"形容詞「早い」にもなる。early bird（早起き者）。ahead of schedule も類義語。"},
+  {en:"easily",     jp:"簡単に・楽々と",  pos:"副詞", ex:"She jumped over the fence easily.", exj:"彼女は簡単にフェンスを飛び越えました。", memo:"easy（簡単な）の副詞形。come easily（すらすらできる）。"},
+  {en:"immediately",jp:"すぐに・即座に",  pos:"副詞", ex:"She called the hospital immediately.", exj:"彼女はすぐに病院に電話しました。", memo:"immediate（即座の）の副詞形。at once / right away も類義語。"},
+  {en:"never",      jp:"決して〜ない",     pos:"副詞", ex:"I have never eaten Thai food.", exj:"私は一度もタイ料理を食べたことがありません。", memo:"現在完了（経験）の否定でよく使う。never mind（気にしない）。"},
+  {en:"once",       jp:"一度・かつて",     pos:"副詞", ex:"She visits her grandparents once a month.", exj:"彼女は月に一度祖父母を訪ねます。", memo:"「かつて」の意味でも重要。once a week（週に一度）。once upon a time（昔々）。"},
+  {en:"sincerely",  jp:"心から・誠実に",   pos:"副詞", ex:"He apologized sincerely for his mistake.", exj:"彼は自分のミスについて心から謝りました。", memo:"sincere（誠実な）の副詞形。Sincerely yours（敬具）。"},
+  {en:"slowly",     jp:"ゆっくりと",       pos:"副詞", ex:"The economy is recovering slowly.", exj:"経済はゆっくりと回復しています。", memo:"slow（遅い）の副詞形。slow down（スピードを落とす）。"},
+  {en:"together",   jp:"一緒に・共に",     pos:"副詞", ex:"Only by working together can we solve the problem.", exj:"共に取り組むことによってのみ問題を解決できます。", memo:"get together（集まる）。altogether（全部で）とは別語。"},
+  {en:"twice",      jp:"2回・2倍",         pos:"副詞", ex:"She has visited Paris twice.", exj:"彼女はパリを2度訪れたことがあります。", memo:"twice as〜as...（…の2倍〜）。twice a week（週2回）。"},
+  {en:"yesterday",  jp:"昨日",             pos:"副詞", ex:"She had her hair cut yesterday.", exj:"彼女は昨日髪を切ってもらいました。", memo:"形容詞「昨日の」にもなる。yesterday's news（時代遅れのもの）はイディオム。"},
+
+  // ════ 超基礎語（動詞）════
+  {en:"eat",    jp:"食べる",             pos:"動詞", ex:"She doesn't eat meat.", exj:"彼女は肉を食べません。", memo:"eat-ate-eaten（不規則変化）。eat out（外食する）。eat up（全部食べる）。"},
+  {en:"go",     jp:"行く",               pos:"動詞", ex:"Where did you go last summer?", exj:"昨年の夏どこへ行きましたか？", memo:"go-went-gone（不規則変化）。go to〜（〜へ行く）。go -ing（〜しに行く）。"},
+  {en:"see",    jp:"見る・会う・理解する", pos:"動詞", ex:"I see her every Monday.", exj:"私は毎月曜日に彼女に会います。", memo:"see-saw-seen（不規則変化）。see O do / doing。Let me see.（えーと）。"},
+  {en:"know",   jp:"知っている",          pos:"動詞", ex:"Do you know when she will come?", exj:"彼女がいつ来るか知っていますか？", memo:"know-knew-known（不規則変化）。know about〜（〜について知っている）。"},
+  {en:"say",    jp:"言う",               pos:"動詞", ex:"She said she was busy.", exj:"彼女は忙しいと言いました。", memo:"say-said-said（不規則変化）。say to〜（〜に言う）。That is to say（つまり）。"},
+  {en:"come",   jp:"来る",               pos:"動詞", ex:"He promised to come on time.", exj:"彼は時間どおりに来ると約束しました。", memo:"come-came-come（不規則変化）。come true（実現する）。come up with（思いつく）。"},
+  {en:"do",     jp:"する・行う",          pos:"動詞", ex:"She does not eat meat.", exj:"彼女は肉を食べません。", memo:"do-did-done（不規則変化）。do one's homework（宿題をする）。do well（うまくやる）。"},
+  {en:"get",    jp:"得る・なる・到着する", pos:"動詞", ex:"She got her hair cut yesterday.", exj:"彼女は昨日髪を切ってもらいました。", memo:"get-got-gotten（不規則変化）。get to〜（〜に到着する）。get O PP（〜してもらう）。"},
+  {en:"give",   jp:"与える・渡す",        pos:"動詞", ex:"She gave him a flower.", exj:"彼女は彼に花をあげました。", memo:"give-gave-given（不規則変化）。give O O / give O to〜の2形が重要。"},
+  {en:"take",   jp:"取る・持っていく・時間がかかる", pos:"動詞", ex:"It takes two hours to get there.", exj:"そこへ行くのに2時間かかります。", memo:"take-took-taken（不規則変化）。take care of〜（世話をする）。It takes O to do。"},
+  {en:"put",    jp:"置く",               pos:"動詞", ex:"She put her bag on the chair.", exj:"彼女は椅子にバッグを置きました。", memo:"put-put-put（原形・過去形・PPが同形）。put off（延期する）。put on（着る）。"},
+  {en:"play",   jp:"遊ぶ・演奏する・プレーする", pos:"動詞", ex:"He plays soccer every weekend.", exj:"彼は毎週末サッカーをします。", memo:"play sport（スポーツをする）。play the piano（ピアノを弾く）。"},
+  {en:"read",   jp:"読む",               pos:"動詞", ex:"I read a book last night.", exj:"昨夜本を読みました。", memo:"read-read-read（発音：リード→レッド→レッド）。read aloud（声に出して読む）。"},
+  {en:"have",   jp:"持っている・食べる・〜させる", pos:"動詞", ex:"She has a strong passion for music.", exj:"彼女は音楽への強い情熱を持っています。", memo:"have-had-had（不規則変化）。have O PP（〜してもらう）。have to do（〜しなければならない）。"},
+  {en:"make",   jp:"作る・〜にする",      pos:"動詞", ex:"She made him a cup of tea.", exj:"彼女は彼のためにお茶を一杯入れました。", memo:"make-made-made（不規則変化）。make O C（OをCにする）。make a mistake（ミスをする）。"},
+  {en:"want",   jp:"欲しい・〜したい",    pos:"動詞", ex:"She wants to become a doctor.", exj:"彼女は医者になりたいと思っています。", memo:"want to do（〜したい）。want O to do（Oに〜してほしい）。"},
+  {en:"find",   jp:"見つける・〜とわかる", pos:"動詞", ex:"I found the test difficult.", exj:"私はテストが難しいと感じました。", memo:"find-found-found（不規則変化）。find O C（OがCだとわかる）。"},
+  {en:"feel",   jp:"感じる・〜な感じがする", pos:"動詞", ex:"She felt happy when she heard the news.", exj:"彼女はニュースを聞いて幸せを感じました。", memo:"feel-felt-felt（不規則変化）。feel like -ing（〜したい気がする）。"},
+  {en:"leave",  jp:"去る・残す・出発する", pos:"動詞", ex:"She left early to catch the last train.", exj:"彼女は終電に乗るために早めに出発しました。", memo:"leave-left-left（不規則変化）。leave O alone（Oをそっとしておく）。"},
+  {en:"try",    jp:"試みる・努力する",    pos:"動詞", ex:"She tried to solve the problem.", exj:"彼女は問題を解こうとしました。", memo:"try to do（〜しようとする）。try -ing（試しに〜してみる）。try on（試着する）。"},
+  {en:"win",    jp:"勝つ・獲得する",      pos:"動詞", ex:"Not only did she win, but she broke the record.", exj:"彼女は優勝しただけでなく記録も更新しました。", memo:"win-won-won（不規則変化）。win O（Oを獲得する）。winner（勝者）。"},
+  {en:"lose",   jp:"負ける・失う",        pos:"動詞", ex:"They lose a lot of time by not planning.", exj:"計画しないことで多くの時間を失います。", memo:"lose-lost-lost（不規則変化）。lose weight（体重を落とす）。loser（敗者）。"},
+  {en:"ask",    jp:"聞く・頼む",          pos:"動詞", ex:"She asked me a question.", exj:"彼女は私に質問しました。", memo:"ask O O / ask O to do（Oに〜するよう頼む）。ask for〜（〜を求める）。"},
+  {en:"let",    jp:"〜させる",            pos:"動詞", ex:"She opened the window to let in fresh air.", exj:"彼女は新鮮な空気を入れるために窓を開けました。", memo:"let O do（Oに〜させる）は使役動詞。let go（手放す）。let alone（〜はもちろん）。"},
+  {en:"hear",   jp:"聞こえる・聞く",      pos:"動詞", ex:"I heard my name called.", exj:"私は自分の名前が呼ばれるのが聞こえました。", memo:"hear-heard-heard（不規則変化）。hear O do/doing/PP。listen to〜（注意して聞く）との違いに注意。"},
+  {en:"sit",    jp:"座る",               pos:"動詞", ex:"She sat beside him on the bench.", exj:"彼女はベンチで彼の隣に座りました。", memo:"sit-sat-sat（不規則変化）。sit down（座る）。sit up（起き上がる）。"},
+  {en:"stand",  jp:"立つ・立っている・我慢する", pos:"動詞", ex:"She can't stand waiting.", exj:"彼女は待つのが我慢できません。", memo:"stand-stood-stood（不規則変化）。stand for〜（〜を表す）。stand up（立ち上がる）。"},
+  {en:"fall",   jp:"落ちる・倒れる・秋",   pos:"動詞", ex:"She fell asleep immediately after dinner.", exj:"彼女は夕食後すぐに眠りに落ちました。", memo:"fall-fell-fallen（不規則変化）。fall asleep（眠りに落ちる）。fall in love（恋に落ちる）。"},
+  {en:"buy",    jp:"買う",               pos:"動詞", ex:"She bought a new dress for the party.", exj:"彼女はパーティーのために新しいドレスを買いました。", memo:"buy-bought-bought（不規則変化）。buy O for〜（〜のためにOを買う）。"},
+  {en:"send",   jp:"送る",               pos:"動詞", ex:"She sent me a message.", exj:"彼女は私にメッセージを送りました。", memo:"send-sent-sent（不規則変化）。send O to〜（〜にOを送る）。send O O の第4文型も重要。"},
+  {en:"cut",    jp:"切る・削減する",      pos:"動詞", ex:"She had her hair cut yesterday.", exj:"彼女は昨日髪を切ってもらいました。", memo:"cut-cut-cut（原形・過去形・PPが同形）。cut down（削減する）。cut off（切り離す）。"},
+  {en:"hold",   jp:"持つ・開催する",      pos:"動詞", ex:"The stadium can hold 50,000 people.", exj:"そのスタジアムは5万人を収容できます。", memo:"hold-held-held（不規則変化）。hold a meeting（会議を開く）。hold on（待つ）。"},
+  {en:"meet",   jp:"会う・満たす",        pos:"動詞", ex:"Nice to meet you.", exj:"はじめまして。", memo:"meet-met-met（不規則変化）。meet a deadline（締め切りを守る）。"},
+  {en:"pay",    jp:"支払う",              pos:"動詞", ex:"He insisted on paying for everyone's dinner.", exj:"彼はみんなの夕食代を払うと主張しました。", memo:"pay-paid-paid（不規則変化）。pay attention to〜（〜に注意を払う）。"},
+  {en:"lead",   jp:"導く・先頭に立つ",    pos:"動詞", ex:"She has the ability to lead others.", exj:"彼女には人を導く能力があります。", memo:"lead-led-led（不規則変化）。lead to〜（〜につながる）。leader（リーダー）。"},
+  {en:"stay",   jp:"滞在する・〜のままでいる", pos:"動詞", ex:"He stayed in Kyoto for a week.", exj:"彼は1週間京都に滞在しました。", memo:"stay at〜（〜に泊まる）。stay up（夜更かしする）。stay healthy（健康でいる）。"},
+  {en:"spend",  jp:"過ごす・費やす",      pos:"動詞", ex:"She spent two hours studying for the test.", exj:"彼女はテストに向けて2時間勉強しました。", memo:"spend-spent-spent（不規則変化）。spend O on〜（Oを〜に費やす）。spend time -ing。"},
+  {en:"save",   jp:"救う・節約する・保存する", pos:"動詞", ex:"You can save money by cooking at home.", exj:"家で料理することでお金を節約できます。", memo:"save O from〜（OをAから救う）。save time（時間を節約する）。"},
+  {en:"sing",   jp:"歌う",               pos:"動詞", ex:"Birds sing in the morning.", exj:"鳥たちは朝に歌います。", memo:"sing-sang-sung（不規則変化）。sing a song（歌を歌う）。singer（歌手）。"},
+  {en:"speak",  jp:"話す・演説する",      pos:"動詞", ex:"She speaks three languages.", exj:"彼女は3言語を話します。", memo:"speak-spoke-spoken（不規則変化）。speak to〜（〜に話しかける）。speak up（大きな声で話す）。"},
+  {en:"swim",   jp:"泳ぐ",               pos:"動詞", ex:"If I were a bird, I could fly, not swim.", exj:"もし私が鳥なら、泳がずに飛べるのに。", memo:"swim-swam-swum（不規則変化）。go swimming（泳ぎに行く）。swimmer（水泳選手）。"},
+  {en:"fly",    jp:"飛ぶ・飛行機で行く",  pos:"動詞", ex:"If I were a bird, I could fly.", exj:"もし私が鳥なら、飛べるのに。", memo:"fly-flew-flown（不規則変化）。fly to〜（飛行機で〜へ行く）。time flies（時間が経つのは速い）。"},
+  {en:"drive",  jp:"運転する",            pos:"動詞", ex:"He drives to work every weekday.", exj:"彼は毎平日車で通勤しています。", memo:"drive-drove-driven（不規則変化）。drive O to〜（Oを〜まで車で送る）。"},
+  {en:"live",   jp:"住む・生きる",        pos:"動詞", ex:"She has lived in Tokyo for five years.", exj:"彼女は5年間東京に住んでいます。", memo:"live in〜（〜に住む）。live on〜（〜を食べて生きる）。lively（活発な）も同語根。"},
+  {en:"move",   jp:"動く・引っ越す・感動させる", pos:"動詞", ex:"She was deeply moved by his speech.", exj:"彼女は彼のスピーチに深く感動しました。", memo:"move to〜（〜に引っ越す）。move O（Oを感動させる）。movement（動き）。"},
+  {en:"watch",  jp:"見る・注意する",      pos:"動詞", ex:"She watched the stars appear one by one.", exj:"彼女は星が一つずつ現れるのを見ました。", memo:"watch O do/doing（知覚動詞）。watch out（気をつける）。watch over〜（〜を見守る）。"},
+  {en:"walk",   jp:"歩く",               pos:"動詞", ex:"He walked home alone.", exj:"彼は一人で歩いて家に帰りました。", memo:"walk to〜（〜へ歩いていく）。take a walk（散歩する）。walker（歩行者）。"},
+  {en:"stop",   jp:"止まる・やめる",      pos:"動詞", ex:"He stopped to look at the map.", exj:"彼は地図を見るために立ち止まりました。", memo:"stop to do（〜するために立ち止まる）。stop -ing（〜するのをやめる）。意味が違うので注意！"},
+  {en:"love",   jp:"愛する・大好きである", pos:"動詞", ex:"She loves playing soccer.", exj:"彼女はサッカーをするのが大好きです。", memo:"love to do / love -ing（どちらも可）。名詞「愛」にもなる。fall in love（恋に落ちる）。"},
+  {en:"like",   jp:"好きである",          pos:"動詞", ex:"She likes listening to music.", exj:"彼女は音楽を聴くのが好きです。", memo:"like to do / like -ing（どちらも可）。would like to do（〜したい）は丁寧な表現。"},
+  {en:"need",   jp:"必要とする",          pos:"動詞", ex:"We need a new approach to the problem.", exj:"問題への新しい取り組みが必要です。", memo:"need to do（〜する必要がある）。need O（Oを必要とする）。need not do（〜しなくてよい）。"},
+  {en:"help",   jp:"助ける・役立つ",      pos:"動詞", ex:"It was kind of you to help me.", exj:"助けてくれてありがとう。", memo:"help O do（Oが〜するのを助ける）。help O with〜（〜についてOを助ける）。"},
+  {en:"use",    jp:"使う",               pos:"動詞", ex:"Can I use your pen?", exj:"あなたのペンを使ってもいいですか？", memo:"use O to do（Oを使って〜する）。be used to -ing（〜に慣れている）。useful（役立つ）。"},
+  {en:"check",  jp:"確認する・調べる",    pos:"動詞", ex:"Please check the details of the contract.", exj:"契約の詳細を確認してください。", memo:"check in（チェックインする）。check out（確認する・チェックアウト）。名詞「小切手」にもなる。"},
+
+  // ════ 超基礎語（名詞）════
+  {en:"day",    jp:"日・1日・昼間",       pos:"名詞", ex:"She studies English every day.", exj:"彼女は毎日英語を勉強します。", memo:"every day（毎日）。day by day（日を追って）。daylight（日光）。"},
+  {en:"man",    jp:"男性・人間",          pos:"名詞", ex:"The man who called you is my uncle.", exj:"あなたに電話した男性は私のおじです。", memo:"man-men（複数形）。mankind（人類）。human（人間）も類義語。"},
+  {en:"year",   jp:"年・1年",            pos:"名詞", ex:"He has lived in Tokyo for five years.", exj:"彼は5年間東京に住んでいます。", memo:"last year（昨年）。per year（年に）。year by year（年々）。"},
+  {en:"way",    jp:"道・方法・様子",      pos:"名詞", ex:"On his way home, he met an old friend.", exj:"帰り道に彼は旧友に偶然出会いました。", memo:"on one's way to〜（〜へ行く途中）。by the way（ところで）。way to do（〜する方法）。"},
+  {en:"time",   jp:"時間・回",           pos:"名詞", ex:"It takes two hours to get there.", exj:"そこへ行くのに2時間かかります。", memo:"have a good time（楽しい時を過ごす）。at the same time（同時に）。on time（時間どおりに）。"},
+  {en:"hand",   jp:"手",                pos:"名詞", ex:"Wash your hands before eating.", exj:"食べる前に手を洗いなさい。", memo:"shake hands（握手する）。on the other hand（一方で）。by hand（手作業で）。"},
+  {en:"eye",    jp:"目",                pos:"名詞", ex:"She avoided making eye contact.", exj:"彼女は目を合わせることを避けました。", memo:"eye contact（目を合わせること）。keep an eye on〜（〜を見張る）。"},
+  {en:"place",  jp:"場所・位置",         pos:"名詞", ex:"Tokyo is the best place to visit in Japan.", exj:"東京は日本で最も訪れるべき場所です。", memo:"take place（起こる・開催される）。in place of〜（〜の代わりに）。"},
+  {en:"life",   jp:"人生・生命・生活",    pos:"名詞", ex:"Technology has changed our daily lives.", exj:"テクノロジーは私たちの日常生活を変えました。", memo:"life-lives（複数形）。way of life（生活様式）。lifetime（一生）。"},
+  {en:"child",  jp:"子供",              pos:"名詞", ex:"She learned English when she was a child.", exj:"彼女は子供の頃に英語を学びました。", memo:"child-children（不規則複数形）。childhood（子供時代）。childlike（子供らしい）。"},
+  {en:"woman",  jp:"女性",              pos:"名詞", ex:"She is a successful businesswoman.", exj:"彼女は成功したビジネスウーマンです。", memo:"woman-women（不規則複数形）。woman doctor（女性医師）。"},
+  {en:"word",   jp:"単語・言葉",         pos:"名詞", ex:"She was at a loss for words.", exj:"彼女は言葉を失いました。", memo:"keep one's word（約束を守る）。in other words（言い換えると）。"},
+  {en:"country",jp:"国・田舎",           pos:"名詞", ex:"Japan is the country I love most.", exj:"日本は私が最も愛する国です。", memo:"country life（田舎暮らし）。countryside（田舎地方）。"},
+  {en:"boy",    jp:"男の子",             pos:"名詞", ex:"The two boys ran to the gate.", exj:"2人の男の子は門に向かって走りました。", memo:"boy-boys（規則複数形）。boyhood（少年時代）。boy's school（男子校）。"},
+  {en:"dog",    jp:"犬",                pos:"名詞", ex:"The dog barked at the stranger.", exj:"犬は見知らぬ人に吠えました。", memo:"walk the dog（犬を散歩させる）。hot dog（ホットドッグ）。"},
+  {en:"cat",    jp:"猫",                pos:"名詞", ex:"The cat sat quietly on the bench.", exj:"猫は静かにベンチに座っていました。", memo:"let the cat out of the bag（秘密を漏らす）はイディオム。"},
+  {en:"bird",   jp:"鳥",                pos:"名詞", ex:"Birds sing in the park every morning.", exj:"鳥たちは毎朝公園で歌います。", memo:"early bird（早起き者）。bird's-eye view（鳥瞰図）。"},
+  {en:"sun",    jp:"太陽",              pos:"名詞", ex:"The sun rises in the east.", exj:"太陽は東から昇ります。", memo:"sunshine（日光）。sunlight（日差し）。sunny（晴れた）。"},
+  {en:"sky",    jp:"空",                pos:"名詞", ex:"The sky became dark before the storm.", exj:"嵐の前に空が暗くなりました。", memo:"under the sky（空の下）。sky-high（非常に高い）。"},
+  {en:"sea",    jp:"海・海洋",           pos:"名詞", ex:"She looked out at the sea.", exj:"彼女は海を眺めました。", memo:"at sea（海で・途方に暮れて）。seaside（海辺）。by the sea（海のそばで）。"},
+  {en:"tree",   jp:"木・樹木",           pos:"名詞", ex:"There are trees around the house.", exj:"家の周りに木があります。", memo:"family tree（家系図）。tree-lined（並木の）。"},
+  {en:"money",  jp:"お金・金銭",         pos:"名詞", ex:"She saved money for her trip.", exj:"彼女は旅行のためにお金を貯めました。", memo:"不可算名詞。×moneys。make money（お金を稼ぐ）。spend money（お金を使う）。"},
+  {en:"job",    jp:"仕事・職業",         pos:"名詞", ex:"She got a new job last month.", exj:"彼女は先月新しい仕事を得ました。", memo:"apply for a job（仕事に応募する）。part-time job（アルバイト）。"},
+  {en:"name",   jp:"名前",              pos:"名詞", ex:"They named the dog Hachi.", exj:"彼らは犬をハチと名付けました。", memo:"名詞「名前」と動詞「名付ける」の両方がある。first name（名）・last name（姓）。"},
+  {en:"face",   jp:"顔・直面する",       pos:"名詞", ex:"The country faces an economic crisis.", exj:"その国は経済危機に直面しています。", memo:"face to face（対面で）。in the face of〜（〜に直面して）。動詞「直面する」にもなる。"},
+  {en:"head",   jp:"頭・先頭・率いる",   pos:"名詞", ex:"She is at the head of the class.", exj:"彼女はクラスのトップです。", memo:"head for〜（〜に向かう）。use one's head（頭を使う）。動詞「率いる」にもなる。"},
+  {en:"mind",   jp:"心・気持ち・気にする", pos:"名詞", ex:"She has a lot on her mind.", exj:"彼女は心配事が多いです。", memo:"make up one's mind（決心する）。keep in mind（心に留める）。動詞「気にする」にもなる。"},
+  {en:"body",   jp:"体・本体",           pos:"名詞", ex:"Exercise is good for both mind and body.", exj:"運動は心と体の両方に良いです。", memo:"body language（ボディランゲージ）。everybody（みんな）も同語根。"},
+  {en:"heart",  jp:"心・心臓",           pos:"名詞", ex:"She said it from the bottom of her heart.", exj:"彼女は心の底から言いました。", memo:"by heart（暗記して）。take heart（勇気を出す）。heartbeat（心拍）。"},
+  {en:"back",   jp:"背中・後ろ",         pos:"名詞", ex:"She put her bag on her back.", exj:"彼女はバッグを背中に背負いました。", memo:"形容詞「後ろの」・副詞「後ろに」にもなる多義語。come back（戻る）。"},
+  {en:"car",    jp:"車・自動車",         pos:"名詞", ex:"She drives to work by car.", exj:"彼女は車で通勤しています。", memo:"by car（車で）。car accident（交通事故）。car park（駐車場）。"},
+  {en:"bag",    jp:"バッグ・袋",         pos:"名詞", ex:"She put her bag on the chair.", exj:"彼女は椅子にバッグを置きました。", memo:"shopping bag（買い物袋）。bag and baggage（荷物一切）。"},
+  {en:"cup",    jp:"カップ・コップ",      pos:"名詞", ex:"She made him a cup of tea.", exj:"彼女は彼のためにお茶を一杯入れました。", memo:"a cup of〜（〜一杯）。World Cup（ワールドカップ）。"},
+  {en:"pen",    jp:"ペン",              pos:"名詞", ex:"May I use your pen?", exj:"あなたのペンを使ってもいいですか？", memo:"ballpoint pen（ボールペン）。pen pal（ペンフレンド）。"},
+  {en:"key",    jp:"鍵・キー・重要な",   pos:"名詞", ex:"She lost her keys.", exj:"彼女は鍵を失くしました。", memo:"the key to〜（〜の鍵・秘訣）。key factor（主要因）。形容詞「重要な」にもなる。"},
+  {en:"bed",    jp:"ベッド・寝床",       pos:"名詞", ex:"It's time you went to bed.", exj:"もう寝る時間ですよ。", memo:"go to bed（寝る）。make one's bed（ベッドを整える）。bedtime（就寝時刻）。"},
+  {en:"box",    jp:"箱",                pos:"名詞", ex:"He couldn't lift the heavy box.", exj:"彼はその重い箱を持ち上げられませんでした。", memo:"mail box（郵便箱）。think outside the box（型にはまらず考える）はイディオム。"},
+  {en:"map",    jp:"地図",              pos:"名詞", ex:"He stopped to look at the map.", exj:"彼は地図を見るために立ち止まりました。", memo:"road map（道路地図）。read a map（地図を読む）。map out（計画を立てる）。"},
+  {en:"ball",   jp:"ボール・球",         pos:"名詞", ex:"He kicked the ball hard.", exj:"彼はボールを強く蹴りました。", memo:"play ball（ボール遊びをする）。ballpark（野球場・おおよその範囲）。"},
+  {en:"bike",   jp:"自転車・バイク",     pos:"名詞", ex:"He rides his bike to school.", exj:"彼は自転車で学校に通います。", memo:"by bike（自転車で）。bicycle と同義（bikeは口語的）。"},
+  {en:"bus",    jp:"バス",              pos:"名詞", ex:"Unless you hurry, you will miss the bus.", exj:"急がない限り、バスに乗り遅れますよ。", memo:"by bus（バスで）。bus stop（バス停）。miss the bus（バスに乗り遅れる）。"},
+  {en:"book",   jp:"本・予約する",       pos:"名詞", ex:"The book was written by a famous author.", exj:"その本は有名な作家によって書かれました。", memo:"動詞「予約する」にもなる。textbook（教科書）。bookstore（書店）。"},
+  {en:"tea",    jp:"お茶・紅茶",         pos:"名詞", ex:"She made him a cup of tea.", exj:"彼女は彼のためにお茶を一杯入れました。", memo:"green tea（緑茶）。tea break（お茶休憩）。"},
+  {en:"milk",   jp:"牛乳・ミルク",       pos:"名詞", ex:"It is no use crying over spilt milk.", exj:"こぼれたミルクを嘆いても無駄です。", memo:"不可算名詞。skim milk（無脂肪乳）。milk chocolate（ミルクチョコレート）。"},
+  {en:"rain",   jp:"雨",                pos:"名詞", ex:"Despite the heavy rain, they played soccer.", exj:"大雨にもかかわらず彼らはサッカーをしました。", memo:"it rains（雨が降る）。rainbow（虹）。rainy（雨の多い）。"},
+  {en:"wind",   jp:"風",                pos:"名詞", ex:"The wind blew strongly from the north.", exj:"風は北から強く吹きました。", memo:"windy（風の強い）。wind power（風力）。"},
+  {en:"fire",   jp:"火・火事",           pos:"名詞", ex:"Be careful not to start a fire.", exj:"火を起こさないように気をつけなさい。", memo:"on fire（燃えている）。catch fire（火がつく）。fireman（消防士）。"},
+  {en:"snow",   jp:"雪",                pos:"名詞", ex:"It snows a lot in Hokkaido in winter.", exj:"冬の北海道では雪がたくさん降ります。", memo:"it snows（雪が降る）。snowfall（降雪）。snowman（雪だるま）。"},
+  {en:"road",   jp:"道路・道",           pos:"名詞", ex:"The road was blocked by the snow.", exj:"道路は雪で封鎖されました。", memo:"on the road（旅の途中で）。road trip（ドライブ旅行）。"},
+  {en:"town",   jp:"町",                pos:"名詞", ex:"I still remember the town where I grew up.", exj:"私はまだ自分が育った町を覚えています。", memo:"downtown（繁華街）。small town（小さな町）。"},
+  {en:"city",   jp:"都市・市",           pos:"名詞", ex:"She moved to a big city to find a job.", exj:"彼女は仕事を探すために大都市に引っ越しました。", memo:"city center（都市の中心部）。city hall（市役所）。"},
+  {en:"shop",   jp:"店・買い物する",      pos:"名詞", ex:"She went to the shop to buy a birthday gift.", exj:"彼女は誕生日プレゼントを買いに店へ行きました。", memo:"動詞「買い物をする」にもなる。go shopping（買い物に行く）。"},
+  {en:"store",  jp:"店・蓄える",         pos:"名詞", ex:"She went to the store to buy some milk.", exj:"彼女はミルクを買いに店に行きました。", memo:"department store（デパート）。grocery store（食料品店）。動詞「蓄える」にもなる。"},
+  {en:"game",   jp:"試合・ゲーム",        pos:"名詞", ex:"They won the game by one point.", exj:"彼らは1点差で試合に勝ちました。", memo:"play a game（ゲームをする）。game over（ゲームオーバー）。"},
+  {en:"club",   jp:"クラブ・部活",        pos:"名詞", ex:"She joined the drama club at school.", exj:"彼女は学校の演劇クラブに入りました。", memo:"book club（読書クラブ）。night club（ナイトクラブ）。"},
+  {en:"home",   jp:"家庭・自宅",          pos:"名詞", ex:"He came home exhausted.", exj:"彼は疲れ果てて帰宅しました。", memo:"at home（家で）。feel at home（くつろぐ）。homesick（ホームシックの）。"},
+  {en:"wall",   jp:"壁",                pos:"名詞", ex:"He painted the wall white.", exj:"彼は壁を白く塗りました。", memo:"off the wall（風変わりな）。wall clock（壁掛け時計）。"},
+  {en:"floor",  jp:"床・階",             pos:"名詞", ex:"She sat on the floor.", exj:"彼女は床に座りました。", memo:"on the floor（床に）。ground floor（1階）。top floor（最上階）。"},
+  {en:"chair",  jp:"椅子",              pos:"名詞", ex:"She put her bag on the chair.", exj:"彼女は椅子にバッグを置きました。", memo:"armchair（肘掛け椅子）。take a seat / sit in a chair（椅子に座る）。"},
+
+  // ════ 超基礎語（形容詞）════
+  {en:"old",    jp:"古い・年老いた",      pos:"形容詞", ex:"The old library stands near the station.", exj:"古い図書館が駅の近くに立っています。", memo:"older / eldest（比較・最上級）。old-fashioned（時代遅れの）。"},
+  {en:"new",    jp:"新しい",             pos:"形容詞", ex:"She found a new job last month.", exj:"彼女は先月新しい仕事を見つけました。", memo:"brand new（真新しい）。What's new?（最近どう？）。"},
+  {en:"big",    jp:"大きい",             pos:"形容詞", ex:"He made a big decision to study abroad.", exj:"彼は留学という大きな決断をしました。", memo:"bigger / biggest（比較・最上級）。big deal（大したこと）。"},
+  {en:"long",   jp:"長い",              pos:"形容詞", ex:"He wrote her a long letter.", exj:"彼は彼女に長い手紙を書きました。", memo:"副詞「長く」にもなる。before long（まもなく）。long for〜（〜を切望する）。"},
+  {en:"short",  jp:"短い・背が低い",     pos:"形容詞", ex:"I'll give you a short explanation.", exj:"簡潔に説明します。", memo:"in short（要するに）。short of〜（〜が足りない）。"},
+  {en:"hot",    jp:"暑い・熱い・辛い",   pos:"形容詞", ex:"It was a hot summer day.", exj:"それは暑い夏の日でした。", memo:"hot dog（ホットドッグ）。hot topic（話題のトピック）。"},
+  {en:"good",   jp:"良い・上手な",       pos:"形容詞", ex:"She has good communication skills.", exj:"彼女はコミュニケーション能力が高いです。", memo:"比較級better・最上級best（不規則変化）。be good at〜（〜が得意）。"},
+  {en:"bad",    jp:"悪い・下手な",       pos:"形容詞", ex:"He felt bad about the mistake.", exj:"彼はミスを申し訳なく思いました。", memo:"比較級worse・最上級worst（不規則変化）。too bad（残念だ）。"},
+  {en:"slow",   jp:"遅い・ゆっくりした", pos:"形容詞", ex:"He took the slow train home.", exj:"彼は各駅停車で帰りました。", memo:"副詞「ゆっくりと」にもなる。slow down（スピードを落とす）。"},
+  {en:"high",   jp:"高い・高度な",       pos:"形容詞", ex:"She got high scores on all her tests.", exj:"彼女は全テストで高得点を取りました。", memo:"副詞「高く」にもなる。high school（高校）。high-tech（ハイテクの）。"},
+  {en:"low",    jp:"低い・少ない",       pos:"形容詞", ex:"The price is very low.", exj:"値段がとても安いです。", memo:"low-cost（低コストの）。keep a low profile（目立たないようにする）。"},
+  {en:"easy",   jp:"簡単な・気楽な",     pos:"形容詞", ex:"This book is easy to understand.", exj:"この本は理解しやすいです。", memo:"be easy to do（〜しやすい）。take it easy（気楽にやる）。easily（簡単に）。"},
+  {en:"free",   jp:"無料の・自由な",     pos:"形容詞", ex:"Admission is free for children.", exj:"子供は入場無料です。", memo:"feel free to do（遠慮なく〜する）。free time（自由な時間）。freedom（自由）。"},
+  {en:"right",  jp:"正しい・右の・権利", pos:"形容詞", ex:"That is the right answer.", exj:"それが正解です。", memo:"副詞「ちょうど・すぐに」にもなる。You're right.（その通りです）。human rights（人権）。"},
+  {en:"wrong",  jp:"間違っている",       pos:"形容詞", ex:"That answer is wrong.", exj:"その答えは間違っています。", memo:"go wrong（うまくいかない）。what's wrong?（どうしたの？）。"},
+  {en:"same",   jp:"同じ",              pos:"形容詞", ex:"They have the same opinion.", exj:"彼らは同じ意見を持っています。", memo:"at the same time（同時に）。the same as〜（〜と同じ）。"},
+  {en:"next",   jp:"次の・隣の",         pos:"形容詞", ex:"The next train leaves in five minutes.", exj:"次の電車は5分後に出ます。", memo:"next to〜（〜の隣に）。next time（次回）。"},
+  {en:"last",   jp:"最後の・先〜の",     pos:"形容詞", ex:"She caught the last train.", exj:"彼女は最終電車に乗りました。", memo:"last week（先週）。at last（ついに）。last but not least（最後ながら重要な点として）。"},
+  {en:"little", jp:"少ない・小さな",     pos:"形容詞", ex:"A little kindness goes a long way.", exj:"少しの親切が大いに役立ちます。", memo:"副詞「少し」にもなる。a little（少し）/ little（ほとんどない）の違いに注意。"},
+  {en:"young",  jp:"若い",              pos:"形容詞", ex:"She is a talented young leader.", exj:"彼女は才能ある若いリーダーです。", memo:"the young（若者）。younger / youngest（比較・最上級）。youth（若さ）。"},
+  {en:"tall",   jp:"背が高い・高い",     pos:"形容詞", ex:"She is the tallest student in the class.", exj:"彼女はクラスで一番背が高い生徒です。", memo:"tall building（高い建物）。taller / tallest（比較・最上級）。"},
+  {en:"safe",   jp:"安全な",            pos:"形容詞", ex:"Is it safe to walk here at night?", exj:"ここは夜歩いても安全ですか？", memo:"safety（安全）の形容詞形。safe and sound（無事に）。safely（安全に）。"},
+  {en:"late",   jp:"遅い・遅れた",       pos:"形容詞", ex:"He arrived an hour late.", exj:"彼は1時間遅れて到着しました。", memo:"副詞「遅く」にもなる。be late for〜（〜に遅刻する）。lately（最近）は別の意味。"},
+
+  // ════ 超基礎語（副詞）════
+  {en:"now",    jp:"今・さっそく",        pos:"副詞", ex:"She is studying English now.", exj:"彼女は今英語を勉強しています。", memo:"right now（今すぐ）。now that〜（今や〜なので）。by now（今ごろは）。"},
+  {en:"then",   jp:"その時・それから・では", pos:"副詞", ex:"He was a student then.", exj:"その頃彼は学生でした。", memo:"now and then（時々）。then again（それでも）。"},
+  {en:"here",   jp:"ここに・ここで",      pos:"副詞", ex:"Please come here.", exj:"ここに来てください。", memo:"here and there（あちこちに）。Here you are.（はいどうぞ）。"},
+  {en:"there",  jp:"そこに・そこで",      pos:"副詞", ex:"There is a book on the desk.", exj:"机の上に本があります。", memo:"There is/are〜（〜がある）構文。here and there（あちこちに）。"},
+  {en:"soon",   jp:"まもなく・すぐに",    pos:"副詞", ex:"She will arrive soon.", exj:"彼女はまもなく到着します。", memo:"as soon as〜（〜するとすぐに）。sooner or later（遅かれ早かれ）。"},
+  {en:"still",  jp:"まだ・依然として",    pos:"副詞", ex:"She still remembers the day they first met.", exj:"彼女はまだ2人が初めて会った日を覚えています。", memo:"stand still（じっとしている）。still water（静水）。"},
+  {en:"also",   jp:"〜も・また",         pos:"副詞", ex:"She also speaks French.", exj:"彼女はフランス語も話します。", memo:"too / as well も同義（文尾に置く）。not only〜but also...（〜だけでなく…も）。"},
+  {en:"just",   jp:"ちょうど・たった今・ただ", pos:"副詞", ex:"She has just finished her homework.", exj:"彼女はちょうど宿題を終えたところです。", memo:"just now（たった今）。just in case（念のために）。just about（ほとんど）。"},
+  {en:"well",   jp:"よく・十分に・上手に", pos:"副詞", ex:"She speaks English very well.", exj:"彼女は英語をとても上手に話します。", memo:"as well（〜も）。well-known（よく知られた）。形容詞「元気な」にもなる。"},
+  {en:"too",    jp:"〜も・あまりにも",    pos:"副詞", ex:"It's too hot today.", exj:"今日はあまりにも暑いです。", memo:"too〜to do（〜すぎて…できない）。too〜for O to do（Oには〜すぎて…できない）。"},
+  {en:"always", jp:"いつも・常に",        pos:"副詞", ex:"She always gets high scores.", exj:"彼女はいつも高得点を取ります。", memo:"頻度副詞の中で最も高頻度。always complaining（いつもぼやいている）。"},
+  {en:"often",  jp:"しばしば・よく",      pos:"副詞", ex:"She often visits the library.", exj:"彼女はよく図書館を訪れます。", memo:"how often〜?（どのくらいの頻度で？）。more often than not（たいていの場合）。"},
+  {en:"again",  jp:"再び・もう一度",      pos:"副詞", ex:"Please try again.", exj:"もう一度試してみてください。", memo:"once again（もう一度）。again and again（何度も何度も）。"},
+  {en:"even",   jp:"〜でさえ・さらに",    pos:"副詞", ex:"Even she made a mistake.", exj:"彼女でさえミスをしました。", memo:"even if（たとえ〜でも）。even though（〜にもかかわらず）。even better（さらによい）。"},
+  {en:"away",   jp:"離れて・遠くに",      pos:"副詞", ex:"She moved away from home.", exj:"彼女は実家を離れました。", memo:"go away（立ち去る）。far away（遠く離れて）。give away（贈る・暴露する）。"},
+  {en:"out",    jp:"外に・外へ",          pos:"副詞", ex:"She went out for a walk.", exj:"彼女は散歩に出かけました。", memo:"go out（外出する）。find out（わかる）。run out of〜（〜がなくなる）。"},
+  {en:"up",     jp:"上へ・上に",          pos:"副詞", ex:"She woke up early.", exj:"彼女は早起きしました。", memo:"give up（あきらめる）。grow up（成長する）。keep up with〜（〜についていく）。"},
+  {en:"down",   jp:"下へ・下に",          pos:"副詞", ex:"She ran down the stairs.", exj:"彼女は階段を駆け下りました。", memo:"sit down（座る）。let down（失望させる）。turn down（断る・音量を下げる）。"},
+  {en:"ever",   jp:"今まで・かつて",      pos:"副詞", ex:"Have you ever eaten Thai food?", exj:"タイ料理を食べたことがありますか？", memo:"現在完了（経験）の疑問文でよく使う。if ever（万が一〜するなら）。"},
+  {en:"yet",    jp:"まだ・すでに",        pos:"副詞", ex:"Has she finished yet?", exj:"彼女はもう終わりましたか？", memo:"not yet（まだ〜ない）は否定文。疑問文では「もう」（already との違いに注意）。"},
+  {en:"else",   jp:"その他の・ほかに",    pos:"副詞", ex:"Does anyone else have a question?", exj:"他に誰か質問はありますか？", memo:"something else（別の何か）。who else（他に誰が）。or else（さもなければ）。"},
+  {en:"abroad", jp:"海外で・外国で",      pos:"副詞", ex:"She decided to study abroad.", exj:"彼女は留学することを決めました。", memo:"go abroad（海外に行く）。from abroad（海外から）。前置詞不要（×go to abroad）。"},
+  {en:"far",    jp:"遠くに・はるかに",    pos:"副詞", ex:"She is by far the most talented student.", exj:"彼女は断然最も才能のある生徒です。", memo:"by far（断然）。so far（これまでのところ）。far from〜（〜とはほど遠い）。"},
 ];
 
 // ════════════════════════════════════
@@ -3766,7 +4119,213 @@ function goSelect() {
       設定を選んで「スタート！」を押してね 🎉
     </div>`;
 }
+
+// ══════════════════════════════════
+// DICT MODE
+// ══════════════════════════════════
+let dictPos  = 'all';
+let dictAlphaFilter = '';
+let vocabMode = 'quiz';  // 'quiz' | 'dict'
+
+const POS_COLOR_MAP = {
+  '名詞':'#4ecdc4','動詞':'#ff6b9d','形容詞':'#e6a800','副詞':'#a29bfe',
+  '前置詞':'#ff9f43','接続詞':'#74b9ff'
+};
+const POS_BG_MAP = {
+  '名詞':'#e8fafb','動詞':'#fff0f6','形容詞':'#fffae8','副詞':'#f3f0ff',
+  '前置詞':'#fff5e8','接続詞':'#eef5ff'
+};
+
+function setVocabMode(mode) {
+  vocabMode = mode;
+  const isDict = mode === 'dict';
+  document.getElementById('vQuizControls').style.display = isDict ? 'none' : 'block';
+  document.getElementById('vDictControls').style.display = isDict ? 'block' : 'none';
+  document.getElementById('vpBody').style.display = isDict ? 'none' : 'block';
+  document.getElementById('dictBody').style.display = isDict ? 'block' : 'none';
+  document.getElementById('vmode-quiz').classList.toggle('active', !isDict);
+  document.getElementById('vmode-dict').classList.toggle('active', isDict);
+  if (!isDict) {
+    document.getElementById('vmode-quiz').style.cssText = 'border-color:var(--orange);background:#fff5e8;color:var(--orange)';
+    document.getElementById('vmode-dict').style.cssText = '';
+  } else {
+    document.getElementById('vmode-dict').style.cssText = 'border-color:var(--sky);background:#e8fafb;color:var(--sky)';
+    document.getElementById('vmode-quiz').style.cssText = '';
+    buildAlphaIndex();
+    renderDict();
+  }
+}
+
+function setDictPos(pos) {
+  dictPos = pos;
+  dictAlphaFilter = '';
+  document.querySelectorAll('[id^="dp-"]').forEach(b => b.classList.remove('active'));
+  document.getElementById('dp-' + (pos === 'all' ? 'all' : pos))?.classList.add('active');
+  buildAlphaIndex();
+  renderDict();
+}
+
+function buildAlphaIndex() {
+  const filtered = dictPos === 'all' ? VOCAB : VOCAB.filter(v => v.pos === dictPos);
+  const letters = [...new Set(filtered.map(v => {
+    const en = Array.isArray(v.en) ? v.en[0] : v.en;
+    return en[0].toUpperCase();
+  }))].sort();
+
+  const container = document.getElementById('dictAlpha');
+  container.innerHTML = `
+    <button class="dict-alpha-btn ${dictAlphaFilter===''?'active':''}" onclick="setAlpha('')">ALL</button>
+    ${letters.map(l => `
+      <button class="dict-alpha-btn ${dictAlphaFilter===l?'active':''}" onclick="setAlpha('${l}')">${l}</button>
+    `).join('')}
+  `;
+}
+
+function setAlpha(letter) {
+  dictAlphaFilter = letter;
+  buildAlphaIndex();
+  renderDict();
+}
+
+function renderDict() {
+  const search = (document.getElementById('dictSearch')?.value || '').toLowerCase().trim();
+  let pool = dictPos === 'all' ? [...VOCAB] : VOCAB.filter(v => v.pos === dictPos);
+
+  if (dictAlphaFilter) {
+    pool = pool.filter(v => {
+      const en = Array.isArray(v.en) ? v.en[0] : v.en;
+      return en[0].toUpperCase() === dictAlphaFilter;
+    });
+  }
+  if (search) {
+    pool = pool.filter(v => {
+      const en = (Array.isArray(v.en) ? v.en[0] : v.en).toLowerCase();
+      return en.includes(search) || v.jp.includes(search);
+    });
+  }
+
+  // sort alphabetically
+  pool.sort((a, b) => {
+    const ea = Array.isArray(a.en) ? a.en[0] : a.en;
+    const eb = Array.isArray(b.en) ? b.en[0] : b.en;
+    return ea.localeCompare(eb);
+  });
+
+  const body = document.getElementById('dictBody');
+  if (pool.length === 0) {
+    body.innerHTML = `<div style="text-align:center;padding:40px;color:var(--muted);font-weight:700">該当する単語が見つかりません 🔍</div>`;
+    return;
+  }
+
+  // group by first letter
+  const groups = {};
+  pool.forEach(v => {
+    const en = Array.isArray(v.en) ? v.en[0] : v.en;
+    const letter = en[0].toUpperCase();
+    if (!groups[letter]) groups[letter] = [];
+    groups[letter].push(v);
+  });
+
+  body.innerHTML = `
+    <div style="font-size:.72rem;color:var(--muted);font-weight:700;margin-bottom:10px;text-align:right">${pool.length}語</div>
+    ${Object.entries(groups).map(([letter, words]) => `
+      <div class="dict-letter-group">
+        <div class="dict-letter-header">${letter}</div>
+        ${words.map(v => {
+          const en = Array.isArray(v.en) ? v.en[0] : v.en;
+          const col  = POS_COLOR_MAP[v.pos] || '#999';
+          const bg   = POS_BG_MAP[v.pos]   || '#f5f5f5';
+          return `
+            <div class="dict-entry" onclick="toggleDictEntry(this)">
+              <div class="dict-entry-top">
+                <span class="dict-en">${en}</span>
+                <span class="dict-pos-badge" style="color:${col};background:${bg};border-color:${col}">${v.pos}</span>
+                <span class="dict-jp">${v.jp}</span>
+                <span class="dict-arrow">▼</span>
+              </div>
+              <div class="dict-entry-detail" style="display:none">
+                <div class="dict-ex">${v.ex}</div>
+                <div class="dict-exj">${v.exj}</div>
+                <div class="dict-memo">💡 ${v.memo}</div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `).join('')}
+  `;
+}
+
+function toggleDictEntry(el) {
+  const detail = el.querySelector('.dict-entry-detail');
+  const arrow  = el.querySelector('.dict-arrow');
+  const isOpen = detail.style.display !== 'none';
+  detail.style.display = isOpen ? 'none' : 'block';
+  arrow.textContent = isOpen ? '▼' : '▲';
+  el.style.background = isOpen ? '' : 'var(--bg)';
+}
 </script>
+
+<style>
+/* ── DICT MODE ── */
+.dict-letter-group { margin-bottom: 6px; }
+.dict-letter-header {
+  font-family:'Fredoka',sans-serif; font-size:1.3rem; font-weight:700;
+  color:var(--orange); padding:4px 0 2px;
+  border-bottom:2px solid var(--border); margin-bottom:4px;
+}
+.dict-entry {
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--radius-sm); margin-bottom:4px;
+  padding:10px 12px; cursor:pointer; transition:all .15s;
+  box-shadow:0 2px 0 var(--border);
+}
+.dict-entry:hover { border-color:var(--orange); transform:translateX(2px); }
+.dict-entry-top {
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+}
+.dict-en {
+  font-family:'Fredoka',sans-serif; font-size:1.05rem; font-weight:700;
+  color:var(--ink); min-width:100px;
+}
+.dict-pos-badge {
+  font-family:'Fredoka',sans-serif; font-size:.65rem; font-weight:600;
+  padding:1px 8px; border-radius:20px; border:1.5px solid; white-space:nowrap;
+}
+.dict-jp {
+  font-size:.82rem; font-weight:700; color:var(--muted); flex:1;
+}
+.dict-arrow {
+  font-size:.7rem; color:var(--muted); margin-left:auto; flex-shrink:0;
+  transition:transform .2s;
+}
+.dict-entry-detail {
+  margin-top:10px; padding-top:10px;
+  border-top:1.5px dashed var(--border);
+  display:flex; flex-direction:column; gap:6px;
+}
+.dict-ex {
+  font-size:.83rem; font-weight:700; color:var(--ink);
+  font-style:italic; line-height:1.7;
+}
+.dict-exj {
+  font-size:.76rem; font-weight:700; color:var(--muted); font-style:normal;
+}
+.dict-memo {
+  font-size:.76rem; font-weight:700; line-height:1.7;
+  background:#fffae8; border:1.5px dashed var(--yellow);
+  border-radius:var(--radius-sm); padding:7px 10px; color:var(--ink);
+}
+.dict-alpha-btn {
+  font-family:'Fredoka',sans-serif; font-size:.75rem; font-weight:700;
+  padding:3px 8px; border-radius:8px; border:1.5px solid var(--border);
+  background:var(--bg); color:var(--muted); cursor:pointer; transition:all .15s;
+}
+.dict-alpha-btn.active {
+  border-color:var(--orange); background:#fff5e8; color:var(--orange);
+}
+.dict-alpha-btn:hover { border-color:var(--orange); color:var(--orange); }
+</style>
 
 <!-- ══════════════════════════════════
      GRAMMAR PAGE CSS
